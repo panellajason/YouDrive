@@ -9,35 +9,54 @@ import UIKit
 
 class SignInViewController: UIViewController {
     
-    @IBOutlet weak var textfieldEmail: UITextField!
-    @IBOutlet weak var textfieldPassword: UITextField!
     @IBOutlet weak var buttonContinue: UIButton!
+    @IBOutlet weak var labelError: UILabel!
+    @IBOutlet weak var textfieldEmail: UITextField! {
+        didSet {
+            let placeholderText = NSAttributedString(string: "Email address",
+                                                        attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])
+            textfieldEmail.attributedPlaceholder = placeholderText
+        }
+    }
+    @IBOutlet weak var textfieldPassword: UITextField! {
+        didSet {
+            let placeholderText = NSAttributedString(string: "Password",
+                                                        attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])
+            textfieldPassword.attributedPlaceholder = placeholderText
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
     }
     
-    @IBAction func login(_ sender: UIButton) {
-            guard let email = textfieldEmail.text else { return }
-            guard let password = textfieldPassword.text else { return }
-
-            self.view.endEditing(true)
-
-            if !email.isEmpty && !password.isEmpty {
-
-                DatabaseService.handleSignIn(email: email, password: password) { [weak self] error in
-                    
-                    guard error == nil else {
-                        return
-                    }
-                    
-                    self?.performSegue(withIdentifier: "toHome", sender: self)
-                }
-            } else {
-
-            }
-        }
+    // Hide keyboard when user taps screen
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+       self.view.endEditing(true)
+    }
     
+    // Try to sign in user with DatabaseService on button click
+    @IBAction func signIn(_ sender: UIButton) {
+        self.view.endEditing(true)
+        labelError.text = ""
+
+        guard let email = textfieldEmail.text else { return }
+        guard let password = textfieldPassword.text else { return }
+
+        if !email.isEmpty && !password.isEmpty {
+            self.showSpinner(onView: self.view)
+
+            DatabaseService.handleSignIn(email: email, password: password) { [weak self] error in
+                guard error == nil else {
+                    self?.labelError.text = ValidationError.invalidCredentials.localizedDescription
+                    self?.removeSpinner()
+                    return
+                }
+                
+                self?.performSegue(withIdentifier: "toHome", sender: self)
+            }
+        } else {
+            labelError.text = ValidationError.emptyTextFields.localizedDescription
+        }
+    }
 }

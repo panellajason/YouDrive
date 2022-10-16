@@ -9,10 +9,8 @@ import Foundation
 
 class User {
     var userID: String
-    var favoriteTours = [Tour]()
 
-    init(userID:String, favoriteTours: [Tour]) {
+    init(userID:String) {
         self.userID = userID
-        self.favoriteTours = favoriteTours
     }
 }

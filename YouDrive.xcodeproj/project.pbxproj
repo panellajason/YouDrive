@@ -10,7 +10,7 @@
 		F234BCD922891B68C806DC26 /* Pods_YouDrive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE157476944AE5D5F3CD5C05 /* Pods_YouDrive.framework */; };
 		FACEA7F628FB120B00CAA2AD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FACEA7F528FB120B00CAA2AD /* AppDelegate.swift */; };
 		FACEA7F828FB120B00CAA2AD /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FACEA7F728FB120B00CAA2AD /* SceneDelegate.swift */; };
-		FACEA7FA28FB120B00CAA2AD /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FACEA7F928FB120B00CAA2AD /* ViewController.swift */; };
+		FACEA7FA28FB120B00CAA2AD /* EntryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FACEA7F928FB120B00CAA2AD /* EntryViewController.swift */; };
 		FACEA7FD28FB120B00CAA2AD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FACEA7FB28FB120B00CAA2AD /* Main.storyboard */; };
 		FACEA7FF28FB120E00CAA2AD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FACEA7FE28FB120E00CAA2AD /* Assets.xcassets */; };
 		FACEA80228FB120E00CAA2AD /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FACEA80028FB120E00CAA2AD /* LaunchScreen.storyboard */; };
@@ -19,7 +19,9 @@
 		FAEF21AF28FB2E91008432C3 /* CreateAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEF21AE28FB2E91008432C3 /* CreateAccountViewController.swift */; };
 		FAEF21B128FB333D008432C3 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEF21B028FB333D008432C3 /* HomeViewController.swift */; };
 		FAEF21B428FB9D03008432C3 /* DatabaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEF21B328FB9D03008432C3 /* DatabaseService.swift */; };
-		FAEF21B728FB9F6E008432C3 /* Users.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEF21B628FB9F6E008432C3 /* Users.swift */; };
+		FAEF21B728FB9F6E008432C3 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEF21B628FB9F6E008432C3 /* User.swift */; };
+		FAEF21B928FBD426008432C3 /* ErrorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEF21B828FBD426008432C3 /* ErrorService.swift */; };
+		FAEF21BB28FBDA0A008432C3 /* WidgetService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEF21BA28FBDA0A008432C3 /* WidgetService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,7 +31,7 @@
 		FACEA7F228FB120B00CAA2AD /* YouDrive.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YouDrive.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FACEA7F528FB120B00CAA2AD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FACEA7F728FB120B00CAA2AD /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		FACEA7F928FB120B00CAA2AD /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		FACEA7F928FB120B00CAA2AD /* EntryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryViewController.swift; sourceTree = "<group>"; };
 		FACEA7FC28FB120B00CAA2AD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		FACEA7FE28FB120E00CAA2AD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FACEA80128FB120E00CAA2AD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -39,7 +41,9 @@
 		FAEF21AE28FB2E91008432C3 /* CreateAccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateAccountViewController.swift; sourceTree = "<group>"; };
 		FAEF21B028FB333D008432C3 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		FAEF21B328FB9D03008432C3 /* DatabaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseService.swift; sourceTree = "<group>"; };
-		FAEF21B628FB9F6E008432C3 /* Users.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Users.swift; sourceTree = "<group>"; };
+		FAEF21B628FB9F6E008432C3 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		FAEF21B828FBD426008432C3 /* ErrorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorService.swift; sourceTree = "<group>"; };
+		FAEF21BA28FBDA0A008432C3 /* WidgetService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,10 +113,10 @@
 		FAEF21A928FB1BBA008432C3 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
-				FACEA7F928FB120B00CAA2AD /* ViewController.swift */,
-				FAEF21AA28FB26B0008432C3 /* SignInViewController.swift */,
 				FAEF21AE28FB2E91008432C3 /* CreateAccountViewController.swift */,
+				FACEA7F928FB120B00CAA2AD /* EntryViewController.swift */,
 				FAEF21B028FB333D008432C3 /* HomeViewController.swift */,
+				FAEF21AA28FB26B0008432C3 /* SignInViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -121,6 +125,8 @@
 			isa = PBXGroup;
 			children = (
 				FAEF21B328FB9D03008432C3 /* DatabaseService.swift */,
+				FAEF21B828FBD426008432C3 /* ErrorService.swift */,
+				FAEF21BA28FBDA0A008432C3 /* WidgetService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -128,7 +134,7 @@
 		FAEF21B528FB9F58008432C3 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				FAEF21B628FB9F6E008432C3 /* Users.swift */,
+				FAEF21B628FB9F6E008432C3 /* User.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -249,14 +255,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FAEF21B728FB9F6E008432C3 /* Users.swift in Sources */,
+				FAEF21B728FB9F6E008432C3 /* User.swift in Sources */,
 				FAEF21AF28FB2E91008432C3 /* CreateAccountViewController.swift in Sources */,
 				FAEF21B428FB9D03008432C3 /* DatabaseService.swift in Sources */,
 				FAEF21AB28FB26B0008432C3 /* SignInViewController.swift in Sources */,
-				FACEA7FA28FB120B00CAA2AD /* ViewController.swift in Sources */,
+				FACEA7FA28FB120B00CAA2AD /* EntryViewController.swift in Sources */,
 				FACEA7F628FB120B00CAA2AD /* AppDelegate.swift in Sources */,
 				FACEA7F828FB120B00CAA2AD /* SceneDelegate.swift in Sources */,
+				FAEF21BB28FBDA0A008432C3 /* WidgetService.swift in Sources */,
 				FAEF21B128FB333D008432C3 /* HomeViewController.swift in Sources */,
+				FAEF21B928FBD426008432C3 /* ErrorService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

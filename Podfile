@@ -5,8 +5,11 @@ target 'YouDrive' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
 
-  # Pods for YouDrive
+  # Firebase
   pod 'FirebaseFirestoreSwift'
   pod 'Firebase/Auth'
+  
+  # UI
+  pod 'BulletinBoard'
   
 end

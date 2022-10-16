@@ -4,26 +4,36 @@
 //
 //  Created by Panella, Jason on 10/15/22.
 //
-
+import BLTNBoard
 import UIKit
 
 class HomeViewController: UIViewController {
-
+    
+    // Account dialog which has button to sign user out
+    private lazy var accountDialog: BLTNItemManager = {
+        let item = BLTNPageItem(title: "Account")
+        item.appearance.titleTextColor = .systemBlue
+        item.actionButtonTitle = "Sign out"
+        item.appearance.actionButtonColor = .systemRed
+        item.actionHandler = { [weak self] _ in
+            guard let self = self else { return }
+            self.signOutUser()
+        }
+        return BLTNItemManager(rootItem: item)
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    // Sign out user and segue to entry view controller
+    func signOutUser() {
+        DatabaseService.handleSignOut()
+        self.performSegue(withIdentifier: "toEntry", sender: self)
     }
-    */
 
+    // Handle on-click for the top nav bar account icon
+    @IBAction func handleAccountAction(_ sender: Any) {
+        accountDialog.showBulletin(above: self)
+    }
 }

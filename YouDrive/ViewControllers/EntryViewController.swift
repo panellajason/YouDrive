@@ -6,11 +6,20 @@
 //
 
 import UIKit
+import FirebaseAuth
 
-class ViewController: UIViewController {
+class EntryViewController: UIViewController {
 
     @IBOutlet weak var buttonSignIn: UIButton!
     @IBOutlet weak var buttonCreateAccount: UIButton!
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        if DatabaseService.getCurrentUser() != nil {
+            self.performSegue(withIdentifier: "toHome", sender: self)
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
