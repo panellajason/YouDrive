@@ -7,15 +7,23 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F234BCD922891B68C806DC26 /* Pods_YouDrive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE157476944AE5D5F3CD5C05 /* Pods_YouDrive.framework */; };
 		FACEA7F628FB120B00CAA2AD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FACEA7F528FB120B00CAA2AD /* AppDelegate.swift */; };
 		FACEA7F828FB120B00CAA2AD /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FACEA7F728FB120B00CAA2AD /* SceneDelegate.swift */; };
 		FACEA7FA28FB120B00CAA2AD /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FACEA7F928FB120B00CAA2AD /* ViewController.swift */; };
 		FACEA7FD28FB120B00CAA2AD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FACEA7FB28FB120B00CAA2AD /* Main.storyboard */; };
 		FACEA7FF28FB120E00CAA2AD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FACEA7FE28FB120E00CAA2AD /* Assets.xcassets */; };
 		FACEA80228FB120E00CAA2AD /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FACEA80028FB120E00CAA2AD /* LaunchScreen.storyboard */; };
+		FACEA80A28FB16CE00CAA2AD /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FACEA80928FB16CE00CAA2AD /* GoogleService-Info.plist */; };
+		FAEF21AB28FB26B0008432C3 /* SignInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEF21AA28FB26B0008432C3 /* SignInViewController.swift */; };
+		FAEF21AF28FB2E91008432C3 /* CreateAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEF21AE28FB2E91008432C3 /* CreateAccountViewController.swift */; };
+		FAEF21B128FB333D008432C3 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEF21B028FB333D008432C3 /* HomeViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6D7BA9035436E9E771DCCCFD /* Pods-YouDrive.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YouDrive.debug.xcconfig"; path = "Target Support Files/Pods-YouDrive/Pods-YouDrive.debug.xcconfig"; sourceTree = "<group>"; };
+		BBD11D57DFED8A1F59417D48 /* Pods-YouDrive.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YouDrive.release.xcconfig"; path = "Target Support Files/Pods-YouDrive/Pods-YouDrive.release.xcconfig"; sourceTree = "<group>"; };
+		DE157476944AE5D5F3CD5C05 /* Pods_YouDrive.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_YouDrive.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FACEA7F228FB120B00CAA2AD /* YouDrive.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YouDrive.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FACEA7F528FB120B00CAA2AD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FACEA7F728FB120B00CAA2AD /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -24,6 +32,10 @@
 		FACEA7FE28FB120E00CAA2AD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FACEA80128FB120E00CAA2AD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		FACEA80328FB120E00CAA2AD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FACEA80928FB16CE00CAA2AD /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		FAEF21AA28FB26B0008432C3 /* SignInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
+		FAEF21AE28FB2E91008432C3 /* CreateAccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateAccountViewController.swift; sourceTree = "<group>"; };
+		FAEF21B028FB333D008432C3 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -31,17 +43,37 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F234BCD922891B68C806DC26 /* Pods_YouDrive.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8250D91B6EEC7B36E10FA81B /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				6D7BA9035436E9E771DCCCFD /* Pods-YouDrive.debug.xcconfig */,
+				BBD11D57DFED8A1F59417D48 /* Pods-YouDrive.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		C6B02AB5174C0C8CFE88F49E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				DE157476944AE5D5F3CD5C05 /* Pods_YouDrive.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		FACEA7E928FB120B00CAA2AD = {
 			isa = PBXGroup;
 			children = (
 				FACEA7F428FB120B00CAA2AD /* YouDrive */,
 				FACEA7F328FB120B00CAA2AD /* Products */,
+				8250D91B6EEC7B36E10FA81B /* Pods */,
+				C6B02AB5174C0C8CFE88F49E /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -56,15 +88,27 @@
 		FACEA7F428FB120B00CAA2AD /* YouDrive */ = {
 			isa = PBXGroup;
 			children = (
+				FAEF21A928FB1BBA008432C3 /* ViewControllers */,
 				FACEA7F528FB120B00CAA2AD /* AppDelegate.swift */,
 				FACEA7F728FB120B00CAA2AD /* SceneDelegate.swift */,
-				FACEA7F928FB120B00CAA2AD /* ViewController.swift */,
 				FACEA7FB28FB120B00CAA2AD /* Main.storyboard */,
 				FACEA7FE28FB120E00CAA2AD /* Assets.xcassets */,
 				FACEA80028FB120E00CAA2AD /* LaunchScreen.storyboard */,
 				FACEA80328FB120E00CAA2AD /* Info.plist */,
+				FACEA80928FB16CE00CAA2AD /* GoogleService-Info.plist */,
 			);
 			path = YouDrive;
+			sourceTree = "<group>";
+		};
+		FAEF21A928FB1BBA008432C3 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				FACEA7F928FB120B00CAA2AD /* ViewController.swift */,
+				FAEF21AA28FB26B0008432C3 /* SignInViewController.swift */,
+				FAEF21AE28FB2E91008432C3 /* CreateAccountViewController.swift */,
+				FAEF21B028FB333D008432C3 /* HomeViewController.swift */,
+			);
+			path = ViewControllers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -74,9 +118,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = FACEA80628FB120E00CAA2AD /* Build configuration list for PBXNativeTarget "YouDrive" */;
 			buildPhases = (
+				00251DBB7785207239ECE14A /* [CP] Check Pods Manifest.lock */,
 				FACEA7EE28FB120B00CAA2AD /* Sources */,
 				FACEA7EF28FB120B00CAA2AD /* Frameworks */,
 				FACEA7F028FB120B00CAA2AD /* Resources */,
+				6B8CAC2D00848499E1858146 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -126,6 +172,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FACEA80228FB120E00CAA2AD /* LaunchScreen.storyboard in Resources */,
+				FACEA80A28FB16CE00CAA2AD /* GoogleService-Info.plist in Resources */,
 				FACEA7FF28FB120E00CAA2AD /* Assets.xcassets in Resources */,
 				FACEA7FD28FB120B00CAA2AD /* Main.storyboard in Resources */,
 			);
@@ -133,14 +180,59 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		00251DBB7785207239ECE14A /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-YouDrive-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		6B8CAC2D00848499E1858146 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-YouDrive/Pods-YouDrive-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-YouDrive/Pods-YouDrive-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-YouDrive/Pods-YouDrive-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		FACEA7EE28FB120B00CAA2AD /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FAEF21AF28FB2E91008432C3 /* CreateAccountViewController.swift in Sources */,
+				FAEF21AB28FB26B0008432C3 /* SignInViewController.swift in Sources */,
 				FACEA7FA28FB120B00CAA2AD /* ViewController.swift in Sources */,
 				FACEA7F628FB120B00CAA2AD /* AppDelegate.swift in Sources */,
 				FACEA7F828FB120B00CAA2AD /* SceneDelegate.swift in Sources */,
+				FAEF21B128FB333D008432C3 /* HomeViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -282,6 +374,7 @@
 		};
 		FACEA80728FB120E00CAA2AD /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6D7BA9035436E9E771DCCCFD /* Pods-YouDrive.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -310,6 +403,7 @@
 		};
 		FACEA80828FB120E00CAA2AD /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BBD11D57DFED8A1F59417D48 /* Pods-YouDrive.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
