@@ -18,6 +18,8 @@
 		FAEF21AB28FB26B0008432C3 /* SignInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEF21AA28FB26B0008432C3 /* SignInViewController.swift */; };
 		FAEF21AF28FB2E91008432C3 /* CreateAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEF21AE28FB2E91008432C3 /* CreateAccountViewController.swift */; };
 		FAEF21B128FB333D008432C3 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEF21B028FB333D008432C3 /* HomeViewController.swift */; };
+		FAEF21B428FB9D03008432C3 /* DatabaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEF21B328FB9D03008432C3 /* DatabaseService.swift */; };
+		FAEF21B728FB9F6E008432C3 /* Users.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEF21B628FB9F6E008432C3 /* Users.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +38,8 @@
 		FAEF21AA28FB26B0008432C3 /* SignInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
 		FAEF21AE28FB2E91008432C3 /* CreateAccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateAccountViewController.swift; sourceTree = "<group>"; };
 		FAEF21B028FB333D008432C3 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
+		FAEF21B328FB9D03008432C3 /* DatabaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseService.swift; sourceTree = "<group>"; };
+		FAEF21B628FB9F6E008432C3 /* Users.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Users.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,6 +92,8 @@
 		FACEA7F428FB120B00CAA2AD /* YouDrive */ = {
 			isa = PBXGroup;
 			children = (
+				FAEF21B528FB9F58008432C3 /* Models */,
+				FAEF21B228FB9813008432C3 /* Services */,
 				FAEF21A928FB1BBA008432C3 /* ViewControllers */,
 				FACEA7F528FB120B00CAA2AD /* AppDelegate.swift */,
 				FACEA7F728FB120B00CAA2AD /* SceneDelegate.swift */,
@@ -109,6 +115,22 @@
 				FAEF21B028FB333D008432C3 /* HomeViewController.swift */,
 			);
 			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		FAEF21B228FB9813008432C3 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				FAEF21B328FB9D03008432C3 /* DatabaseService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		FAEF21B528FB9F58008432C3 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				FAEF21B628FB9F6E008432C3 /* Users.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -227,7 +249,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FAEF21B728FB9F6E008432C3 /* Users.swift in Sources */,
 				FAEF21AF28FB2E91008432C3 /* CreateAccountViewController.swift in Sources */,
+				FAEF21B428FB9D03008432C3 /* DatabaseService.swift in Sources */,
 				FAEF21AB28FB26B0008432C3 /* SignInViewController.swift in Sources */,
 				FACEA7FA28FB120B00CAA2AD /* ViewController.swift in Sources */,
 				FACEA7F628FB120B00CAA2AD /* AppDelegate.swift in Sources */,

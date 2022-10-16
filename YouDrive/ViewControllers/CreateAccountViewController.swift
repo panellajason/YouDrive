@@ -19,8 +19,32 @@ class CreateAccountViewController: UIViewController {
 
         // Do any additional setup after loading the view.
     }
+    
+    @IBAction func signUp(_ sender: UIButton) {
+            guard let email = textfieldEmail.text else { return }
+            guard let password1 = textfieldPassword.text else { return }
+            guard let password2 = textfieldConfirmPassword.text else { return }
+
+            self.view.endEditing(true)
+
+            if !email.isEmpty && !password1.isEmpty && !password2.isEmpty {
+                if password1 == password2 {
+                    DatabaseService.handleSignUp(email: email, password: password1) { [weak self] error in
+                        
+                        guard error == nil else {
+                            return
+                        }
+                        
+                        self?.performSegue(withIdentifier: "toHome", sender: self)
+                    }
+                } else {
+                    //errorLabel.text = ValidationError.passwordsMustMatch.localizedDescription
+                }
+            } else {
+                //errorLabel.text = ValidationError.emptyTextFields.localizedDescription
+            }
+        }
 
     @IBAction func goToHome(_ sender: UIButton) {
-        self.performSegue(withIdentifier: "toHome", sender: self)
     }
 }

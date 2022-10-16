@@ -19,7 +19,25 @@ class SignInViewController: UIViewController {
         // Do any additional setup after loading the view.
     }
     
-    @IBAction func goToHome(_ sender: UIButton) {
-        self.performSegue(withIdentifier: "toHome", sender: self)
-    }
+    @IBAction func login(_ sender: UIButton) {
+            guard let email = textfieldEmail.text else { return }
+            guard let password = textfieldPassword.text else { return }
+
+            self.view.endEditing(true)
+
+            if !email.isEmpty && !password.isEmpty {
+
+                DatabaseService.handleSignIn(email: email, password: password) { [weak self] error in
+                    
+                    guard error == nil else {
+                        return
+                    }
+                    
+                    self?.performSegue(withIdentifier: "toHome", sender: self)
+                }
+            } else {
+
+            }
+        }
+    
 }
