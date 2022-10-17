@@ -330,9 +330,9 @@
                                         <rect key="frame" x="0.0" y="0.0" width="414" height="50"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" text="Search results for &quot;descanso&quot;" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UHS-n9-3mI">
-                                                <rect key="frame" x="12" y="8" width="265" height="34"/>
+                                                <rect key="frame" x="12" y="8" width="252" height="34"/>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="19"/>
+                                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
                                                 <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
@@ -517,7 +517,7 @@
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="filled" title="Search"/>
                                 <connections>
-                                    <action selector="handleAccountAction:" destination="y1q-Kf-Bi4" eventType="touchUpInside" id="0oz-Xp-Isa"/>
+                                    <action selector="handleSearchButton:" destination="y1q-Kf-Bi4" eventType="touchUpInside" id="2wJ-gi-SJE"/>
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4Ho-dr-p6o">
@@ -540,10 +540,10 @@
                     </view>
                     <navigationItem key="navigationItem" title="Add Drive" id="IuS-EL-kzu"/>
                     <connections>
-                        <outlet property="buttonSearch" destination="Fnq-zH-v3d" id="xIZ-iq-sUs"/>
+                        <outlet property="buttonSearch" destination="Fnq-zH-v3d" id="Ka4-b8-o5n"/>
                         <outlet property="labelSearch" destination="4Ho-dr-p6o" id="XcC-Ik-5Ln"/>
                         <outlet property="textfieldSearch" destination="JD8-GP-VVU" id="1Xu-zg-RHe"/>
-                        <segue destination="Aoz-tn-0fw" kind="presentation" identifier="toSearchResults" modalPresentationStyle="automatic" modalTransitionStyle="coverVertical" id="esp-u2-g6U"/>
+                        <segue destination="Aoz-tn-0fw" kind="presentation" identifier="toSearchResults" id="tjZ-7X-YQe"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cqX-Db-lkg" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
