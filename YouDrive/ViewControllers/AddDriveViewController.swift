@@ -21,7 +21,7 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     let locationManager = CLLocationManager()
-    var currentLocation : CLLocationCoordinate2D!;
+    var searchResults: [MKMapItem]!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,7 +30,7 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     // Handle on-click for the search button
-    @IBAction func handleAccountAction(_ sender: Any) {
+    @IBAction func handleSearchButton(_ sender: Any) {
         guard textfieldSearch.text != "" else {
             labelSearch.text = "Enter a location."
             return
@@ -39,47 +39,40 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate {
         search()
     }
     
-    // Excecutes a MKLocalSearch request with text from textfield
+    // Uses search service to search for locations based on search query
     func search() {
-        let span = MKCoordinateSpan(latitudeDelta: 0.00005, longitudeDelta: 0.00005)
-        let region = MKCoordinateRegion(center: currentLocation, span: span)
+        guard textfieldSearch.text != "" else {
+            labelSearch.text = "Enter a location."
+            return
+        }
         
-        let searchRequest = MKLocalSearch.Request()
-        searchRequest.naturalLanguageQuery = textfieldSearch.text
-        searchRequest.region = region
-                
-        let search = MKLocalSearch(request: searchRequest)
+        labelSearch.text = ""
 
-        search.start {[weak self] response, error in
-            guard let response = response else {
-                
-                switch error!._code {
-                case Int(MKError.placemarkNotFound.rawValue):
-                    self?.labelSearch.text = "No locations found."
-                case Int(MKError.serverFailure.rawValue):
-                    self?.labelSearch.text = "No internet."
-                default:
-                    self?.labelSearch.text = "Error: \(error?.localizedDescription ?? "Unknown error")."
+        SearchService.searchForLocations(searchQuery: textfieldSearch.text ?? "") {[weak self] error, mapItems in
+            
+            guard error == nil && !mapItems.isEmpty else {
+                switch error?._code ?? 1 {
+                    case Int(MKError.loadingThrottled.rawValue):
+                        self?.labelSearch.text = "Loading throttled, try again."
+                    case Int(MKError.placemarkNotFound.rawValue):
+                        self?.labelSearch.text = "No locations found."
+                    case Int(MKError.serverFailure.rawValue):
+                        self?.labelSearch.text = "No internet."
+                    default:
+                        self?.labelSearch.text = "Unknown error, try again."
                 }
-                
                 return
             }
             
-            // Selecting first result for testing
-            let selectedDestintation = response.mapItems[0].placemark.location?.coordinate
-            
-            let currentPoint = CLLocation(latitude: (self?.currentLocation.latitude)!, longitude: (self?.currentLocation.longitude)!)
-            let endPoint = CLLocation(latitude: selectedDestintation!.latitude ,longitude: selectedDestintation!.longitude)
-            let distance = currentPoint.distance(from: endPoint) / 1609.344
-
-            self?.labelSearch.text = "Distance: \(String(distance.rounded(toPlaces: 1))) miles"
+            self?.searchResults = mapItems
+            self?.performSegue(withIdentifier: "toSearchResults", sender: self)
         }
     }
     
     // Requests tracking permission and sets up delegate if granted
     func requestLocationPermissionIfNeeded() {
-        self.locationManager.requestAlwaysAuthorization()
-        self.locationManager.requestWhenInUseAuthorization()
+        locationManager.requestAlwaysAuthorization()
+        locationManager.requestWhenInUseAuthorization()
 
         if CLLocationManager.locationServicesEnabled() {
             locationManager.delegate = self
@@ -91,14 +84,14 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate {
     // Update currentLocation when location changes
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location: CLLocationCoordinate2D = manager.location?.coordinate else { return }
-        currentLocation = location
+        SearchService.currentLocation = location
     }
-}
-
-extension Double {
-    // Rounds the double to decimal places value
-    func rounded(toPlaces places:Int) -> Double {
-        let divisor = pow(10.0, Double(places))
-        return (self * divisor).rounded() / divisor
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?){
+        if (segue.identifier == "toSearchResults") {
+            let searchResultsViewController = segue.destination as! SearchResultsViewController
+            searchResultsViewController.searchResults = searchResults
+            searchResultsViewController.searchQuery = textfieldSearch.text
+        }
     }
 }

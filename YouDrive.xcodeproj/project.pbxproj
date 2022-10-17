@@ -23,6 +23,9 @@
 		FAEF21B928FBD426008432C3 /* ErrorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEF21B828FBD426008432C3 /* ErrorService.swift */; };
 		FAEF21BB28FBDA0A008432C3 /* WidgetService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEF21BA28FBDA0A008432C3 /* WidgetService.swift */; };
 		FAEF21BD28FCCDAE008432C3 /* AddDriveViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEF21BC28FCCDAE008432C3 /* AddDriveViewController.swift */; };
+		FAEF21BF28FD26AC008432C3 /* SearchResultsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEF21BE28FD26AC008432C3 /* SearchResultsViewController.swift */; };
+		FAEF21C328FD2C2D008432C3 /* SearchResultsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEF21C128FD2C2D008432C3 /* SearchResultsTableViewCell.swift */; };
+		FAEF21C628FD4129008432C3 /* SearchService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEF21C528FD4129008432C3 /* SearchService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -46,6 +49,9 @@
 		FAEF21B828FBD426008432C3 /* ErrorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorService.swift; sourceTree = "<group>"; };
 		FAEF21BA28FBDA0A008432C3 /* WidgetService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetService.swift; sourceTree = "<group>"; };
 		FAEF21BC28FCCDAE008432C3 /* AddDriveViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddDriveViewController.swift; sourceTree = "<group>"; };
+		FAEF21BE28FD26AC008432C3 /* SearchResultsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultsViewController.swift; sourceTree = "<group>"; };
+		FAEF21C128FD2C2D008432C3 /* SearchResultsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultsTableViewCell.swift; sourceTree = "<group>"; };
+		FAEF21C528FD4129008432C3 /* SearchService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +104,7 @@
 		FACEA7F428FB120B00CAA2AD /* YouDrive */ = {
 			isa = PBXGroup;
 			children = (
+				FAEF21C028FD2BFF008432C3 /* Cells */,
 				FAEF21B528FB9F58008432C3 /* Models */,
 				FAEF21B228FB9813008432C3 /* Services */,
 				FAEF21A928FB1BBA008432C3 /* ViewControllers */,
@@ -120,6 +127,7 @@
 				FAEF21B028FB333D008432C3 /* HomeViewController.swift */,
 				FAEF21AA28FB26B0008432C3 /* SignInViewController.swift */,
 				FAEF21BC28FCCDAE008432C3 /* AddDriveViewController.swift */,
+				FAEF21BE28FD26AC008432C3 /* SearchResultsViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -130,6 +138,7 @@
 				FAEF21B328FB9D03008432C3 /* DatabaseService.swift */,
 				FAEF21B828FBD426008432C3 /* ErrorService.swift */,
 				FAEF21BA28FBDA0A008432C3 /* WidgetService.swift */,
+				FAEF21C528FD4129008432C3 /* SearchService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -140,6 +149,14 @@
 				FAEF21B628FB9F6E008432C3 /* User.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		FAEF21C028FD2BFF008432C3 /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				FAEF21C128FD2C2D008432C3 /* SearchResultsTableViewCell.swift */,
+			);
+			path = Cells;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -259,6 +276,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FAEF21B728FB9F6E008432C3 /* User.swift in Sources */,
+				FAEF21BF28FD26AC008432C3 /* SearchResultsViewController.swift in Sources */,
 				FAEF21AF28FB2E91008432C3 /* CreateAccountViewController.swift in Sources */,
 				FAEF21B428FB9D03008432C3 /* DatabaseService.swift in Sources */,
 				FAEF21AB28FB26B0008432C3 /* SignInViewController.swift in Sources */,
@@ -267,6 +285,8 @@
 				FAEF21BD28FCCDAE008432C3 /* AddDriveViewController.swift in Sources */,
 				FACEA7F828FB120B00CAA2AD /* SceneDelegate.swift in Sources */,
 				FAEF21BB28FBDA0A008432C3 /* WidgetService.swift in Sources */,
+				FAEF21C328FD2C2D008432C3 /* SearchResultsTableViewCell.swift in Sources */,
+				FAEF21C628FD4129008432C3 /* SearchService.swift in Sources */,
 				FAEF21B128FB333D008432C3 /* HomeViewController.swift in Sources */,
 				FAEF21B928FBD426008432C3 /* ErrorService.swift in Sources */,
 			);
