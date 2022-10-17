@@ -16,21 +16,21 @@ enum ValidationError: Error {
 extension ValidationError: LocalizedError {
     var errorDescription: String? {
         switch self {
-        case .invalidCredentials:
-            return NSLocalizedString(
-                "Username and/or passsword is incorrect.",
-                comment: ""
-            )
-        case .emptyTextFields:
-            return NSLocalizedString(
-                "Fields cannot be empty.",
-                comment: ""
-            )
-        case .passwordsMustMatch:
-            return NSLocalizedString(
-                "Passwords must match.",
-                comment: ""
-            )
+            case .invalidCredentials:
+                return NSLocalizedString(
+                    "Username and/or passsword is incorrect.",
+                    comment: ""
+                )
+            case .emptyTextFields:
+                return NSLocalizedString(
+                    "Fields cannot be empty.",
+                    comment: ""
+                )
+            case .passwordsMustMatch:
+                return NSLocalizedString(
+                    "Passwords must match.",
+                    comment: ""
+                )
         }
     }
 }

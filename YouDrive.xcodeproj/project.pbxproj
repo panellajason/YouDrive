@@ -22,6 +22,7 @@
 		FAEF21B728FB9F6E008432C3 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEF21B628FB9F6E008432C3 /* User.swift */; };
 		FAEF21B928FBD426008432C3 /* ErrorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEF21B828FBD426008432C3 /* ErrorService.swift */; };
 		FAEF21BB28FBDA0A008432C3 /* WidgetService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEF21BA28FBDA0A008432C3 /* WidgetService.swift */; };
+		FAEF21BD28FCCDAE008432C3 /* AddDriveViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEF21BC28FCCDAE008432C3 /* AddDriveViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -44,6 +45,7 @@
 		FAEF21B628FB9F6E008432C3 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		FAEF21B828FBD426008432C3 /* ErrorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorService.swift; sourceTree = "<group>"; };
 		FAEF21BA28FBDA0A008432C3 /* WidgetService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetService.swift; sourceTree = "<group>"; };
+		FAEF21BC28FCCDAE008432C3 /* AddDriveViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddDriveViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -117,6 +119,7 @@
 				FACEA7F928FB120B00CAA2AD /* EntryViewController.swift */,
 				FAEF21B028FB333D008432C3 /* HomeViewController.swift */,
 				FAEF21AA28FB26B0008432C3 /* SignInViewController.swift */,
+				FAEF21BC28FCCDAE008432C3 /* AddDriveViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -261,6 +264,7 @@
 				FAEF21AB28FB26B0008432C3 /* SignInViewController.swift in Sources */,
 				FACEA7FA28FB120B00CAA2AD /* EntryViewController.swift in Sources */,
 				FACEA7F628FB120B00CAA2AD /* AppDelegate.swift in Sources */,
+				FAEF21BD28FCCDAE008432C3 /* AddDriveViewController.swift in Sources */,
 				FACEA7F828FB120B00CAA2AD /* SceneDelegate.swift in Sources */,
 				FAEF21BB28FBDA0A008432C3 /* WidgetService.swift in Sources */,
 				FAEF21B128FB333D008432C3 /* HomeViewController.swift in Sources */,

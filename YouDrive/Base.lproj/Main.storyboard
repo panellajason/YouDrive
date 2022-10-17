@@ -158,7 +158,7 @@
                         <outlet property="labelError" destination="9CT-Xz-pCL" id="llW-8C-2Ve"/>
                         <outlet property="textfieldEmail" destination="XW3-27-rYO" id="cWS-sa-dCI"/>
                         <outlet property="textfieldPassword" destination="YtG-Ab-UZ8" id="R2n-dn-RZy"/>
-                        <segue destination="J5l-0e-dcw" kind="showDetail" identifier="toHome" animates="NO" id="U72-ZP-qZE"/>
+                        <segue destination="J5l-0e-dcw" kind="showDetail" identifier="toHome" animates="NO" id="88j-II-SiN"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cfT-uc-4Ob" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -262,14 +262,14 @@
         <!--Home-->
         <scene sceneID="oJR-UU-8dq">
             <objects>
-                <navigationController modalPresentationStyle="fullScreen" id="OvO-tY-d9N" sceneMemberID="viewController">
+                <navigationController id="OvO-tY-d9N" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Home" image="house" catalog="system" selectedImage="house" id="cN2-aW-xFI">
                         <color key="badgeColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </tabBarItem>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" barStyle="black" translucent="NO" id="E7y-xK-dW1">
-                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" barStyle="black" id="E7y-xK-dW1">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="56"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <color key="barTintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <textAttributes key="titleTextAttributes">
@@ -277,6 +277,7 @@
                         </textAttributes>
                     </navigationBar>
                     <toolbar key="toolbar" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="nBT-XC-E9v">
+                        <rect key="frame" x="0.0" y="-54" width="0.0" height="0.0"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </toolbar>
                     <connections>
@@ -292,7 +293,7 @@
             <objects>
                 <viewController modalPresentationStyle="fullScreen" id="daL-k0-y5X" customClass="HomeViewController" customModule="YouDrive" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="HWM-E7-qDF">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="725"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="759"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <viewLayoutGuide key="safeArea" id="bdt-ri-u8h"/>
                         <color key="backgroundColor" systemColor="systemPurpleColor"/>
@@ -321,10 +322,10 @@
                     <tabBarItem key="tabBarItem" title="Add drive" image="plus.app" catalog="system" selectedImage="plus.app" id="UJO-GR-lFI">
                         <color key="badgeColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </tabBarItem>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" barStyle="black" translucent="NO" id="nSa-s3-LAP">
-                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" barStyle="black" id="nSa-s3-LAP">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="56"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <color key="barTintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <textAttributes key="titleTextAttributes">
                             <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -341,14 +342,53 @@
         <!--Add Drive-->
         <scene sceneID="ETe-1y-i0f">
             <objects>
-                <viewController modalPresentationStyle="fullScreen" id="y1q-Kf-Bi4" sceneMemberID="viewController">
+                <viewController modalPresentationStyle="fullScreen" id="y1q-Kf-Bi4" customClass="AddDriveViewController" customModule="YouDrive" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Zy1-fn-GOb">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="725"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="759"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter location" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="JD8-GP-VVU">
+                                <rect key="frame" x="82" y="362.5" width="250" height="34"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="250" id="3c5-M5-6fZ"/>
+                                </constraints>
+                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Fnq-zH-v3d">
+                                <rect key="frame" x="172.5" y="414" width="69" height="31"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="filled" title="Search"/>
+                                <connections>
+                                    <action selector="handleAccountAction:" destination="y1q-Kf-Bi4" eventType="touchUpInside" id="0oz-Xp-Isa"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4Ho-dr-p6o">
+                                <rect key="frame" x="207" y="479.5" width="0.0" height="0.0"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="Y0X-ma-e3g"/>
                         <color key="backgroundColor" systemColor="systemYellowColor"/>
+                        <constraints>
+                            <constraint firstItem="4Ho-dr-p6o" firstAttribute="centerY" secondItem="Zy1-fn-GOb" secondAttribute="centerY" constant="100" id="1We-C0-RFX"/>
+                            <constraint firstItem="JD8-GP-VVU" firstAttribute="centerX" secondItem="Zy1-fn-GOb" secondAttribute="centerX" id="9Vy-0F-lfz"/>
+                            <constraint firstItem="JD8-GP-VVU" firstAttribute="centerY" secondItem="Zy1-fn-GOb" secondAttribute="centerY" id="KBH-hT-Kfv"/>
+                            <constraint firstItem="Fnq-zH-v3d" firstAttribute="centerY" secondItem="Zy1-fn-GOb" secondAttribute="centerY" constant="50" id="UB1-gu-AFZ"/>
+                            <constraint firstItem="4Ho-dr-p6o" firstAttribute="centerX" secondItem="Zy1-fn-GOb" secondAttribute="centerX" id="Yz2-tY-ZIf"/>
+                            <constraint firstItem="Fnq-zH-v3d" firstAttribute="centerX" secondItem="Zy1-fn-GOb" secondAttribute="centerX" id="uSg-4H-ypo"/>
+                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Add Drive" id="IuS-EL-kzu"/>
+                    <connections>
+                        <outlet property="buttonSearch" destination="Fnq-zH-v3d" id="xIZ-iq-sUs"/>
+                        <outlet property="labelSearch" destination="4Ho-dr-p6o" id="XcC-Ik-5Ln"/>
+                        <outlet property="textfieldSearch" destination="JD8-GP-VVU" id="1Xu-zg-RHe"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cqX-Db-lkg" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -361,10 +401,10 @@
                     <tabBarItem key="tabBarItem" title="Graphs" image="chart.line.uptrend.xyaxis" catalog="system" selectedImage="chart.line.uptrend.xyaxis" id="gWG-0J-pYa">
                         <color key="badgeColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </tabBarItem>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" barStyle="black" translucent="NO" id="aem-R1-EaT">
-                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" barStyle="black" id="aem-R1-EaT">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="56"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <color key="barTintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <textAttributes key="titleTextAttributes">
                             <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -383,7 +423,7 @@
             <objects>
                 <viewController modalPresentationStyle="fullScreen" id="vN8-B9-Xnv" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="r6o-yz-EN8">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="725"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="759"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <viewLayoutGuide key="safeArea" id="EuP-Ip-ONf"/>
                         <color key="backgroundColor" systemColor="systemOrangeColor"/>
@@ -397,9 +437,8 @@
         <!--Tab Bar Controller-->
         <scene sceneID="KE6-LW-dcZ">
             <objects>
-                <tabBarController modalPresentationStyle="fullScreen" id="J5l-0e-dcw" sceneMemberID="viewController">
-                    <navigationItem key="navigationItem" largeTitleDisplayMode="always" id="mXq-jm-2ch"/>
-                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="black" translucent="NO" prompted="NO"/>
+                <tabBarController storyboardIdentifier="MainTabBarController" modalPresentationStyle="fullScreen" useStoryboardIdentifierAsRestorationIdentifier="YES" id="J5l-0e-dcw" sceneMemberID="viewController">
+                    <navigationItem key="navigationItem" id="mXq-jm-2ch"/>
                     <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translucent="NO" id="MX3-uh-Gnf">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="49"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -419,7 +458,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="iQj-o5-Mrx"/>
+        <segue reference="88j-II-SiN"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="chart.line.uptrend.xyaxis" catalog="system" width="128" height="101"/>
