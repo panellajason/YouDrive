@@ -53,7 +53,7 @@ class SignInViewController: UIViewController {
                     return
                 }
                 
-                self?.performSegue(withIdentifier: "toHome", sender: self)
+                self?.performSegue(withIdentifier: SegueType.toNoGroups.rawValue, sender: self)
             }
         } else {
             labelError.text = ValidationError.emptyTextFields.localizedDescription

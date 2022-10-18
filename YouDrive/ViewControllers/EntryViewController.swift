@@ -17,7 +17,7 @@ class EntryViewController: UIViewController {
         super.viewDidAppear(animated)
         
         if DatabaseService.getCurrentUser() != nil {
-            self.performSegue(withIdentifier: "toHome", sender: self)
+            self.performSegue(withIdentifier: SegueType.toNoGroups.rawValue, sender: self)
         }
     }
     
@@ -26,11 +26,11 @@ class EntryViewController: UIViewController {
     }
     
     @IBAction func goToCreateAccount(_ sender: UIButton) {
-        self.performSegue(withIdentifier: "toCreateAccount", sender: self)
+        self.performSegue(withIdentifier: SegueType.toCreateAccount.rawValue, sender: self)
     }
     
     @IBAction func goToSignIn(_ sender: UIButton) {
-        self.performSegue(withIdentifier: "toSignIn", sender: self)
+        self.performSegue(withIdentifier: SegueType.toSignIn.rawValue, sender: self)
     }
 }
 

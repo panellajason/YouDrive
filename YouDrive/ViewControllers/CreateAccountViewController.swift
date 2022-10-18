@@ -62,7 +62,7 @@ class CreateAccountViewController: UIViewController {
                         return
                     }
                     
-                    self?.performSegue(withIdentifier: "toHome", sender: self)
+                    self?.performSegue(withIdentifier: SegueType.toNoGroups.rawValue, sender: self)
                 }
             } else {
                 labelError.text = ValidationError.passwordsMustMatch.localizedDescription

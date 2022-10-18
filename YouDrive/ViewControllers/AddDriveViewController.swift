@@ -65,7 +65,7 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
             }
             
             self?.searchResults = mapItems
-            self?.performSegue(withIdentifier: "toSearchResults", sender: self)
+            self?.performSegue(withIdentifier: SegueType.toSearchResults.rawValue, sender: self)
         }
     }
     
@@ -94,7 +94,7 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?){
-        if (segue.identifier == "toSearchResults") {
+        if (segue.identifier == SegueType.toSearchResults.rawValue) {
             let searchResultsViewController = segue.destination as! SearchResultsViewController
             searchResultsViewController.searchResults = searchResults
             searchResultsViewController.searchQuery = textfieldSearch.text

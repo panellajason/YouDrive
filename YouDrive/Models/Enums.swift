@@ -1,18 +1,30 @@
 //
-//  ErrorService.swift
+//  Enums.swift
 //  YouDrive
 //
-//  Created by Panella, Jason on 10/15/22.
+//  Created by Panella, Jason on 10/17/22.
 //
 
 import Foundation
 
-enum ValidationError: Error {
-        case invalidCredentials
-        case emptyTextFields
-        case passwordsMustMatch
+// Segue names
+enum SegueType: String {
+    case toCreateAccount
+    case toCreateGroup
+    case toEntry
+    case toHome
+    case toNoGroups
+    case toSearchResults
+    case toSignIn
 }
-        
+
+// User validation errors
+enum ValidationError: Error {
+    case invalidCredentials
+    case emptyTextFields
+    case passwordsMustMatch
+}
+
 extension ValidationError: LocalizedError {
     var errorDescription: String? {
         switch self {

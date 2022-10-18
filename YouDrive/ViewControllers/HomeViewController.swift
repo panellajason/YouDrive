@@ -29,7 +29,7 @@ class HomeViewController: UIViewController {
     // Sign out user and segue to entry view controller
     func signOutUser() {
         DatabaseService.handleSignOut()
-        self.performSegue(withIdentifier: "toEntry", sender: self)
+        self.performSegue(withIdentifier: SegueType.toEntry.rawValue, sender: self)
     }
 
     // Handle on-click for the top nav bar account icon
