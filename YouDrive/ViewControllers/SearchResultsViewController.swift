@@ -15,7 +15,8 @@ class SearchResultsViewController: UIViewController, UITableViewDelegate, UITabl
     
     var searchResults: [MKMapItem]!
     var searchQuery: String!
-
+    var searchDelegate: SearchDelegate?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -30,6 +31,13 @@ class SearchResultsViewController: UIViewController, UITableViewDelegate, UITabl
         self.dismiss(animated: true, completion: nil)
     }
 
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let location: MKMapItem = searchResults[indexPath.row]
+        searchDelegate?.onLocationSelected(location: location)
+        
+        self.dismiss(animated: true, completion: nil)
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         searchResults.count
     }

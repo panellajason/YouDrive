@@ -58,3 +58,7 @@ extension Double {
         return (self * divisor).rounded() / divisor
     }
 }
+
+protocol SearchDelegate {
+    func onLocationSelected(location: MKMapItem)
+}

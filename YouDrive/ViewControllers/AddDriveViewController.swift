@@ -9,7 +9,7 @@ import CoreLocation
 import MapKit
 import UIKit
 
-class AddDriveViewController: UIViewController, CLLocationManagerDelegate {
+class AddDriveViewController: UIViewController, CLLocationManagerDelegate, SearchDelegate {
     @IBOutlet weak var buttonSearch: UIButton!
     @IBOutlet weak var labelSearch: UILabel!
     @IBOutlet weak var textfieldSearch: UITextField! {
@@ -81,6 +81,12 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate {
         }
     }
     
+    // SearchDelegate function used when user selects location in SearchResultsViewController
+    func onLocationSelected(location: MKMapItem) {
+        let distance = SearchService.caclulateDistance(destination: location.placemark.coordinate)
+        labelSearch.text = distance.description + " miles"
+    }
+    
     // Update currentLocation when location changes
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location: CLLocationCoordinate2D = manager.location?.coordinate else { return }
@@ -92,6 +98,7 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate {
             let searchResultsViewController = segue.destination as! SearchResultsViewController
             searchResultsViewController.searchResults = searchResults
             searchResultsViewController.searchQuery = textfieldSearch.text
+            searchResultsViewController.searchDelegate = self
         }
     }
 }
