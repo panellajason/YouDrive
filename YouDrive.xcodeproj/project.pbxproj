@@ -87,6 +87,14 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		FA67D59D28FFD88F0015C020 /* Types */ = {
+			isa = PBXGroup;
+			children = (
+				FA38505B28FE7FB200133A93 /* Enums.swift */,
+			);
+			path = Types;
+			sourceTree = "<group>";
+		};
 		FACEA7E928FB120B00CAA2AD = {
 			isa = PBXGroup;
 			children = (
@@ -111,6 +119,7 @@
 				FAEF21C028FD2BFF008432C3 /* Cells */,
 				FAEF21B528FB9F58008432C3 /* Models */,
 				FAEF21B228FB9813008432C3 /* Services */,
+				FA67D59D28FFD88F0015C020 /* Types */,
 				FAEF21A928FB1BBA008432C3 /* ViewControllers */,
 				FACEA7F528FB120B00CAA2AD /* AppDelegate.swift */,
 				FACEA7F728FB120B00CAA2AD /* SceneDelegate.swift */,
@@ -152,7 +161,6 @@
 			isa = PBXGroup;
 			children = (
 				FAEF21B628FB9F6E008432C3 /* User.swift */,
-				FA38505B28FE7FB200133A93 /* Enums.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";

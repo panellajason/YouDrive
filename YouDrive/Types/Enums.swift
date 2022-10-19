@@ -7,6 +7,23 @@
 
 import Foundation
 
+// Database collection names in firestore
+enum DatabaseCollection: String {
+    case groups
+    case users
+    case user_drives
+    case user_groups
+}
+
+// Database field names in firestore
+enum DatabaseField: String {
+    case host
+    case group_name
+    case group_passcode
+    case points
+    case user_id
+}
+
 // Segue names
 enum SegueType: String {
     case toCreateAccount

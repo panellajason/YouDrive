@@ -7,6 +7,7 @@
 
 import UIKit
 
+// Loading spinner
 var vSpinner : UIView?
 extension UIViewController {
     

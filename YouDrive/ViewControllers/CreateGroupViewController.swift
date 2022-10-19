@@ -9,6 +9,7 @@ import UIKit
 
 class CreateGroupViewController: UIViewController {
 
+    @IBOutlet weak var labelError: UILabel!
     @IBOutlet weak var textfieldGroupName: UITextField! {
         didSet {
             let placeholderText = NSAttributedString(string: "Enter group name",
@@ -29,7 +30,37 @@ class CreateGroupViewController: UIViewController {
         super.viewDidLoad()
 
     }
+    
     @IBAction func goToHome(_ sender: UIButton) {
-        self.performSegue(withIdentifier: SegueType.toHome.rawValue, sender: self)
+        labelError.text = ""
+
+        guard textfieldGroupName.text != ""  && textfieldGroupPasscode.text != "" else {
+            labelError.text = "Fields cannot be empty."
+            return
+        }
+        
+        self.showSpinner(onView: self.view)
+
+        DatabaseService.createNewGroup(
+            groupName: textfieldGroupName.text ?? "",
+            groupPasscode: textfieldGroupPasscode.text ?? ""
+        ){ [weak self] error, errorString in
+            
+            guard error == nil else {
+                self?.removeSpinner()
+                let errorAlert = UIAlertController(title: "Error", message: "Unable to create group.", preferredStyle: .alert)
+                errorAlert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
+                self?.present(errorAlert, animated: true)
+                return
+            }
+            
+            guard errorString == nil else {
+                self?.removeSpinner()
+                self?.labelError.text = errorString
+                return
+            }
+            
+            self?.performSegue(withIdentifier: SegueType.toHome.rawValue, sender: self)
+        }
     }
 }

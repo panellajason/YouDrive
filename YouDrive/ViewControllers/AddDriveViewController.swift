@@ -94,7 +94,7 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?){
-        if (segue.identifier == SegueType.toSearchResults.rawValue) {
+        if segue.identifier == SegueType.toSearchResults.rawValue {
             let searchResultsViewController = segue.destination as! SearchResultsViewController
             searchResultsViewController.searchResults = searchResults
             searchResultsViewController.searchQuery = textfieldSearch.text
