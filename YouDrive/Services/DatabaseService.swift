@@ -16,7 +16,7 @@ class DatabaseService {
     private static var currentUserProfile:User?
     private static var databaseInstance = Firestore.firestore()
     
-    // Return DatabaseService.currentUserProfile or get current user from Firebase
+    // Returns DatabaseService.currentUserProfile or gets current user from Firebase
     static func getCurrentUser() -> User? {
         
         guard currentUserProfile != nil else {
@@ -33,7 +33,7 @@ class DatabaseService {
         return currentUserProfile
     }
 
-    // Sign in user with Firebase
+    // Signs in user with Firebase
     static func handleSignIn(email: String, password: String, completion: @escaping(Error?) ->()) {
         
         Auth.auth().signIn(withEmail: email, password: password) { user, error in
@@ -49,7 +49,7 @@ class DatabaseService {
         }
     }
     
-    // Create user account with Firebase
+    // Creates user account with Firebase
     static func createUserAccount(email: String, password: String, completion: @escaping(Error?) ->()) {
         
         Auth.auth().createUser(withEmail: email, password: password) { user, error in
@@ -65,7 +65,7 @@ class DatabaseService {
         }
     }
     
-    // Sign out current user
+    // Signs out current user
     static func handleSignOut() {
         
         let currentUser = Auth.auth().currentUser
@@ -77,14 +77,14 @@ class DatabaseService {
         currentUserProfile = nil
     }
     
-    // Send password recovery email
+    // Sends password recovery email
     static func handlePasswordRecoveryEmail (email: String, completion: @escaping(Error?) ->()) {
         Auth.auth().sendPasswordReset(withEmail: email) { error in
            completion(error)
         }
     }
     
-    // Create new group with current user as host
+    // Creates new group with current user as host
     static func createNewGroup(groupName: String, groupPasscode: String, completion: @escaping(Error?, String?) ->()) {
         
         // Check if group name exists already
@@ -119,7 +119,7 @@ class DatabaseService {
         }
     }
     
-    // Join existing group
+    // Joins existing group
     static func joinGroup(groupName: String, groupPasscode: String, completion: @escaping(Error?, String?, Bool) ->()) {
         
         // Check if group credentials match a database record
@@ -181,11 +181,12 @@ class DatabaseService {
             
             // Successfully added document to "drives" table
             completion(error)
+            
         }
     }
     
     
-    // Helper func to check if user is a member of ANY group
+    // Checks if user is a member of ANY group
      static func checkIfUserIsMemberOfAnyGroup(completion: @escaping(Error?, Bool) ->()) {
         
         databaseInstance.collection(DatabaseCollection.user_groups.rawValue)
@@ -213,6 +214,71 @@ class DatabaseService {
         }
     }
     
+    // Checks
+     static func getAllGroupsForUser(completion: @escaping(Error?) ->()) {
+        
+        databaseInstance.collection(DatabaseCollection.user_groups.rawValue)
+            .whereField(DatabaseField.user_id.rawValue, isEqualTo: (currentUserProfile?.userID ?? "") as String)
+            .getDocuments()
+        {(queryResults, error) in
+
+            guard error == nil else {
+                completion(error)
+                return
+            }
+                            
+            guard let results = queryResults else {
+                completion(error)
+                return
+            }
+            
+            if !results.documents.isEmpty {
+                // User is a member of a group
+                print("asq" + results.documents.count.description)
+                completion(error)
+            } else {
+                // User is not a member in any group
+                completion(error)
+            }
+        }
+    }
+    
+    // Checks
+    static func getGroupByName(groupName: String, completion: @escaping(Error?, Group) ->()) {
+        let defaultGroup = Group(host: "", groupName: "", groupPasscode: "")
+        
+        databaseInstance.collection(DatabaseCollection.groups.rawValue)
+            .whereField(DatabaseField.group_name.rawValue, isEqualTo: "bois")
+            .getDocuments()
+        {(queryResults, error) in
+
+            guard error == nil else {
+                completion(error, defaultGroup)
+                return
+            }
+            
+            guard let results = queryResults else {
+                completion(error, defaultGroup)
+                return
+            }
+
+            if !results.documents.isEmpty {
+                var group = defaultGroup
+
+                for document in results.documents {
+
+                    let data = document.data()
+                    let host = data[DatabaseField.host.rawValue] as? String ?? ""
+                    let groupName = data[DatabaseField.group_name.rawValue] as? String ?? ""
+                    let groupPasscode = data[DatabaseField.group_passcode.rawValue] as? String ?? ""
+                    group = Group(host: host, groupName: groupName, groupPasscode: groupPasscode)
+                }
+
+                return(completion(error, group))
+            }
+            completion(error, defaultGroup)
+        }
+    }
     
     
     // -------------------------------------------------------- Will be DatabaseHelper and DatabaseFacade^ -----------------------------------

@@ -9,7 +9,15 @@ import UIKit
 
 class CreateGroupViewController: UIViewController {
 
+    @IBOutlet weak var buttonCreateGroup: UIButton!
     @IBOutlet weak var labelError: UILabel!
+    @IBOutlet weak var textfieldConfirmPasscode: UITextField! {
+        didSet {
+            let placeholderText = NSAttributedString(string: "Confirm passcode",
+                                                        attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])
+            textfieldConfirmPasscode.attributedPlaceholder = placeholderText
+        }
+    }
     @IBOutlet weak var textfieldGroupName: UITextField! {
         didSet {
             let placeholderText = NSAttributedString(string: "Enter group name",
@@ -24,21 +32,32 @@ class CreateGroupViewController: UIViewController {
             textfieldGroupPasscode.attributedPlaceholder = placeholderText
         }
     }
-    @IBOutlet weak var buttonCreateGroup: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
     }
     
-    @IBAction func goToHome(_ sender: UIButton) {
+    // Handles on-click for continue button
+    @IBAction func handleCreateGroupButton(_ sender: UIButton) {
         labelError.text = ""
+        self.view.endEditing(true)
 
-        guard textfieldGroupName.text != ""  && textfieldGroupPasscode.text != "" else {
+        guard textfieldGroupName.text != ""  && textfieldGroupPasscode.text != "" && textfieldConfirmPasscode.text != "" else {
             labelError.text = "Fields cannot be empty."
             return
         }
         
+        guard textfieldGroupPasscode.text == textfieldConfirmPasscode.text else {
+            labelError.text = "Passcodes must match."
+            return
+        }
+        
+        createNewGroup()
+    }
+    
+    // Uses DatabaseService to create new group in Firestore
+    private func createNewGroup() {
         self.showSpinner(onView: self.view)
 
         DatabaseService.createNewGroup(
@@ -62,5 +81,10 @@ class CreateGroupViewController: UIViewController {
             
             self?.performSegue(withIdentifier: SegueType.toHome.rawValue, sender: self)
         }
+    }
+    
+    // Hides keyboard when user taps screen
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+       self.view.endEditing(true)
     }
 }

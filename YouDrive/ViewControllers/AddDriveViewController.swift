@@ -27,7 +27,6 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
             let placeholderText = NSAttributedString(string: "Amount",
                                                         attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])
             textfieldAmount.attributedPlaceholder = placeholderText
-            textfieldAmount.keyboardType = .asciiCapableNumberPad
 
         }
     }
@@ -43,7 +42,6 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
             let placeholderText = NSAttributedString(string: "Enter # of passengers",
                                                         attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])
             textfieldPassengers.attributedPlaceholder = placeholderText
-            textfieldPassengers.keyboardType = .asciiCapableNumberPad
 
         }
     }
@@ -98,6 +96,7 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
             
             self?.removeSpinner()
             self?.refresh()
+            self?.performSegue(withIdentifier: SegueType.toHome.rawValue, sender: self)
         }
     }
     

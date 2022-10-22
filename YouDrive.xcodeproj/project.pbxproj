@@ -10,7 +10,12 @@
 		F234BCD922891B68C806DC26 /* Pods_YouDrive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE157476944AE5D5F3CD5C05 /* Pods_YouDrive.framework */; };
 		FA38505628FE591900133A93 /* NoGroupsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA38505528FE591900133A93 /* NoGroupsViewController.swift */; };
 		FA38505A28FE7B4F00133A93 /* CreateGroupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA38505928FE7B4F00133A93 /* CreateGroupViewController.swift */; };
-		FA38505C28FE7FB200133A93 /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA38505B28FE7FB200133A93 /* Enums.swift */; };
+		FAAF18402903DBD1005E5E95 /* Drive.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAAF183F2903DBD1005E5E95 /* Drive.swift */; };
+		FAAF18422903E31E005E5E95 /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAAF18412903E31E005E5E95 /* Group.swift */; };
+		FAAF184429046D2F005E5E95 /* JoinGroupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAAF184329046D2F005E5E95 /* JoinGroupViewController.swift */; };
+		FAAF184629046E4E005E5E95 /* Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAAF184529046E4E005E5E95 /* Database.swift */; };
+		FAAF184829046E80005E5E95 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAAF184729046E80005E5E95 /* Error.swift */; };
+		FAAF184A29046E9E005E5E95 /* Segue.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAAF184929046E9E005E5E95 /* Segue.swift */; };
 		FACEA7F628FB120B00CAA2AD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FACEA7F528FB120B00CAA2AD /* AppDelegate.swift */; };
 		FACEA7F828FB120B00CAA2AD /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FACEA7F728FB120B00CAA2AD /* SceneDelegate.swift */; };
 		FACEA7FA28FB120B00CAA2AD /* EntryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FACEA7F928FB120B00CAA2AD /* EntryViewController.swift */; };
@@ -36,7 +41,13 @@
 		DE157476944AE5D5F3CD5C05 /* Pods_YouDrive.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_YouDrive.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA38505528FE591900133A93 /* NoGroupsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoGroupsViewController.swift; sourceTree = "<group>"; };
 		FA38505928FE7B4F00133A93 /* CreateGroupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateGroupViewController.swift; sourceTree = "<group>"; };
-		FA38505B28FE7FB200133A93 /* Enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enums.swift; sourceTree = "<group>"; };
+		FAAF183F2903DBD1005E5E95 /* Drive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Drive.swift; sourceTree = "<group>"; };
+		FAAF18412903E31E005E5E95 /* Group.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Group.swift; sourceTree = "<group>"; };
+		FAAF184329046D2F005E5E95 /* JoinGroupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoinGroupViewController.swift; sourceTree = "<group>"; };
+		FAAF184529046E4E005E5E95 /* Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Database.swift; sourceTree = "<group>"; };
+		FAAF184729046E80005E5E95 /* Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
+		FAAF184929046E9E005E5E95 /* Segue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Segue.swift; sourceTree = "<group>"; };
+		FAAF184D290471D5005E5E95 /* _todo.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = _todo.md; sourceTree = "<group>"; };
 		FACEA7F228FB120B00CAA2AD /* YouDrive.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YouDrive.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FACEA7F528FB120B00CAA2AD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FACEA7F728FB120B00CAA2AD /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -90,7 +101,9 @@
 		FA67D59D28FFD88F0015C020 /* Types */ = {
 			isa = PBXGroup;
 			children = (
-				FA38505B28FE7FB200133A93 /* Enums.swift */,
+				FAAF184529046E4E005E5E95 /* Database.swift */,
+				FAAF184729046E80005E5E95 /* Error.swift */,
+				FAAF184929046E9E005E5E95 /* Segue.swift */,
 			);
 			path = Types;
 			sourceTree = "<group>";
@@ -128,6 +141,7 @@
 				FACEA80028FB120E00CAA2AD /* LaunchScreen.storyboard */,
 				FACEA80328FB120E00CAA2AD /* Info.plist */,
 				FACEA80928FB16CE00CAA2AD /* GoogleService-Info.plist */,
+				FAAF184D290471D5005E5E95 /* _todo.md */,
 			);
 			path = YouDrive;
 			sourceTree = "<group>";
@@ -143,6 +157,7 @@
 				FA38505528FE591900133A93 /* NoGroupsViewController.swift */,
 				FAEF21BE28FD26AC008432C3 /* SearchResultsViewController.swift */,
 				FAEF21AA28FB26B0008432C3 /* SignInViewController.swift */,
+				FAAF184329046D2F005E5E95 /* JoinGroupViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -160,6 +175,8 @@
 		FAEF21B528FB9F58008432C3 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				FAAF183F2903DBD1005E5E95 /* Drive.swift */,
+				FAAF18412903E31E005E5E95 /* Group.swift */,
 				FAEF21B628FB9F6E008432C3 /* User.swift */,
 			);
 			path = Models;
@@ -290,13 +307,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				FAEF21B728FB9F6E008432C3 /* User.swift in Sources */,
+				FAAF18402903DBD1005E5E95 /* Drive.swift in Sources */,
 				FAEF21BF28FD26AC008432C3 /* SearchResultsViewController.swift in Sources */,
+				FAAF184A29046E9E005E5E95 /* Segue.swift in Sources */,
 				FAEF21AF28FB2E91008432C3 /* CreateAccountViewController.swift in Sources */,
 				FAEF21B428FB9D03008432C3 /* DatabaseService.swift in Sources */,
+				FAAF184429046D2F005E5E95 /* JoinGroupViewController.swift in Sources */,
 				FAEF21AB28FB26B0008432C3 /* SignInViewController.swift in Sources */,
-				FA38505C28FE7FB200133A93 /* Enums.swift in Sources */,
 				FA38505628FE591900133A93 /* NoGroupsViewController.swift in Sources */,
 				FACEA7FA28FB120B00CAA2AD /* EntryViewController.swift in Sources */,
+				FAAF18422903E31E005E5E95 /* Group.swift in Sources */,
 				FACEA7F628FB120B00CAA2AD /* AppDelegate.swift in Sources */,
 				FAEF21BD28FCCDAE008432C3 /* AddDriveViewController.swift in Sources */,
 				FACEA7F828FB120B00CAA2AD /* SceneDelegate.swift in Sources */,
@@ -304,6 +324,8 @@
 				FAEF21BB28FBDA0A008432C3 /* WidgetService.swift in Sources */,
 				FAEF21C328FD2C2D008432C3 /* SearchResultsTableViewCell.swift in Sources */,
 				FAEF21C628FD4129008432C3 /* SearchService.swift in Sources */,
+				FAAF184629046E4E005E5E95 /* Database.swift in Sources */,
+				FAAF184829046E80005E5E95 /* Error.swift in Sources */,
 				FAEF21B128FB333D008432C3 /* HomeViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

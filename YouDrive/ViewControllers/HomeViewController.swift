@@ -35,5 +35,14 @@ class HomeViewController: UIViewController {
     // Handle on-click for the top nav bar account icon
     @IBAction func handleAccountAction(_ sender: Any) {
         accountDialog.showBulletin(above: self)
+        
+        DatabaseService.getGroupByName(groupName: "bois") { [weak self] error, group in
+            
+            guard error == nil else {
+                return
+            }
+            
+            print(group.groupName + group.groupPasscode)
+        }
     }
 }
