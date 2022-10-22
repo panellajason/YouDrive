@@ -62,6 +62,8 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.locationManager.delegate = self
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
         requestLocationPermissionIfNeeded()
     }
     
@@ -167,28 +169,35 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
     func requestLocationPermissionIfNeeded() {
         locationManager.requestAlwaysAuthorization()
         locationManager.requestWhenInUseAuthorization()
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.0) {
-            if CLLocationManager.locationServicesEnabled() {
-                self.locationManager.delegate = self
-                self.locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
-                self.locationManager.startUpdatingLocation()
-            }
-        }
     }
     
     // Updates distance label when user selects location in SearchResultsViewController
     func onLocationSelected(location: MKMapItem) {
         selectedLocation = location.name?.description
-        
-        let distance = SearchService.caclulateDistance(destination: location.placemark.coordinate)
-        labelSearch.text = "Distance: " + distance.description + " miles"
+        selectedLocationDistance = SearchService.caclulateDistance(destination: location.placemark.coordinate).description
+        labelSearch.text = "Distance: " + (selectedLocationDistance ?? "") + " miles"
     }
     
     // Updates currentLocation when location changes
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location: CLLocationCoordinate2D = manager.location?.coordinate else { return }
         SearchService.currentLocation = location
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        switch status {
+            case CLAuthorizationStatus.authorizedAlways:
+                self.locationManager.startUpdatingLocation()
+                break
+            case CLAuthorizationStatus.authorizedWhenInUse:
+                self.locationManager.startUpdatingLocation()
+                break
+            case CLAuthorizationStatus.restricted:
+                self.locationManager.startUpdatingLocation()
+                break
+            default:
+                print("Cannot determine location")
+        }
     }
     
     // Hides keyboard when user taps screen

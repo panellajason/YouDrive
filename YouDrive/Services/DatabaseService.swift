@@ -215,30 +215,38 @@ class DatabaseService {
     }
     
     // Checks
-     static func getAllGroupsForUser(completion: @escaping(Error?) ->()) {
-        
+     static func getAllGroupsForUser(completion: @escaping(Error?, [String]) ->()) {
+
         databaseInstance.collection(DatabaseCollection.user_groups.rawValue)
             .whereField(DatabaseField.user_id.rawValue, isEqualTo: (currentUserProfile?.userID ?? "") as String)
             .getDocuments()
         {(queryResults, error) in
 
             guard error == nil else {
-                completion(error)
+                completion(error, [])
                 return
             }
                             
             guard let results = queryResults else {
-                completion(error)
+                completion(error, [])
                 return
             }
             
             if !results.documents.isEmpty {
-                // User is a member of a group
-                print("asq" + results.documents.count.description)
-                completion(error)
+                
+                var groupNames: [String] = []
+                
+                for document in results.documents {
+                    
+                    let data = document.data()
+                    let groupName = data[DatabaseField.group_name.rawValue] as? String ?? ""
+                    
+                    groupNames.append(groupName)
+                }
+                
+                completion(error, groupNames)
             } else {
-                // User is not a member in any group
-                completion(error)
+                completion(error, [])
             }
         }
     }
@@ -261,10 +269,11 @@ class DatabaseService {
                 completion(error, defaultGroup)
                 return
             }
+            
+            var group: Group = defaultGroup
 
             if !results.documents.isEmpty {
-                var group = defaultGroup
-
+                
                 for document in results.documents {
 
                     let data = document.data()
@@ -272,9 +281,10 @@ class DatabaseService {
                     let groupName = data[DatabaseField.group_name.rawValue] as? String ?? ""
                     let groupPasscode = data[DatabaseField.group_passcode.rawValue] as? String ?? ""
                     group = Group(host: host, groupName: groupName, groupPasscode: groupPasscode)
+                    print(group.groupName)
                 }
-
-                return(completion(error, group))
+                
+                completion(error, group)
             }
             completion(error, defaultGroup)
         }
