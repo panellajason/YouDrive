@@ -9,6 +9,7 @@ import Foundation
 
 // Database collection names in firestore
 enum DatabaseCollection: String {
+    case drives
     case groups
     case users
     case user_drives
@@ -17,11 +18,17 @@ enum DatabaseCollection: String {
 
 // Database field names in firestore
 enum DatabaseField: String {
+    case amount
+    case distance
+    case drive_name
     case host
     case group_name
     case group_passcode
+    case location
+    case number_of_passengers
     case points
     case user_id
+    case who_paid
 }
 
 // Segue names

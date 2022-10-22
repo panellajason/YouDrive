@@ -9,6 +9,7 @@
 import Foundation
 import Firebase
 import FirebaseAuth
+import MapKit
 
 class DatabaseService {
     
@@ -161,7 +162,63 @@ class DatabaseService {
         }
     }
     
-    // Check if group credentials match a database record
+    static func addDriveToGroup(amount: String, distance: String, groupName: String, location: String, numberOfPassengers: String, whoPaid: String, completion: @escaping(Error?) ->()) {
+     
+        databaseInstance.collection(DatabaseCollection.drives.rawValue).addDocument(data: [
+            DatabaseField.amount.rawValue: amount,
+            DatabaseField.distance.rawValue: distance,
+            DatabaseField.group_name.rawValue: groupName,
+            DatabaseField.location.rawValue: location,
+            DatabaseField.number_of_passengers.rawValue: numberOfPassengers,
+            DatabaseField.user_id.rawValue: (currentUserProfile?.userID ?? "") as String,
+            DatabaseField.who_paid.rawValue: whoPaid,
+        ]) { error in
+            
+            guard error == nil else {
+                completion(error)
+                return
+            }
+            
+            // Successfully added document to "drives" table
+            completion(error)
+        }
+    }
+    
+    
+    // Helper func to check if user is a member of ANY group
+     static func checkIfUserIsMemberOfAnyGroup(completion: @escaping(Error?, Bool) ->()) {
+        
+        databaseInstance.collection(DatabaseCollection.user_groups.rawValue)
+            .whereField(DatabaseField.user_id.rawValue, isEqualTo: (currentUserProfile?.userID ?? "") as String)
+            .getDocuments()
+        {(queryResults, error) in
+
+            guard error == nil else {
+                completion(error, false)
+                return
+            }
+                
+            guard let results = queryResults else {
+                completion(error, false)
+                return
+            }
+            
+            if !results.documents.isEmpty {
+                // User is a member of a group
+                completion(error, true)
+            } else {
+                // User is not a member in any group
+                completion(error, false)
+            }
+        }
+    }
+    
+    
+    
+    // -------------------------------------------------------- Will be DatabaseHelper and DatabaseFacade^ -----------------------------------
+    
+    
+    // Helper func to check if group credentials match a database record
     private static func checkIfGroupCredentialsMatch(groupName: String, groupPasscode: String, completion: @escaping(Error?, Bool) ->()) {
         
         databaseInstance.collection(DatabaseCollection.groups.rawValue)
@@ -280,7 +337,7 @@ class DatabaseService {
                 return
             }
             
-            //Successfully added doument to "user_groups" table
+            // Successfully added doument to "user_groups" table
             completion(error)
         }
     }

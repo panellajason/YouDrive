@@ -10,8 +10,43 @@ import MapKit
 import UIKit
 
 class AddDriveViewController: UIViewController, CLLocationManagerDelegate, SearchDelegate {
+    
+    let locationManager = CLLocationManager()
+    
+    var selectedLocation: String?
+    var selectedLocationDistance: String?
+
+    var searchResults: [MKMapItem]!
+    
+    @IBOutlet weak var buttonRefresh: UIBarButtonItem!
     @IBOutlet weak var buttonSearch: UIButton!
+    @IBOutlet weak var buttonSubmit: UIButton!
     @IBOutlet weak var labelSearch: UILabel!
+    @IBOutlet weak var textfieldAmount: UITextField! {
+        didSet {
+            let placeholderText = NSAttributedString(string: "Amount",
+                                                        attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])
+            textfieldAmount.attributedPlaceholder = placeholderText
+            textfieldAmount.keyboardType = .asciiCapableNumberPad
+
+        }
+    }
+    @IBOutlet weak var textfieldGroupName: UITextField! {
+        didSet {
+            let placeholderText = NSAttributedString(string: "Name of group",
+                                                        attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])
+            textfieldGroupName.attributedPlaceholder = placeholderText
+        }
+    }
+    @IBOutlet weak var textfieldPassengers: UITextField! {
+        didSet {
+            let placeholderText = NSAttributedString(string: "Enter # of passengers",
+                                                        attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])
+            textfieldPassengers.attributedPlaceholder = placeholderText
+            textfieldPassengers.keyboardType = .asciiCapableNumberPad
+
+        }
+    }
     @IBOutlet weak var textfieldSearch: UITextField! {
         didSet {
             let placeholderText = NSAttributedString(string: "Enter location",
@@ -19,24 +54,79 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
             textfieldSearch.attributedPlaceholder = placeholderText
         }
     }
-    
-    let locationManager = CLLocationManager()
-    var searchResults: [MKMapItem]!
+    @IBOutlet weak var textfieldWhoPaid: UITextField! {
+        didSet {
+            let placeholderText = NSAttributedString(string: "Who paid?",
+                                                     attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])
+            textfieldWhoPaid.attributedPlaceholder = placeholderText
+        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         requestLocationPermissionIfNeeded()
     }
     
-    // Handle on-click for the search button
+    // Handles on-click for the submit button
+    @IBAction func handleSubmitButton(_ sender: Any) {
+        self.view.endEditing(true)
+
+        // guard all text is empty, and distance label is not empty
+        guard textfieldSearch.text != "" else {
+            labelSearch.text = "Enter a location."
+            return
+        }
+        
+        self.showSpinner(onView: self.view)
+
+        DatabaseService.addDriveToGroup(
+            amount: textfieldAmount.text ?? "",
+            distance: selectedLocationDistance?.description ?? "",
+            groupName: textfieldGroupName.text ?? "",
+            location: selectedLocation ?? "",
+            numberOfPassengers: textfieldPassengers.text ?? "",
+            whoPaid: textfieldWhoPaid.text ?? ""
+        ){ [weak self] error in
+            
+            guard error == nil else {
+                self?.removeSpinner()
+                let errorAlert = UIAlertController(title: "Error", message: "Unable to add drive to group.", preferredStyle: .alert)
+                errorAlert.addAction(UIAlertAction(title: "Close", style: .cancel, handler: nil))
+                self?.present(errorAlert, animated: true)
+                return
+            }
+            
+            self?.removeSpinner()
+            self?.refresh()
+        }
+    }
+    
+    // Handles on-click for the refresh nav item
+    @IBAction func handleRefreshButton(_ sender: Any) {
+        refresh()
+    }
+    
+    // Handles on-click for the search button
     @IBAction func handleSearchButton(_ sender: Any) {
+        self.view.endEditing(true)
+
         guard textfieldSearch.text != "" else {
             labelSearch.text = "Enter a location."
             return
         }
         
         search()
+    }
+    
+    func refresh() {
+        self.view.endEditing(true)
+        
+        labelSearch.text = ""
+        textfieldAmount.text = ""
+        textfieldGroupName.text = ""
+        textfieldPassengers.text = ""
+        textfieldSearch.text = ""
+        textfieldWhoPaid.text = ""
     }
     
     // Uses search service to search for locations based on search query
@@ -48,9 +138,13 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
         
         labelSearch.text = ""
 
+        self.showSpinner(onView: self.view)
+
         SearchService.searchForLocations(searchQuery: textfieldSearch.text ?? "") {[weak self] error, mapItems in
             
             guard error == nil && !mapItems.isEmpty else {
+                self?.removeSpinner()
+                
                 switch error?._code ?? 1 {
                     case Int(MKError.loadingThrottled.rawValue):
                         self?.labelSearch.text = "Loading throttled, try again."
@@ -66,6 +160,7 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
             
             self?.searchResults = mapItems
             self?.performSegue(withIdentifier: SegueType.toSearchResults.rawValue, sender: self)
+            self?.removeSpinner()
         }
     }
     
@@ -74,23 +169,32 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
         locationManager.requestAlwaysAuthorization()
         locationManager.requestWhenInUseAuthorization()
 
-        if CLLocationManager.locationServicesEnabled() {
-            locationManager.delegate = self
-            locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
-            locationManager.startUpdatingLocation()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.0) {
+            if CLLocationManager.locationServicesEnabled() {
+                self.locationManager.delegate = self
+                self.locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+                self.locationManager.startUpdatingLocation()
+            }
         }
     }
     
-    // SearchDelegate function used when user selects location in SearchResultsViewController
+    // Updates distance label when user selects location in SearchResultsViewController
     func onLocationSelected(location: MKMapItem) {
+        selectedLocation = location.name?.description
+        
         let distance = SearchService.caclulateDistance(destination: location.placemark.coordinate)
-        labelSearch.text = distance.description + " miles"
+        labelSearch.text = "Distance: " + distance.description + " miles"
     }
     
-    // Update currentLocation when location changes
+    // Updates currentLocation when location changes
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location: CLLocationCoordinate2D = manager.location?.coordinate else { return }
         SearchService.currentLocation = location
+    }
+    
+    // Hides keyboard when user taps screen
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+       self.view.endEditing(true)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?){

@@ -49,7 +49,7 @@ class CreateGroupViewController: UIViewController {
             guard error == nil else {
                 self?.removeSpinner()
                 let errorAlert = UIAlertController(title: "Error", message: "Unable to create group.", preferredStyle: .alert)
-                errorAlert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
+                errorAlert.addAction(UIAlertAction(title: "Close", style: .cancel, handler: nil))
                 self?.present(errorAlert, animated: true)
                 return
             }

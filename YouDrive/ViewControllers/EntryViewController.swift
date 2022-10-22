@@ -17,7 +17,7 @@ class EntryViewController: UIViewController {
         super.viewDidAppear(animated)
         
         if DatabaseService.getCurrentUser() != nil {
-            self.performSegue(withIdentifier: SegueType.toNoGroups.rawValue, sender: self)
+            self.performSegue(withIdentifier: SegueType.toHome.rawValue, sender: self)
         }
     }
     

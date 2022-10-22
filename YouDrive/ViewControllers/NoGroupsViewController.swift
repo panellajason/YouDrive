@@ -26,6 +26,8 @@ class NoGroupsViewController: UIViewController, UITextFieldDelegate {
     
     // Handles on-click for join group button
     @IBAction func openJoinGroupDialog(_ sender: UIButton) {
+        self.view.endEditing(true)
+        
         setUpJoinGroupAlertController()
         self.present(alertController, animated: true, completion: nil)
     }
@@ -40,7 +42,7 @@ class NoGroupsViewController: UIViewController, UITextFieldDelegate {
         let textfieldGroupName = (self.alertController.textFields?[0]) as UITextField?
         let textfieldGroupCode = (self.alertController.textFields?[1]) as UITextField?
 
-        guard textfieldGroupCode?.text != "" else {
+        guard textfieldGroupCode?.text != "" && textfieldGroupName?.text != "" else {
             self.removeSpinner()
             errorAlert.message = "Fields cannot be empty."
             self.present(errorAlert, animated: true)
@@ -95,5 +97,10 @@ class NoGroupsViewController: UIViewController, UITextFieldDelegate {
             self?.joinGroup()
         })
         alertController.addAction(continueButtonAction)
+    }
+    
+    // Hide keyboard when user taps screen
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+       self.view.endEditing(true)
     }
 }
