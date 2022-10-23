@@ -30,12 +30,7 @@ class SignInViewController: UIViewController {
         super.viewDidLoad()
     }
     
-    // Hide keyboard when user taps screen
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-       self.view.endEditing(true)
-    }
-    
-    // Try to sign in user with DatabaseService on button click
+    // Tries to sign a user in with DatabaseService.
     @IBAction func signIn(_ sender: UIButton) {
         self.view.endEditing(true)
         labelError.text = ""
@@ -44,9 +39,11 @@ class SignInViewController: UIViewController {
         guard let password = textfieldPassword.text else { return }
 
         if !email.isEmpty && !password.isEmpty {
+            
             self.showSpinner(onView: self.view)
 
-            DatabaseService.handleSignIn(email: email, password: password) { [weak self] error in
+            DatabaseService.handleSignIn(email: email, password: password) {[weak self] error in
+                
                 guard error == nil else {
                     self?.labelError.text = ValidationError.invalidCredentials.localizedDescription
                     self?.removeSpinner()
@@ -56,7 +53,13 @@ class SignInViewController: UIViewController {
                 self?.performSegue(withIdentifier: SegueType.toHome.rawValue, sender: self)
             }
         } else {
+            
             labelError.text = ValidationError.emptyTextFields.localizedDescription
         }
+    }
+    
+    // Hide keyboard when user taps screen
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+       self.view.endEditing(true)
     }
 }

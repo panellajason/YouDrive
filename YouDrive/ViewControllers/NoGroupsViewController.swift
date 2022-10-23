@@ -19,12 +19,12 @@ class NoGroupsViewController: UIViewController, UITextFieldDelegate {
         super.viewDidLoad()
     }
     
-    // Handles on-click for create group button
+    // Handles on-click for create group button.
     @IBAction func goToCreateGroup(_ sender: UIButton) {
         self.performSegue(withIdentifier: SegueType.toCreateGroup.rawValue, sender: self)
     }
     
-    // Handles on-click for join group button
+    // Handles on-click for join group button.
     @IBAction func goToJoinGroup(_ sender: UIButton) {
         self.performSegue(withIdentifier: SegueType.toJoinGroup.rawValue, sender: self)
     }

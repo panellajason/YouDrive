@@ -12,7 +12,7 @@ import MapKit
 class SearchService {
     static var currentLocation : CLLocationCoordinate2D!
 
-    // Calculates distance in miles between two points
+    // Calculates distance in miles between two points.
     static func caclulateDistance(destination: CLLocationCoordinate2D) -> Double {
         
         let currentPoint = CLLocation(latitude: currentLocation.latitude, longitude: currentLocation.longitude)
@@ -24,7 +24,7 @@ class SearchService {
         return distanceInMiles.rounded(toPlaces: 1)
     }
     
-    // Uses Apple's MKLocalSearch api to search for locations
+    // Uses Apple's MKLocalSearch api to search for locations by using a query string.
     static func searchForLocations(searchQuery: String, completion: @escaping(Error?, [MKMapItem]) -> ()) {
         
         guard !searchQuery.isEmpty else {
@@ -51,7 +51,7 @@ class SearchService {
     }
 }
 
-// Rounds Double to decimal places value
+// Rounds Double to decimal places value.
 extension Double {
     func rounded(toPlaces places:Int) -> Double {
         let divisor = pow(10.0, Double(places))
@@ -59,6 +59,7 @@ extension Double {
     }
 }
 
+// Delegate for updating AddDriveViewCcontroller after selecting a location in SearchResultsViewController.
 protocol SearchDelegate {
     func onLocationSelected(location: MKMapItem)
 }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-// User validation errors
+// User credential validation errors.
 enum ValidationError: Error {
     case invalidCredentials
     case emptyTextFields

@@ -8,6 +8,7 @@
 import MapKit
 import UIKit
 
+// Tableview cell for displaying search results for locations.
 class SearchResultsTableViewCell: UITableViewCell {
     static let identifier = "SearchResultsTableViewCell"
     

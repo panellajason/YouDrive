@@ -16,7 +16,7 @@ class DatabaseService {
     private static var currentUserProfile:User?
     private static var databaseInstance = Firestore.firestore()
     
-    // Returns DatabaseService.currentUserProfile or gets current user from Firebase
+    // Returns DatabaseService.currentUserProfile or gets current user from Firebase.
     static func getCurrentUser() -> User? {
         
         guard currentUserProfile != nil else {
@@ -33,7 +33,7 @@ class DatabaseService {
         return currentUserProfile
     }
 
-    // Signs in user with Firebase
+    // Signs in user with Firebase.
     static func handleSignIn(email: String, password: String, completion: @escaping(Error?) ->()) {
         
         Auth.auth().signIn(withEmail: email, password: password) { user, error in
@@ -49,7 +49,7 @@ class DatabaseService {
         }
     }
     
-    // Creates user account with Firebase
+    // Creates user account with Firebase.
     static func createUserAccount(email: String, password: String, completion: @escaping(Error?) ->()) {
         
         Auth.auth().createUser(withEmail: email, password: password) { user, error in
@@ -65,7 +65,7 @@ class DatabaseService {
         }
     }
     
-    // Signs out current user
+    // Signs out current user.
     static func handleSignOut() {
         
         let currentUser = Auth.auth().currentUser
@@ -84,7 +84,7 @@ class DatabaseService {
         }
     }
     
-    // Creates new group with current user as host
+    // Creates new group with current user as host.
     static func createNewGroup(groupName: String, groupPasscode: String, completion: @escaping(Error?, String?) ->()) {
         
         // Check if group name exists already
@@ -119,7 +119,7 @@ class DatabaseService {
         }
     }
     
-    // Joins existing group
+    // Joins existing group.
     static func joinGroup(groupName: String, groupPasscode: String, completion: @escaping(Error?, String?, Bool) ->()) {
         
         // Check if group credentials match a database record
@@ -162,6 +162,7 @@ class DatabaseService {
         }
     }
     
+    // Adds a document to "drives" table.
     static func addDriveToGroup(amount: String, distance: String, groupName: String, location: String, numberOfPassengers: String, whoPaid: String, completion: @escaping(Error?) ->()) {
      
         databaseInstance.collection(DatabaseCollection.drives.rawValue).addDocument(data: [
@@ -181,12 +182,11 @@ class DatabaseService {
             
             // Successfully added document to "drives" table
             completion(error)
-            
         }
     }
     
     
-    // Checks if user is a member of ANY group
+    // Checks if user is a member of ANY group.
      static func checkIfUserIsMemberOfAnyGroup(completion: @escaping(Error?, Bool) ->()) {
         
         databaseInstance.collection(DatabaseCollection.user_groups.rawValue)
@@ -214,7 +214,7 @@ class DatabaseService {
         }
     }
     
-    // Checks
+    // Gets all groups for the current user.
      static func getAllGroupsForUser(completion: @escaping(Error?, [String]) ->()) {
 
         databaseInstance.collection(DatabaseCollection.user_groups.rawValue)
@@ -244,19 +244,18 @@ class DatabaseService {
                     groupNames.append(groupName)
                 }
                 
-                completion(error, groupNames)
-            } else {
-                completion(error, [])
+                return completion(error, groupNames)
             }
+            completion(error, [])
         }
     }
     
-    // Checks
+    // Gets group by name.
     static func getGroupByName(groupName: String, completion: @escaping(Error?, Group) ->()) {
         let defaultGroup = Group(host: "", groupName: "", groupPasscode: "")
         
         databaseInstance.collection(DatabaseCollection.groups.rawValue)
-            .whereField(DatabaseField.group_name.rawValue, isEqualTo: "bois")
+            .whereField(DatabaseField.group_name.rawValue, isEqualTo: groupName)
             .getDocuments()
         {(queryResults, error) in
 
@@ -275,26 +274,63 @@ class DatabaseService {
             if !results.documents.isEmpty {
                 
                 for document in results.documents {
-
                     let data = document.data()
                     let host = data[DatabaseField.host.rawValue] as? String ?? ""
                     let groupName = data[DatabaseField.group_name.rawValue] as? String ?? ""
                     let groupPasscode = data[DatabaseField.group_passcode.rawValue] as? String ?? ""
                     group = Group(host: host, groupName: groupName, groupPasscode: groupPasscode)
-                    print(group.groupName)
                 }
                 
-                completion(error, group)
+                return completion(error, group)
             }
             completion(error, defaultGroup)
         }
     }
     
+    // Gets all users in a group.
+    static func getAllUsersInGroup(groupName: String, completion: @escaping(Error?, [UserGroup]) ->()) {
+
+        databaseInstance.collection(DatabaseCollection.user_groups.rawValue)
+            .whereField(DatabaseField.group_name.rawValue, isEqualTo: groupName)
+            .getDocuments()
+        {(queryResults, error) in
+
+            guard error == nil else {
+                completion(error, [])
+                return
+            }
+                            
+            guard let results = queryResults else {
+                completion(error, [])
+                return
+            }
+            
+            if !results.documents.isEmpty {
+                
+                var usersInGroup: [UserGroup] = []
+                
+                for document in results.documents {
+                    let data = document.data()
+                    let groupName = data[DatabaseField.group_name.rawValue] as? String ?? ""
+                    let pointsInGroup = data[DatabaseField.points.rawValue] as? String ?? ""
+                    let userName = data[DatabaseField.user_id.rawValue] as? String ?? ""
+                    let userInGroup = UserGroup(groupName: groupName, pointsInGroup: pointsInGroup, userName: userName)
+                    usersInGroup.append(userInGroup)
+                }
+                
+                return completion(error, usersInGroup)
+            }
+            completion(error, [])
+        }
+    }
     
-    // -------------------------------------------------------- Will be DatabaseHelper and DatabaseFacade^ -----------------------------------
     
     
-    // Helper func to check if group credentials match a database record
+    // -------------------------------------------------------- Private functions below --------------------------------------------------------
+    
+    
+    
+    // Helper func to check if group credentials match a database document.
     private static func checkIfGroupCredentialsMatch(groupName: String, groupPasscode: String, completion: @escaping(Error?, Bool) ->()) {
         
         databaseInstance.collection(DatabaseCollection.groups.rawValue)
@@ -323,7 +359,7 @@ class DatabaseService {
         }
     }
     
-    // Helper func to check group name already exists in database
+    // Helper func to check if group name already exists in database.
     private static func checkIfGroupNameExists(groupName: String, completion: @escaping(Error?, String?) ->()) {
 
         databaseInstance.collection(DatabaseCollection.groups.rawValue)
@@ -351,7 +387,7 @@ class DatabaseService {
         }
     }
     
-    // Helper func to check if user is already a member of a group
+    // Helper func to check if user is already a member of a group.
     private static func checkIfUserIsMemberOfGroup(groupName: String, completion: @escaping(Error?, Bool) ->()) {
         
         databaseInstance.collection(DatabaseCollection.user_groups.rawValue)
@@ -380,7 +416,7 @@ class DatabaseService {
         }
     }
     
-    // Helper func to add new group to database
+    // Helper func to add a document to "groups" table.
     private static func createNewGroupDocument(groupName: String, groupPasscode: String, completion: @escaping(Error?) ->()) {
         
         databaseInstance.collection(DatabaseCollection.groups.rawValue).addDocument(data: [
@@ -399,12 +435,12 @@ class DatabaseService {
         }
     }
     
-    // Helper func to add document to userGroups table
+    // Helper func to add a document to "userGroups" table.
     private static func createUserGroupsDocument(groupName: String, completion: @escaping(Error?) ->()) {
 
         databaseInstance.collection(DatabaseCollection.user_groups.rawValue).addDocument(data: [
             DatabaseField.group_name.rawValue: groupName,
-            DatabaseField.points.rawValue: 0,
+            DatabaseField.points.rawValue: "0",
             DatabaseField.user_id.rawValue: (currentUserProfile?.userID ?? "") as String
         ]) { error in
             

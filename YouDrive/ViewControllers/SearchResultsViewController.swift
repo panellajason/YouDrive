@@ -9,13 +9,14 @@ import MapKit
 import UIKit
 
 class SearchResultsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+    
+    var searchDelegate: SearchDelegate?
+    var searchResults: [MKMapItem] = []
+    var searchQuery: String!
+    
     @IBOutlet weak var buttonClose: UIButton!
     @IBOutlet weak var labelTitle: UILabel!
     @IBOutlet weak var tableViewSearchResults: UITableView!
-    
-    var searchResults: [MKMapItem]!
-    var searchQuery: String!
-    var searchDelegate: SearchDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,6 +28,7 @@ class SearchResultsViewController: UIViewController, UITableViewDelegate, UITabl
         labelTitle.text = "Search results for " + "\"" + searchQuery + "\""
     }
         
+    // Handles on-click for the "X" button.
     @IBAction func handleCloseAction(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
     }

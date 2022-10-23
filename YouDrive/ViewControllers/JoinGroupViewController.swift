@@ -28,11 +28,9 @@ class JoinGroupViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
     }
     
-    // Handles on-click for continue button
+    // Handles on-click for continue button.
     @IBAction func handleContinueButton(_ sender: UIButton) {
         labelError.text = ""
         self.view.endEditing(true)
@@ -42,11 +40,10 @@ class JoinGroupViewController: UIViewController {
             return
         }
         
-       
         joinGroup()
     }
 
-    // Uses DatabaseService to join group
+    // Tries to join a group using DatabaseService.
     func joinGroup() {
         self.showSpinner(onView: self.view)
 

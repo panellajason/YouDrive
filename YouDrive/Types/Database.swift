@@ -7,7 +7,7 @@
 
 import Foundation
 
-// Database collection names in firestore
+// Database collection names in firestore.
 enum DatabaseCollection: String {
     case drives
     case groups
@@ -16,7 +16,7 @@ enum DatabaseCollection: String {
     case user_groups
 }
 
-// Database field names in firestore
+// Database field names in firestore.
 enum DatabaseField: String {
     case amount
     case distance

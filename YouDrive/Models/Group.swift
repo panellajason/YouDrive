@@ -7,6 +7,7 @@
 
 import Foundation
 
+// Object for defining a group.
 class Group {
     var host: String
     var groupName: String

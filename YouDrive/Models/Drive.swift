@@ -7,6 +7,7 @@
 
 import Foundation
 
+// Object for defining a drive for a user in a group.
 class Drive {
     var amount: String
     var distance: String

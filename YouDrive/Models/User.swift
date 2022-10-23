@@ -7,6 +7,7 @@
 
 import Foundation
 
+// Object for defining a user.
 class User {
     var userID: String
 

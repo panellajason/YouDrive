@@ -38,7 +38,7 @@ class CreateGroupViewController: UIViewController {
 
     }
     
-    // Handles on-click for continue button
+    // Handles on-click for continue button.
     @IBAction func handleCreateGroupButton(_ sender: UIButton) {
         labelError.text = ""
         self.view.endEditing(true)
@@ -56,14 +56,14 @@ class CreateGroupViewController: UIViewController {
         createNewGroup()
     }
     
-    // Uses DatabaseService to create new group in Firestore
+    // Uses DatabaseService to create new group.
     private func createNewGroup() {
         self.showSpinner(onView: self.view)
 
         DatabaseService.createNewGroup(
             groupName: textfieldGroupName.text ?? "",
             groupPasscode: textfieldGroupPasscode.text ?? ""
-        ){ [weak self] error, errorString in
+        ){[weak self] error, errorString in
             
             guard error == nil else {
                 self?.removeSpinner()
@@ -83,7 +83,7 @@ class CreateGroupViewController: UIViewController {
         }
     }
     
-    // Hides keyboard when user taps screen
+    // Hides keyboard when user taps screen.
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
        self.view.endEditing(true)
     }

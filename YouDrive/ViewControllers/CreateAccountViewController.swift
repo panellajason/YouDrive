@@ -11,6 +11,13 @@ class CreateAccountViewController: UIViewController {
     
     @IBOutlet weak var buttonContinute: UIButton!
     @IBOutlet weak var labelError: UILabel!
+    @IBOutlet weak var textfieldConfirmPassword: UITextField! {
+        didSet {
+            let placeholderText = NSAttributedString(string: "Confirm password",
+                                                        attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])
+            textfieldConfirmPassword.attributedPlaceholder = placeholderText
+        }
+    }
     @IBOutlet weak var textfieldEmail: UITextField! {
         didSet {
             let placeholderText = NSAttributedString(string: "Email address",
@@ -25,24 +32,12 @@ class CreateAccountViewController: UIViewController {
             textfieldPassword.attributedPlaceholder = placeholderText
         }
     }
-    @IBOutlet weak var textfieldConfirmPassword: UITextField! {
-        didSet {
-            let placeholderText = NSAttributedString(string: "Confirm password",
-                                                        attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])
-            textfieldConfirmPassword.attributedPlaceholder = placeholderText
-        }
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
     }
     
-    // Hide keyboard when user taps screen
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-       self.view.endEditing(true)
-    }
-    
-    // Try to create a user account with DatabaseService on button click
+    // Tries to create a user account with DatabaseService.
     @IBAction func createAccount(_ sender: UIButton) {
         self.view.endEditing(true)
         labelError.text = ""
@@ -52,10 +47,13 @@ class CreateAccountViewController: UIViewController {
         guard let password2 = textfieldConfirmPassword.text else { return }
 
         if !email.isEmpty && !password1.isEmpty && !password2.isEmpty {
+            
             if password1 == password2 {
+                
                 self.showSpinner(onView: self.view)
 
                 DatabaseService.createUserAccount(email: email, password: password1) { [weak self] error in
+                    
                     guard error == nil else {
                         self?.labelError.text = error?.localizedDescription
                         self?.removeSpinner()
@@ -65,10 +63,17 @@ class CreateAccountViewController: UIViewController {
                     self?.performSegue(withIdentifier: SegueType.toNoGroups.rawValue, sender: self)
                 }
             } else {
+                
                 labelError.text = ValidationError.passwordsMustMatch.localizedDescription
             }
         } else {
+            
             labelError.text = ValidationError.emptyTextFields.localizedDescription
         }
+    }
+    
+    // Hides keyboard when user taps screen.
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+       self.view.endEditing(true)
     }
 }

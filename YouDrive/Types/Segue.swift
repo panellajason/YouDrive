@@ -7,7 +7,7 @@
 
 import Foundation
 
-// Segue names
+// Segue names.
 enum SegueType: String {
     case toCreateAccount
     case toCreateGroup

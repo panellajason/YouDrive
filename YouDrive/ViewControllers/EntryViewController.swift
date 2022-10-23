@@ -13,6 +13,7 @@ class EntryViewController: UIViewController {
     @IBOutlet weak var buttonSignIn: UIButton!
     @IBOutlet weak var buttonCreateAccount: UIButton!
     
+    // Checks if user is still signed in and will segue to home if they are.
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
@@ -25,10 +26,12 @@ class EntryViewController: UIViewController {
         super.viewDidLoad()
     }
     
+    // Handles on-click for create account button.
     @IBAction func goToCreateAccount(_ sender: UIButton) {
         self.performSegue(withIdentifier: SegueType.toCreateAccount.rawValue, sender: self)
     }
     
+    // Handles on-click for sign in button.
     @IBAction func goToSignIn(_ sender: UIButton) {
         self.performSegue(withIdentifier: SegueType.toSignIn.rawValue, sender: self)
     }

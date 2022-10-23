@@ -13,10 +13,9 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
     
     let locationManager = CLLocationManager()
     
+    var searchResults: [MKMapItem]!
     var selectedLocation: String?
     var selectedLocationDistance: String?
-
-    var searchResults: [MKMapItem]!
     
     @IBOutlet weak var buttonRefresh: UIBarButtonItem!
     @IBOutlet weak var buttonSearch: UIButton!
@@ -67,11 +66,11 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
         requestLocationPermissionIfNeeded()
     }
     
-    // Handles on-click for the submit button
+    // Handles on-click for the submit button.
     @IBAction func handleSubmitButton(_ sender: Any) {
         self.view.endEditing(true)
 
-        // guard all text is empty, and distance label is not empty
+        // TODO: Guard all text is empty, and distance label is not empty
         guard textfieldSearch.text != "" else {
             labelSearch.text = "Enter a location."
             return
@@ -102,12 +101,12 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
         }
     }
     
-    // Handles on-click for the refresh nav item
+    // Handles on-click for the refresh button.
     @IBAction func handleRefreshButton(_ sender: Any) {
         refresh()
     }
     
-    // Handles on-click for the search button
+    // Handles on-click for the search button.
     @IBAction func handleSearchButton(_ sender: Any) {
         self.view.endEditing(true)
 
@@ -119,6 +118,7 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
         search()
     }
     
+    // Resets all labels and textviews.
     func refresh() {
         self.view.endEditing(true)
         
@@ -130,7 +130,7 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
         textfieldWhoPaid.text = ""
     }
     
-    // Uses search service to search for locations based on search query
+    // Uses SearchService to search for locations based on search query.
     func search() {
         guard textfieldSearch.text != "" else {
             labelSearch.text = "Enter a location."
@@ -165,25 +165,26 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
         }
     }
     
-    // Requests tracking permission and sets up delegate if granted
+    // Requests tracking permission and sets up delegate if granted.
     func requestLocationPermissionIfNeeded() {
         locationManager.requestAlwaysAuthorization()
         locationManager.requestWhenInUseAuthorization()
     }
     
-    // Updates distance label when user selects location in SearchResultsViewController
+    // Updates distance label when user selects location in SearchResultsViewController.
     func onLocationSelected(location: MKMapItem) {
         selectedLocation = location.name?.description
         selectedLocationDistance = SearchService.caclulateDistance(destination: location.placemark.coordinate).description
         labelSearch.text = "Distance: " + (selectedLocationDistance ?? "") + " miles"
     }
     
-    // Updates currentLocation when location changes
+    // Updates currentLocation when location changes.
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location: CLLocationCoordinate2D = manager.location?.coordinate else { return }
         SearchService.currentLocation = location
     }
     
+    // Starts updating location when user allows location tracking.
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         switch status {
             case CLAuthorizationStatus.authorizedAlways:
@@ -200,11 +201,12 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
         }
     }
     
-    // Hides keyboard when user taps screen
+    // Hides keyboard when user taps screen.
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
        self.view.endEditing(true)
     }
     
+    // Sets up SearchResultsViewController before segue.
     override func prepare(for segue: UIStoryboardSegue, sender: Any?){
         if segue.identifier == SegueType.toSearchResults.rawValue {
             let searchResultsViewController = segue.destination as! SearchResultsViewController
