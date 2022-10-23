@@ -61,9 +61,8 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.locationManager.delegate = self
-        self.locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
-        requestLocationPermissionIfNeeded()
+        
+        setupLocationManager()
     }
     
     // Handles on-click for the submit button.
@@ -115,6 +114,14 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
             return
         }
         
+        guard SearchService.currentLocation != nil else {
+            labelSearch.text = "Cannot determine your location."
+            locationManager.requestWhenInUseAuthorization()
+            return
+        }
+        
+        labelSearch.text = ""
+
         search()
     }
     
@@ -132,13 +139,6 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
     
     // Uses SearchService to search for locations based on search query.
     func search() {
-        guard textfieldSearch.text != "" else {
-            labelSearch.text = "Enter a location."
-            return
-        }
-        
-        labelSearch.text = ""
-
         self.showSpinner(onView: self.view)
 
         SearchService.searchForLocations(searchQuery: textfieldSearch.text ?? "") {[weak self] error, mapItems in
@@ -146,7 +146,7 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
             guard error == nil && !mapItems.isEmpty else {
                 self?.removeSpinner()
                 
-                switch error?._code ?? 1 {
+                switch error?._code ?? Int(MKError.unknown.rawValue) {
                     case Int(MKError.loadingThrottled.rawValue):
                         self?.labelSearch.text = "Loading throttled, try again."
                     case Int(MKError.placemarkNotFound.rawValue):
@@ -165,10 +165,31 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
         }
     }
     
-    // Requests tracking permission and sets up delegate if granted.
-    func requestLocationPermissionIfNeeded() {
-        locationManager.requestAlwaysAuthorization()
-        locationManager.requestWhenInUseAuthorization()
+    // Sets up location manager.
+    func setupLocationManager() {
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+        
+        startUpdatingLocationIfAllowed(status: locationManager.authorizationStatus)
+    }
+    
+    func startUpdatingLocationIfAllowed(status: CLAuthorizationStatus) {
+        switch status {
+            case CLAuthorizationStatus.authorizedAlways:
+                self.locationManager.startUpdatingLocation()
+                break
+            case CLAuthorizationStatus.authorizedWhenInUse:
+                self.locationManager.startUpdatingLocation()
+                break
+            case CLAuthorizationStatus.restricted:
+                self.locationManager.startUpdatingLocation()
+                break
+            case CLAuthorizationStatus.notDetermined:
+                self.locationManager.startUpdatingLocation()
+                break
+            default:
+                print("Location tracking denied from user.")
+        }
     }
     
     // Updates distance label when user selects location in SearchResultsViewController.
@@ -184,21 +205,9 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
         SearchService.currentLocation = location
     }
     
-    // Starts updating location when user allows location tracking.
+    // Starts updating location when authorization status changes.
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        switch status {
-            case CLAuthorizationStatus.authorizedAlways:
-                self.locationManager.startUpdatingLocation()
-                break
-            case CLAuthorizationStatus.authorizedWhenInUse:
-                self.locationManager.startUpdatingLocation()
-                break
-            case CLAuthorizationStatus.restricted:
-                self.locationManager.startUpdatingLocation()
-                break
-            default:
-                print("Cannot determine location")
-        }
+        startUpdatingLocationIfAllowed(status: status)
     }
     
     // Hides keyboard when user taps screen.

@@ -497,7 +497,7 @@
         <scene sceneID="oJR-UU-8dq">
             <objects>
                 <navigationController id="OvO-tY-d9N" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Home" image="house" catalog="system" selectedImage="house" id="cN2-aW-xFI">
+                    <tabBarItem key="tabBarItem" title="Home" image="house" catalog="system" selectedImage="house.fill" id="cN2-aW-xFI">
                         <color key="badgeColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </tabBarItem>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" barStyle="black" id="E7y-xK-dW1">
@@ -527,11 +527,11 @@
             <objects>
                 <viewController modalPresentationStyle="fullScreen" id="daL-k0-y5X" customClass="HomeViewController" customModule="YouDrive" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="HWM-E7-qDF">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="755"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="mnj-Mq-anZ">
-                                <rect key="frame" x="0.0" y="56" width="414" height="699"/>
+                                <rect key="frame" x="0.0" y="92" width="414" height="770"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="0Ma-dJ-C4F">
                                         <rect key="frame" x="0.0" y="0.0" width="414" height="50"/>
@@ -559,7 +559,7 @@
                                         <edgeInsets key="layoutMargins" top="8" left="8" bottom="8" right="8"/>
                                     </stackView>
                                     <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="Zkz-Iw-Eip">
-                                        <rect key="frame" x="0.0" y="50" width="414" height="649"/>
+                                        <rect key="frame" x="0.0" y="50" width="414" height="720"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                         <prototypes>
@@ -821,7 +821,7 @@
         <scene sceneID="7Md-Nu-HiG">
             <objects>
                 <navigationController modalPresentationStyle="fullScreen" id="hNH-KL-4Ou" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Add drive" image="plus.app" catalog="system" selectedImage="plus.app" id="UJO-GR-lFI">
+                    <tabBarItem key="tabBarItem" title="Add drive" image="plus.app" catalog="system" selectedImage="plus.app.fill" id="UJO-GR-lFI">
                         <color key="badgeColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </tabBarItem>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" barStyle="black" id="nSa-s3-LAP">
@@ -1058,7 +1058,7 @@
         <scene sceneID="4yM-49-RZT">
             <objects>
                 <navigationController modalPresentationStyle="fullScreen" id="SMp-xQ-bTE" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Graphs" image="chart.line.uptrend.xyaxis" catalog="system" selectedImage="chart.line.uptrend.xyaxis" id="gWG-0J-pYa">
+                    <tabBarItem key="tabBarItem" title="Graphs" image="person" catalog="system" selectedImage="person.fill" id="gWG-0J-pYa">
                         <color key="badgeColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </tabBarItem>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" barStyle="black" id="aem-R1-EaT">
@@ -1078,7 +1078,7 @@
             </objects>
             <point key="canvasLocation" x="2833" y="971"/>
         </scene>
-        <!--Graphs-->
+        <!--Account-->
         <scene sceneID="SSm-g1-ORl">
             <objects>
                 <viewController modalPresentationStyle="fullScreen" id="vN8-B9-Xnv" sceneMemberID="viewController">
@@ -1088,7 +1088,7 @@
                         <viewLayoutGuide key="safeArea" id="EuP-Ip-ONf"/>
                         <color key="backgroundColor" systemColor="systemOrangeColor"/>
                     </view>
-                    <navigationItem key="navigationItem" title="Graphs" id="71L-ND-lni"/>
+                    <navigationItem key="navigationItem" title="Account" id="71L-ND-lni"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="VgX-bj-nbd" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -1197,17 +1197,21 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
+        <segue reference="FBf-vh-php"/>
         <segue reference="4gm-tw-2Xh"/>
         <segue reference="FgF-hb-B04"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="arrow.clockwise" catalog="system" width="113" height="128"/>
         <image name="car" catalog="system" width="128" height="95"/>
-        <image name="chart.line.uptrend.xyaxis" catalog="system" width="128" height="102"/>
         <image name="house" catalog="system" width="128" height="104"/>
+        <image name="house.fill" catalog="system" width="128" height="104"/>
         <image name="location.circle.fill" catalog="system" width="128" height="123"/>
+        <image name="person" catalog="system" width="128" height="121"/>
         <image name="person.circle" catalog="system" width="128" height="123"/>
+        <image name="person.fill" catalog="system" width="128" height="120"/>
         <image name="plus.app" catalog="system" width="128" height="114"/>
+        <image name="plus.app.fill" catalog="system" width="128" height="114"/>
         <image name="x.circle.fill" catalog="system" width="128" height="123"/>
         <systemColor name="linkColor">
             <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

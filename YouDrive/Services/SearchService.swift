@@ -27,7 +27,8 @@ class SearchService {
     // Uses Apple's MKLocalSearch api to search for locations by using a query string.
     static func searchForLocations(searchQuery: String, completion: @escaping(Error?, [MKMapItem]) -> ()) {
         
-        guard !searchQuery.isEmpty else {
+        guard SearchService.currentLocation != nil else {
+            print("Search not allowed: Location is nil.")
             return
         }
         
