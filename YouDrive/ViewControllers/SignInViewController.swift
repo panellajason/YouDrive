@@ -42,7 +42,7 @@ class SignInViewController: UIViewController {
             
             self.showSpinner(onView: self.view)
 
-            DatabaseService.handleSignIn(email: email, password: password) {[weak self] error in
+            UserDatabaseService.handleSignIn(email: email, password: password) {[weak self] error, currentUser in
                 
                 guard error == nil else {
                     self?.labelError.text = ValidationError.invalidCredentials.localizedDescription
@@ -50,7 +50,22 @@ class SignInViewController: UIViewController {
                     return
                 }
                 
-                self?.performSegue(withIdentifier: SegueType.toHome.rawValue, sender: self)
+                guard currentUser.homeGroup != "" else {
+                    self?.performSegue(withIdentifier: SegueType.toNoGroups.rawValue, sender: self)
+                    return
+                }
+                
+                GroupDatabaseService.getAllGroupsForUser(userId: UserDatabaseService.currentUserProfile?.userId ?? "") {[weak self]
+                    error, groupNames in
+                    
+                    guard error == nil else {
+                        self?.removeSpinner()
+                        return
+                    }
+                    
+                    UserDatabaseService.groupsForCurrentUser = groupNames
+                    self?.performSegue(withIdentifier: SegueType.toHome.rawValue, sender: self)
+                }
             }
         } else {
             
@@ -58,8 +73,18 @@ class SignInViewController: UIViewController {
         }
     }
     
-    // Hide keyboard when user taps screen
+    // Hides keyboard when user taps screen.
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
        self.view.endEditing(true)
+    }
+    
+    // Sets up HomeViewController before segue.
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?){
+        if segue.identifier == SegueType.toHome.rawValue {
+            let tabBarController = segue.destination as! UITabBarController
+            let navController = tabBarController.viewControllers![0] as! UINavigationController
+            let homeViewController = navController.viewControllers.first as! HomeViewController
+            homeViewController.passedGroupsForUser = UserDatabaseService.groupsForCurrentUser
+        }
     }
 }

@@ -9,9 +9,15 @@ import Foundation
 
 // Object for defining a user.
 class User {
-    var userID: String
+    var email: String
+    var homeGroup: String
+    var userId: String
+    var username: String
 
-    init(userID:String) {
-        self.userID = userID
+    init(email:String, homeGroup:String, userId:String, username:String) {
+        self.email = email
+        self.homeGroup = homeGroup
+        self.userId = userId
+        self.username = username
     }
 }

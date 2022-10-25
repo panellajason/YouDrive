@@ -25,6 +25,6 @@ class HomeGroupTableViewCell: UITableViewCell {
     
     func configure(with userGroup: UserGroup) {
         labelPointsInGroup.text = userGroup.pointsInGroup + " points"
-        labelUserName.text = userGroup.userName
+        labelUserName.text = userGroup.username
     }
 }

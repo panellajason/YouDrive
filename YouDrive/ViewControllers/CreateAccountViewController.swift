@@ -32,6 +32,13 @@ class CreateAccountViewController: UIViewController {
             textfieldPassword.attributedPlaceholder = placeholderText
         }
     }
+    @IBOutlet weak var textfieldUsername: UITextField! {
+        didSet {
+            let placeholderText = NSAttributedString(string: "Display name",
+                                                        attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])
+            textfieldUsername.attributedPlaceholder = placeholderText
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -45,6 +52,7 @@ class CreateAccountViewController: UIViewController {
         guard let email = textfieldEmail.text else { return }
         guard let password1 = textfieldPassword.text else { return }
         guard let password2 = textfieldConfirmPassword.text else { return }
+        guard let username = textfieldUsername.text else { return }
 
         if !email.isEmpty && !password1.isEmpty && !password2.isEmpty {
             
@@ -52,7 +60,9 @@ class CreateAccountViewController: UIViewController {
                 
                 self.showSpinner(onView: self.view)
 
-                DatabaseService.createUserAccount(email: email, password: password1) { [weak self] error in
+                let accountToCreate = User(email: email, homeGroup: "", userId: "", username: username)
+                
+                UserDatabaseService.createUserAccount(accountToCreate: accountToCreate, password: password1) { [weak self] error in
                     
                     guard error == nil else {
                         self?.labelError.text = error?.localizedDescription

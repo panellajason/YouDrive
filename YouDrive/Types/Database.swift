@@ -21,6 +21,8 @@ enum DatabaseField: String {
     case amount
     case distance
     case drive_name
+    case email
+    case home_group
     case host
     case group_name
     case group_passcode
@@ -28,5 +30,6 @@ enum DatabaseField: String {
     case number_of_passengers
     case points
     case user_id
+    case username
     case who_paid
 }

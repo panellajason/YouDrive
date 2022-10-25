@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		F234BCD922891B68C806DC26 /* Pods_YouDrive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE157476944AE5D5F3CD5C05 /* Pods_YouDrive.framework */; };
+		FA0157A8290622280018E354 /* AccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0157A7290622280018E354 /* AccountViewController.swift */; };
+		FA15E7B42907881E00699DE3 /* UserDatabaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA15E7B32907881E00699DE3 /* UserDatabaseService.swift */; };
+		FA15E7B62907892D00699DE3 /* GroupDatabaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA15E7B52907892D00699DE3 /* GroupDatabaseService.swift */; };
+		FA15E7B829078D3900699DE3 /* DriveDatabaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA15E7B729078D3900699DE3 /* DriveDatabaseService.swift */; };
 		FA317B252905E0400047BEC6 /* HomeGroupTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA317B242905E0400047BEC6 /* HomeGroupTableViewCell.swift */; };
 		FA317B272905E2440047BEC6 /* UserGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA317B262905E2440047BEC6 /* UserGroup.swift */; };
 		FA38505628FE591900133A93 /* NoGroupsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA38505528FE591900133A93 /* NoGroupsViewController.swift */; };
@@ -28,7 +32,6 @@
 		FAEF21AB28FB26B0008432C3 /* SignInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEF21AA28FB26B0008432C3 /* SignInViewController.swift */; };
 		FAEF21AF28FB2E91008432C3 /* CreateAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEF21AE28FB2E91008432C3 /* CreateAccountViewController.swift */; };
 		FAEF21B128FB333D008432C3 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEF21B028FB333D008432C3 /* HomeViewController.swift */; };
-		FAEF21B428FB9D03008432C3 /* DatabaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEF21B328FB9D03008432C3 /* DatabaseService.swift */; };
 		FAEF21B728FB9F6E008432C3 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEF21B628FB9F6E008432C3 /* User.swift */; };
 		FAEF21BB28FBDA0A008432C3 /* WidgetService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEF21BA28FBDA0A008432C3 /* WidgetService.swift */; };
 		FAEF21BD28FCCDAE008432C3 /* AddDriveViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEF21BC28FCCDAE008432C3 /* AddDriveViewController.swift */; };
@@ -41,6 +44,10 @@
 		6D7BA9035436E9E771DCCCFD /* Pods-YouDrive.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YouDrive.debug.xcconfig"; path = "Target Support Files/Pods-YouDrive/Pods-YouDrive.debug.xcconfig"; sourceTree = "<group>"; };
 		BBD11D57DFED8A1F59417D48 /* Pods-YouDrive.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YouDrive.release.xcconfig"; path = "Target Support Files/Pods-YouDrive/Pods-YouDrive.release.xcconfig"; sourceTree = "<group>"; };
 		DE157476944AE5D5F3CD5C05 /* Pods_YouDrive.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_YouDrive.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		FA0157A7290622280018E354 /* AccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountViewController.swift; sourceTree = "<group>"; };
+		FA15E7B32907881E00699DE3 /* UserDatabaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDatabaseService.swift; sourceTree = "<group>"; };
+		FA15E7B52907892D00699DE3 /* GroupDatabaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupDatabaseService.swift; sourceTree = "<group>"; };
+		FA15E7B729078D3900699DE3 /* DriveDatabaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DriveDatabaseService.swift; sourceTree = "<group>"; };
 		FA317B242905E0400047BEC6 /* HomeGroupTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeGroupTableViewCell.swift; sourceTree = "<group>"; };
 		FA317B262905E2440047BEC6 /* UserGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserGroup.swift; sourceTree = "<group>"; };
 		FA38505528FE591900133A93 /* NoGroupsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoGroupsViewController.swift; sourceTree = "<group>"; };
@@ -64,7 +71,6 @@
 		FAEF21AA28FB26B0008432C3 /* SignInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
 		FAEF21AE28FB2E91008432C3 /* CreateAccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateAccountViewController.swift; sourceTree = "<group>"; };
 		FAEF21B028FB333D008432C3 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
-		FAEF21B328FB9D03008432C3 /* DatabaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseService.swift; sourceTree = "<group>"; };
 		FAEF21B628FB9F6E008432C3 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		FAEF21BA28FBDA0A008432C3 /* WidgetService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetService.swift; sourceTree = "<group>"; };
 		FAEF21BC28FCCDAE008432C3 /* AddDriveViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddDriveViewController.swift; sourceTree = "<group>"; };
@@ -100,6 +106,16 @@
 				DE157476944AE5D5F3CD5C05 /* Pods_YouDrive.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		FA15E7B22907880200699DE3 /* DatabaseServices */ = {
+			isa = PBXGroup;
+			children = (
+				FA15E7B32907881E00699DE3 /* UserDatabaseService.swift */,
+				FA15E7B52907892D00699DE3 /* GroupDatabaseService.swift */,
+				FA15E7B729078D3900699DE3 /* DriveDatabaseService.swift */,
+			);
+			path = DatabaseServices;
 			sourceTree = "<group>";
 		};
 		FA67D59D28FFD88F0015C020 /* Types */ = {
@@ -153,6 +169,7 @@
 		FAEF21A928FB1BBA008432C3 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				FA0157A7290622280018E354 /* AccountViewController.swift */,
 				FAEF21BC28FCCDAE008432C3 /* AddDriveViewController.swift */,
 				FAEF21AE28FB2E91008432C3 /* CreateAccountViewController.swift */,
 				FA38505928FE7B4F00133A93 /* CreateGroupViewController.swift */,
@@ -169,7 +186,7 @@
 		FAEF21B228FB9813008432C3 /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				FAEF21B328FB9D03008432C3 /* DatabaseService.swift */,
+				FA15E7B22907880200699DE3 /* DatabaseServices */,
 				FAEF21BA28FBDA0A008432C3 /* WidgetService.swift */,
 				FAEF21C528FD4129008432C3 /* SearchService.swift */,
 			);
@@ -314,17 +331,19 @@
 			files = (
 				FA317B252905E0400047BEC6 /* HomeGroupTableViewCell.swift in Sources */,
 				FAEF21B728FB9F6E008432C3 /* User.swift in Sources */,
+				FA0157A8290622280018E354 /* AccountViewController.swift in Sources */,
 				FAAF18402903DBD1005E5E95 /* Drive.swift in Sources */,
 				FAEF21BF28FD26AC008432C3 /* SearchResultsViewController.swift in Sources */,
 				FAAF184A29046E9E005E5E95 /* Segue.swift in Sources */,
+				FA15E7B42907881E00699DE3 /* UserDatabaseService.swift in Sources */,
 				FAEF21AF28FB2E91008432C3 /* CreateAccountViewController.swift in Sources */,
-				FAEF21B428FB9D03008432C3 /* DatabaseService.swift in Sources */,
 				FAAF184429046D2F005E5E95 /* JoinGroupViewController.swift in Sources */,
 				FAEF21AB28FB26B0008432C3 /* SignInViewController.swift in Sources */,
 				FA38505628FE591900133A93 /* NoGroupsViewController.swift in Sources */,
 				FACEA7FA28FB120B00CAA2AD /* EntryViewController.swift in Sources */,
 				FAAF18422903E31E005E5E95 /* Group.swift in Sources */,
 				FACEA7F628FB120B00CAA2AD /* AppDelegate.swift in Sources */,
+				FA15E7B829078D3900699DE3 /* DriveDatabaseService.swift in Sources */,
 				FAEF21BD28FCCDAE008432C3 /* AddDriveViewController.swift in Sources */,
 				FACEA7F828FB120B00CAA2AD /* SceneDelegate.swift in Sources */,
 				FA317B272905E2440047BEC6 /* UserGroup.swift in Sources */,
@@ -334,6 +353,7 @@
 				FAEF21C628FD4129008432C3 /* SearchService.swift in Sources */,
 				FAAF184629046E4E005E5E95 /* Database.swift in Sources */,
 				FAAF184829046E80005E5E95 /* Error.swift in Sources */,
+				FA15E7B62907892D00699DE3 /* GroupDatabaseService.swift in Sources */,
 				FAEF21B128FB333D008432C3 /* HomeViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

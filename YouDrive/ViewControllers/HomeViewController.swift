@@ -4,28 +4,17 @@
 //
 //  Created by Panella, Jason on 10/15/22.
 //
-import BLTNBoard
 import DropDown
 import UIKit
 
 class HomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
+    var currentGroupShowing = ""
     var groupsForUser: [String]?
     var hasLoadedData = false
+    var passedGroupsForUser: [String] = []
     var usersInGroup: [UserGroup] = []
         
-    // Account dialog which has button to sign user out.
-    private lazy var accountDialog: BLTNItemManager = {
-        let item = BLTNPageItem(title: "Account")
-        item.appearance.titleTextColor = .systemBlue
-        item.actionButtonTitle = "Sign out"
-        item.appearance.actionButtonColor = .systemRed
-        item.actionHandler = { [weak self] _ in
-            guard let self = self else { return }
-            self.signOutUser()
-        }
-        return BLTNItemManager(rootItem: item)
-    }()
     // Dropdown to select a group to show.
     private let groupsDropdown: DropDown = DropDown()
         
@@ -35,9 +24,20 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
+        // Check if groups for current user have already been populated
+        guard passedGroupsForUser == [] else {
+            groupsForUser = passedGroupsForUser
+            groupsDropdown.dataSource = passedGroupsForUser
+            getUsersInGroup(groupName: passedGroupsForUser[0])
+            hasLoadedData = true
+            passedGroupsForUser = []
+            return
+        }
         
-        if !hasLoadedData {
+        guard hasLoadedData else {
             loadDropdownAndTableviewData()
+            return
         }
     }
     
@@ -46,13 +46,9 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         tableviewShowingGroup.dataSource = self
         tableviewShowingGroup.delegate = self
         tableviewShowingGroup.backgroundColor = .white
-        
+        tableviewShowingGroup.reloadData()
+
         setupDropdown()
-    }
-    
-    // Handles on-click for the top nav bar account icon.
-    @IBAction func handleAccountAction(_ sender: Any) {
-        accountDialog.showBulletin(above: self)
     }
     
     // Handles on-click for the change group button.
@@ -60,15 +56,11 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         groupsDropdown.show()
     }
     
-    // Signs out user and segue to entry view controller.
-    func signOutUser() {
-        DatabaseService.handleSignOut()
-        self.performSegue(withIdentifier: SegueType.toEntry.rawValue, sender: self)
-    }
-    
     // Uses DatabaseService to get all users in a group.
     func getUsersInGroup(groupName: String) {
-        DatabaseService.getAllUsersInGroup(groupName: groupName) {[weak self] error, users in
+        currentGroupShowing = groupName
+        
+        GroupDatabaseService.getAllUsersInGroup(groupName: groupName) {[weak self] error, users in
             
             guard error == nil && users.count != 0 else {
                 self?.removeSpinner()
@@ -87,7 +79,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         hasLoadedData = true
         self.showSpinner(onView: self.view)
 
-        DatabaseService.getAllGroupsForUser() {[weak self] error, names in
+        GroupDatabaseService.getAllGroupsForUser(userId: UserDatabaseService.currentUserProfile?.userId ?? "") {[weak self] error, names in
             
             guard error == nil && names != [] else {
                 self?.removeSpinner()
@@ -103,11 +95,19 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     // Sets up dropdown which displays all the groups that the current user is in.
     func setupDropdown() {
         groupsDropdown.anchorView = tableviewShowingGroup
-        groupsDropdown.selectionAction = { [weak self] index, title in
+        groupsDropdown.selectionAction = {[weak self] index, title in
+            
             guard let self = self else { return }
-            guard let groupName = self.groupsForUser?[index] else { return }
+            guard let groups = self.groupsForUser else { return }
+
+            let groupName = groups[index]
+
+            guard groupName != self.currentGroupShowing else {
+                return
+            }
             
             self.showSpinner(onView: self.view)
+
             self.getUsersInGroup(groupName: groupName)
         }
     }

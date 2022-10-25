@@ -75,9 +75,7 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
             return
         }
         
-        self.showSpinner(onView: self.view)
-
-        DatabaseService.addDriveToGroup(
+        DriveDatabaseService.addDriveToGroup(
             amount: textfieldAmount.text ?? "",
             distance: selectedLocationDistance?.description ?? "",
             groupName: textfieldGroupName.text ?? "",
@@ -94,7 +92,6 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
                 return
             }
             
-            self?.removeSpinner()
             self?.refresh()
             self?.performSegue(withIdentifier: SegueType.toHome.rawValue, sender: self)
         }

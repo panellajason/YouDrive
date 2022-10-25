@@ -13,7 +13,7 @@ class JoinGroupViewController: UIViewController {
     @IBOutlet weak var labelError: UILabel!
     @IBOutlet weak var textfieldGroupName: UITextField! {
         didSet {
-            let placeholderText = NSAttributedString(string: "Enter group passcode",
+            let placeholderText = NSAttributedString(string: "Enter group name",
                                                         attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])
             textfieldGroupName.attributedPlaceholder = placeholderText
         }
@@ -53,7 +53,7 @@ class JoinGroupViewController: UIViewController {
             return
         }
         
-        DatabaseService.joinGroup(
+        GroupDatabaseService.joinGroup(
             groupName: textfieldGroupName?.text ?? "",
             groupPasscode: textfieldGroupPasscode?.text ?? ""
         ){[weak self] error, errorMessage, hasSuccessfullyJoined in

@@ -11,11 +11,13 @@ import Foundation
 class UserGroup {
     var groupName: String
     var pointsInGroup: String
-    var userName: String
+    var userId: String
+    var username: String
 
-    init(groupName: String, pointsInGroup: String, userName: String) {
+    init(groupName: String, pointsInGroup: String, userId: String, username: String) {
         self.groupName = groupName
         self.pointsInGroup = pointsInGroup
-        self.userName = userName
+        self.userId = userId
+        self.username = username
     }
 }

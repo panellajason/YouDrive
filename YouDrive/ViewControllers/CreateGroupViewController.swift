@@ -60,7 +60,7 @@ class CreateGroupViewController: UIViewController {
     private func createNewGroup() {
         self.showSpinner(onView: self.view)
 
-        DatabaseService.createNewGroup(
+        GroupDatabaseService.createNewGroup(
             groupName: textfieldGroupName.text ?? "",
             groupPasscode: textfieldGroupPasscode.text ?? ""
         ){[weak self] error, errorString in
