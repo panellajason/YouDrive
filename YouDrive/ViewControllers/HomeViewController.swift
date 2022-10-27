@@ -9,14 +9,14 @@ import UIKit
 
 class HomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
+    // Dropdown to select a group to show.
+    private let groupsDropdown: DropDown = DropDown()
+    
     var currentGroupShowing = ""
     var groupsForUser: [String]?
     var hasLoadedData = false
     var passedGroupsForUser: [String] = []
     var usersInGroup: [UserGroup] = []
-        
-    // Dropdown to select a group to show.
-    private let groupsDropdown: DropDown = DropDown()
         
     @IBOutlet weak var buttonChangeShowingGroup: UIButton!
     @IBOutlet weak var labelShowingGroup: UILabel!
@@ -24,18 +24,21 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        guard let currentUser = UserDatabaseService.currentUserProfile else { return }
 
         // Check if groups for current user have already been populated
         guard passedGroupsForUser == [] else {
             groupsForUser = passedGroupsForUser
             groupsDropdown.dataSource = passedGroupsForUser
-            getUsersInGroup(groupName: passedGroupsForUser[0])
+            getUsersInGroup(groupName: currentUser.homeGroup)
+            
             hasLoadedData = true
             passedGroupsForUser = []
             return
         }
         
         guard hasLoadedData else {
+            print("loaded")
             loadDropdownAndTableviewData()
             return
         }
@@ -46,7 +49,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         tableviewShowingGroup.dataSource = self
         tableviewShowingGroup.delegate = self
         tableviewShowingGroup.backgroundColor = .white
-        tableviewShowingGroup.reloadData()
 
         setupDropdown()
     }
@@ -76,10 +78,11 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     // Uses DatabaseService to getAllGroupsForUser and to getUsersInGroup for the selected group in dropdown.
     func loadDropdownAndTableviewData() {
-        hasLoadedData = true
+        guard let currentUser = UserDatabaseService.currentUserProfile else { return }
+
         self.showSpinner(onView: self.view)
 
-        GroupDatabaseService.getAllGroupsForUser(userId: UserDatabaseService.currentUserProfile?.userId ?? "") {[weak self] error, names in
+        GroupDatabaseService.getAllGroupsForUser(userId: currentUser.userId) {[weak self] error, names in
             
             guard error == nil && names != [] else {
                 self?.removeSpinner()
@@ -88,13 +91,16 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
             
             self?.groupsForUser = names
             self?.groupsDropdown.dataSource = names
-            self?.getUsersInGroup(groupName: names[0])
+            self?.getUsersInGroup(groupName: currentUser.homeGroup)
+            self?.hasLoadedData = true
         }
     }
     
     // Sets up dropdown which displays all the groups that the current user is in.
     func setupDropdown() {
+        
         groupsDropdown.anchorView = tableviewShowingGroup
+        
         groupsDropdown.selectionAction = {[weak self] index, title in
             
             guard let self = self else { return }
@@ -106,9 +112,19 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
                 return
             }
             
+            guard let currentUser = UserDatabaseService.currentUserProfile else { return }
+            currentUser.homeGroup = groupName
+            
             self.showSpinner(onView: self.view)
-
-            self.getUsersInGroup(groupName: groupName)
+            
+            UserDatabaseService.updateUserDocument(accountToUpdate: currentUser) { error in
+                
+                guard error == nil else {
+                    return
+                }
+                
+                self.getUsersInGroup(groupName: groupName)
+            }
         }
     }
 

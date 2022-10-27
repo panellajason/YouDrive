@@ -47,15 +47,18 @@ class JoinGroupViewController: UIViewController {
     func joinGroup() {
         self.showSpinner(onView: self.view)
 
-        guard textfieldGroupName?.text != "" && textfieldGroupPasscode?.text != "" else {
+        guard let groupName = textfieldGroupName.text else { return }
+        guard let groupPasscode = textfieldGroupPasscode.text else { return }
+        
+        guard groupName != "" && groupPasscode != "" else {
             self.removeSpinner()
             labelError.text = "Fields cannot be empty."
             return
         }
         
         GroupDatabaseService.joinGroup(
-            groupName: textfieldGroupName?.text ?? "",
-            groupPasscode: textfieldGroupPasscode?.text ?? ""
+            groupName: groupName,
+            groupPasscode: groupPasscode
         ){[weak self] error, errorMessage, hasSuccessfullyJoined in
             
             guard error == nil else {
@@ -71,8 +74,12 @@ class JoinGroupViewController: UIViewController {
             }
             
             if hasSuccessfullyJoined {
+                
+                UserDatabaseService.currentUserProfile?.homeGroup = groupName
                 self?.performSegue(withIdentifier: SegueType.toHome.rawValue, sender: self)
+                
             } else {
+                
                 self?.removeSpinner()
                 self?.labelError.text = "Group name and/or passcode incorrect."
             }

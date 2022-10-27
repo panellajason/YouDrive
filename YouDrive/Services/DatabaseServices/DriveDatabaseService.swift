@@ -14,16 +14,17 @@ class DriveDatabaseService {
 
     
     // Adds a document to "drives" table.
-    static func addDriveToGroup(amount: String, distance: String, groupName: String, location: String, numberOfPassengers: String, whoPaid: String, completion: @escaping(Error?) ->()) {
+    static func addDriveToGroup(distance: String, groupName: String, location: String, numberOfPassengers: String, completion: @escaping(Error?) ->()) {
      
+        guard let currentUser = UserDatabaseService.currentUserProfile else { return }
+
         databaseInstance.collection(DatabaseCollection.drives.rawValue).addDocument(data: [
-            DatabaseField.amount.rawValue: amount,
             DatabaseField.distance.rawValue: distance,
             DatabaseField.group_name.rawValue: groupName,
             DatabaseField.location.rawValue: location,
             DatabaseField.number_of_passengers.rawValue: numberOfPassengers,
-            DatabaseField.user_id.rawValue: (UserDatabaseService.currentUserProfile?.userId ?? "") as String,
-            DatabaseField.who_paid.rawValue: whoPaid,
+            DatabaseField.user_id.rawValue: currentUser.userId,
+            DatabaseField.username.rawValue: currentUser.username
         ]) { error in
             
             guard error == nil else {

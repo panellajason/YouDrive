@@ -129,8 +129,9 @@ class GroupDatabaseService {
                     }
                     
                     guard let currentUser = UserDatabaseService.currentUserProfile else { return }
-                    let accountToUpdate = User(email: currentUser.email, homeGroup: groupName, userId: currentUser.userId, username: currentUser.username)
                     
+                    // Set home group of current user user to this group
+                    let accountToUpdate = User(email: currentUser.email, homeGroup: groupName, userId: currentUser.userId, username: currentUser.username)
                     UserDatabaseService.updateUserDocument(accountToUpdate: accountToUpdate) { error in
                         
                         guard error == nil else {
@@ -221,8 +222,9 @@ class GroupDatabaseService {
                             }
                             
                             guard let currentUser = UserDatabaseService.currentUserProfile else { return }
-                            let accountToUpdate = User(email: currentUser.email, homeGroup: groupName, userId: currentUser.userId, username: currentUser.username)
                             
+                            // Set home group of current user user to this group
+                            let accountToUpdate = User(email: currentUser.email, homeGroup: groupName, userId: currentUser.userId, username: currentUser.username)
                             UserDatabaseService.updateUserDocument(accountToUpdate: accountToUpdate) { error in
                                 
                                 guard error == nil else {
@@ -239,7 +241,7 @@ class GroupDatabaseService {
         }
     }
     
-    // Gets all groups for the current user.
+    // Gets all groups for a user.
     static func getAllGroupsForUser(userId: String, completion: @escaping(Error?, [String]) ->()) {
 
         databaseInstance.collection(DatabaseCollection.user_groups.rawValue)
@@ -269,6 +271,8 @@ class GroupDatabaseService {
                     groupNames.append(groupName)
                 }
                 
+                UserDatabaseService.groupsForCurrentUser = groupNames
+
                 return completion(error, groupNames)
             }
             

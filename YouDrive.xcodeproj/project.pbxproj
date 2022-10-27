@@ -174,11 +174,11 @@
 				FAEF21AE28FB2E91008432C3 /* CreateAccountViewController.swift */,
 				FA38505928FE7B4F00133A93 /* CreateGroupViewController.swift */,
 				FACEA7F928FB120B00CAA2AD /* EntryViewController.swift */,
+				FAAF184329046D2F005E5E95 /* JoinGroupViewController.swift */,
 				FAEF21B028FB333D008432C3 /* HomeViewController.swift */,
 				FA38505528FE591900133A93 /* NoGroupsViewController.swift */,
 				FAEF21BE28FD26AC008432C3 /* SearchResultsViewController.swift */,
 				FAEF21AA28FB26B0008432C3 /* SignInViewController.swift */,
-				FAAF184329046D2F005E5E95 /* JoinGroupViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";

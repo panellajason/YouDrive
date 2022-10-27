@@ -195,6 +195,7 @@ class UserDatabaseService {
                         }
                         
                         // Document updated
+                        currentUserProfile = accountToUpdate
                         completion(error)
                     }
                 }

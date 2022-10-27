@@ -63,7 +63,6 @@ class SignInViewController: UIViewController {
                         return
                     }
                     
-                    UserDatabaseService.groupsForCurrentUser = groupNames
                     self?.performSegue(withIdentifier: SegueType.toHome.rawValue, sender: self)
                 }
             }

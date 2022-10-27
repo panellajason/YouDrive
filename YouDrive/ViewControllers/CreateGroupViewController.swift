@@ -42,7 +42,7 @@ class CreateGroupViewController: UIViewController {
     @IBAction func handleCreateGroupButton(_ sender: UIButton) {
         labelError.text = ""
         self.view.endEditing(true)
-
+    
         guard textfieldGroupName.text != ""  && textfieldGroupPasscode.text != "" && textfieldConfirmPasscode.text != "" else {
             labelError.text = "Fields cannot be empty."
             return
@@ -59,10 +59,13 @@ class CreateGroupViewController: UIViewController {
     // Uses DatabaseService to create new group.
     private func createNewGroup() {
         self.showSpinner(onView: self.view)
+        
+        guard let groupName = textfieldGroupName.text else { return }
+        guard let groupPasscode = textfieldGroupPasscode.text else { return }
 
         GroupDatabaseService.createNewGroup(
-            groupName: textfieldGroupName.text ?? "",
-            groupPasscode: textfieldGroupPasscode.text ?? ""
+            groupName: groupName,
+            groupPasscode: groupPasscode
         ){[weak self] error, errorString in
             
             guard error == nil else {
@@ -78,6 +81,9 @@ class CreateGroupViewController: UIViewController {
                 self?.labelError.text = errorString
                 return
             }
+            
+            
+            UserDatabaseService.currentUserProfile?.homeGroup = groupName
             
             self?.performSegue(withIdentifier: SegueType.toHome.rawValue, sender: self)
         }

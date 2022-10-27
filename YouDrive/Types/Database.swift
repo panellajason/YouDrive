@@ -31,5 +31,4 @@ enum DatabaseField: String {
     case points
     case user_id
     case username
-    case who_paid
 }
