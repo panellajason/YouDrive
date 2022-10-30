@@ -13,9 +13,10 @@ import UIKit
 class AddDriveViewController: UIViewController, CLLocationManagerDelegate, SearchDelegate {
     // Dropdown to select a group to show.
     private let groupsDropdown: DropDown = DropDown()
-    
+
     let locationManager = CLLocationManager()
     
+    var addDriveDelegate: AddDriveDelegate?
     var searchResults: [MKMapItem]!
     var selectedLocation: String?
     var selectedLocationDistance: String?
@@ -54,7 +55,7 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
         labelGroup.addGestureRecognizer(labelGroupOnClick)
         
         guard let homeGroup = UserDatabaseService.currentUserProfile?.homeGroup else { return }
-        labelGroup.text = "Group: " + homeGroup
+        labelGroup.text = homeGroup
         
         setupLocationManager()
         setupDropdown()
@@ -76,27 +77,17 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
             return
         }
         
-        DriveDatabaseService.addDriveToGroup(
-            distance: selectedLocationDistance?.description ?? "",
-            groupName: labelGroup.text ?? "",
-            location: selectedLocation ?? "",
-            numberOfPassengers: textfieldPassengers.text ?? ""
-        ){ [weak self] error in
-            
-            guard error == nil else {
-                self?.removeSpinner()
-                self?.labelError.textColor = .red
-                self?.labelError.text = "Unable to add drive, try again."
-                return
-            }
-            
-            self?.performSegue(withIdentifier: SegueType.toHome.rawValue, sender: self)
-        }
+        addDrive()
     }
     
     // Handles on-click for the edit gorup button.
     @IBAction func handleGroupEditButton(_ sender: Any) {
         editGroup()
+    }
+    
+    // Handles on-click for the "X" button.
+    @IBAction func handleCloseAction(_ sender: Any) {
+        self.dismiss(animated: true, completion: nil)
     }
     
     // Handles on-click for the refresh button.
@@ -120,6 +111,36 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
         }
         
         search()
+    }
+    
+    // Uses DriveDatabaseService to add a new drive.
+    func addDrive() {
+        
+        guard let distance = selectedLocationDistance?.description else { return }
+        guard let groupName = labelGroup.text else { return }
+        guard let location = selectedLocation else { return }
+        guard let numOfPassengers = textfieldPassengers.text else { return }
+        
+        guard let currentUser = UserDatabaseService.currentUserProfile else { return }
+
+        let oldPoints = 0.0
+        
+        let newPoints = (Double(numOfPassengers) ?? 0.0) * (Double(distance) ?? 0.0)
+
+        let driveToAdd = Drive(distance: distance, groupName: groupName, location: location, newPoints: newPoints.rounded(toPlaces: 1).description, numberOfPassengers: numOfPassengers, oldPoints: oldPoints.description, userId: currentUser.userId, username: currentUser.username)
+        
+        DriveDatabaseService.addDriveToGroup(driveToAdd: driveToAdd){ [weak self] error in
+            
+            guard error == nil else {
+                self?.removeSpinner()
+                self?.labelError.textColor = .red
+                self?.labelError.text = "Unable to add drive, try again."
+                return
+            }
+            
+            self?.addDriveDelegate?.onDriveAdded()
+            self?.dismiss(animated: true, completion: nil)
+        }
     }
     
     // Shows dropdown for user to select a group.

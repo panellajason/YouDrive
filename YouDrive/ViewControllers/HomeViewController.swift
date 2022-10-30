@@ -4,10 +4,11 @@
 //
 //  Created by Panella, Jason on 10/15/22.
 //
+
 import DropDown
 import UIKit
 
-class HomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class HomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, AddDriveDelegate {
     
     // Dropdown to select a group to show.
     private let groupsDropdown: DropDown = DropDown()
@@ -38,7 +39,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         }
         
         guard hasLoadedData else {
-            print("loaded")
             loadDropdownAndTableviewData()
             return
         }
@@ -56,6 +56,11 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     // Handles on-click for the change group button.
     @IBAction func handleChangeGroupButton(_ sender: Any) {
         groupsDropdown.show()
+    }
+    
+    // Handles on-click for the plus nav bar button.
+    @IBAction func handlePlusButton(_ sender: Any) {
+        self.performSegue(withIdentifier: SegueType.toAddDrive.rawValue, sender: self)
     }
     
     // Uses DatabaseService to get all users in a group.
@@ -127,6 +132,12 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
             }
         }
     }
+    
+    //
+    func onDriveAdded() {
+        print("laoded")
+       loadDropdownAndTableviewData()
+    }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         // segue to player screen??
@@ -145,5 +156,13 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
                                                         for: indexPath) as! HomeGroupTableViewCell
         resultsCell.configure(with: usersInGroup[indexPath.row])
         return resultsCell
+    }
+    
+    //
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?){
+        if segue.identifier == SegueType.toAddDrive.rawValue {
+            let addDriveViewController = segue.destination as! AddDriveViewController
+            addDriveViewController.addDriveDelegate = self
+        }
     }
 }

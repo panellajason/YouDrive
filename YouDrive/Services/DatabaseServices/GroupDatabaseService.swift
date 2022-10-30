@@ -355,6 +355,52 @@ class GroupDatabaseService {
             completion(error, defaultGroup)
         }
     }
+    
+    // Updates userGroups document.
+    static func updateUserGroupsDocument(userGroupToUpdate: UserGroup, completion: @escaping(Error?) ->()) {
+        
+        databaseInstance.collection(DatabaseCollection.user_groups.rawValue)
+            .whereField(DatabaseField.user_id.rawValue, isEqualTo: userGroupToUpdate.userId)
+            .whereField(DatabaseField.group_name.rawValue, isEqualTo: userGroupToUpdate.groupName)
+            .getDocuments()
+        {(queryResults, error) in
+
+            guard error == nil else {
+                completion(error)
+                return
+            }
+                
+            guard let results = queryResults else {
+                completion(error)
+                return
+            }
+                        
+            if !results.documents.isEmpty {
+                
+                for document in results.documents {
+                    
+                    let docId = document.documentID
+                    let docRef =  databaseInstance.collection(DatabaseCollection.user_groups.rawValue).document(docId)
+                   
+                    docRef.updateData([
+                        DatabaseField.group_name.rawValue: userGroupToUpdate.groupName,
+                        DatabaseField.points.rawValue: userGroupToUpdate.pointsInGroup,
+                        DatabaseField.user_id.rawValue: userGroupToUpdate.userId,
+                        DatabaseField.username.rawValue: userGroupToUpdate.username,
+                    ]) { error in
+                        
+                        guard error == nil else {
+                            completion(error)
+                            return
+                        }
+                        
+                        // Document updated
+                        completion(error)
+                    }
+                }
+            }
+        }
+    }
 }
 
 

@@ -9,21 +9,23 @@ import Foundation
 
 // Object for defining a drive for a user in a group.
 class Drive {
-    var amount: String
     var distance: String
     var groupName: String
     var location: String
+    var newPoints: String
     var numberOfPassengers: String
-    var userID: String
-    var whoPaid: String
+    var oldPoints: String
+    var userId: String
+    var username: String
 
-    init(amount: String, distance: String, groupName: String, location: String, numberOfPassengers: String, userID: String, whoPaid: String) {
-        self.amount = amount
+    init(distance: String, groupName: String, location: String, newPoints: String, numberOfPassengers: String,  oldPoints: String, userId: String, username: String) {
         self.distance = distance
         self.groupName = groupName
         self.location = location
+        self.newPoints = newPoints
         self.numberOfPassengers = numberOfPassengers
-        self.userID = userID
-        self.whoPaid = whoPaid
+        self.oldPoints = oldPoints
+        self.userId = userId
+        self.username = username
     }
 }
