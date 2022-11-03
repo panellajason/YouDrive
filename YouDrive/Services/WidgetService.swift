@@ -7,6 +7,22 @@
 
 import UIKit
 
+class WidgetService {
+    
+    static let ICON_PREFIX = "icon_"
+    
+    static func getIconIdList() -> [String] {
+        
+        var iconIdList: [String] = []
+        
+        for index in 2...25 {
+            iconIdList.append(index.description)
+        }
+        
+        return iconIdList.shuffled()
+    }
+}
+
 // Loading spinner.
 var vSpinner : UIView?
 extension UIViewController {

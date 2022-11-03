@@ -10,6 +10,7 @@ import UIKit
 
 // Tableview cell for displaying search results for locations.
 class SearchResultsTableViewCell: UITableViewCell {
+    
     static let identifier = "SearchResultsTableViewCell"
     
     @IBOutlet weak var labelDescription: UILabel!

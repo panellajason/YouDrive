@@ -8,6 +8,9 @@
 import UIKit
 
 class CreateGroupViewController: UIViewController {
+    
+    static var groupUpdatesDelegate: GroupUpdatesDelegate?
+    var shouldShowMainNavController: Bool = false
 
     @IBOutlet weak var buttonCreateGroup: UIButton!
     @IBOutlet weak var labelError: UILabel!
@@ -35,16 +38,30 @@ class CreateGroupViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
     }
     
-    // Handles on-click for continue button.
+    // Handles on-click for the "X" button.
+    @IBAction func handleCloseAction(_ sender: Any) {
+        self.dismiss(animated: true, completion: nil)
+    }
+    
+    // Handles on-click for create group (continue) button.
     @IBAction func handleCreateGroupButton(_ sender: UIButton) {
         labelError.text = ""
         self.view.endEditing(true)
     
-        guard textfieldGroupName.text != ""  && textfieldGroupPasscode.text != "" && textfieldConfirmPasscode.text != "" else {
+        guard let preTrimmedGroupName = textfieldGroupName.text else { return }
+        guard let groupPasscode = textfieldGroupPasscode.text else { return }
+        guard let confirmedPasscode = textfieldConfirmPasscode.text else { return }
+        let groupName = preTrimmedGroupName.trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines)
+                
+        guard !groupName.isEmpty  && !groupPasscode.isEmpty && !confirmedPasscode.isEmpty else {
             labelError.text = "Fields cannot be empty."
+            return
+        }
+        
+        guard groupName.count <= 25 else {
+            labelError.text = "Group name must be less than 25 characters."
             return
         }
         
@@ -53,26 +70,21 @@ class CreateGroupViewController: UIViewController {
             return
         }
         
-        createNewGroup()
+        createNewGroup(groupName: groupName, groupPasscode: groupPasscode)
     }
     
     // Uses DatabaseService to create new group.
-    private func createNewGroup() {
+    private func createNewGroup(groupName: String, groupPasscode: String) {
         self.showSpinner(onView: self.view)
-        
-        guard let groupName = textfieldGroupName.text else { return }
-        guard let groupPasscode = textfieldGroupPasscode.text else { return }
 
         GroupDatabaseService.createNewGroup(
             groupName: groupName,
             groupPasscode: groupPasscode
-        ){[weak self] error, errorString in
+        ){ [weak self] error, errorString in
             
             guard error == nil else {
                 self?.removeSpinner()
-                let errorAlert = UIAlertController(title: "Error", message: "Unable to create group.", preferredStyle: .alert)
-                errorAlert.addAction(UIAlertAction(title: "Close", style: .cancel, handler: nil))
-                self?.present(errorAlert, animated: true)
+                self?.labelError.text = "Unable to create group, try again."
                 return
             }
             
@@ -82,10 +94,20 @@ class CreateGroupViewController: UIViewController {
                 return
             }
             
+            self?.removeSpinner()
             
-            UserDatabaseService.currentUserProfile?.homeGroup = groupName
+            guard let showMainNavController = self?.shouldShowMainNavController else { return }
             
-            self?.performSegue(withIdentifier: SegueType.toHome.rawValue, sender: self)
+            if showMainNavController {
+                NavigationService.showMainNavController()
+            } else {
+                
+                self?.dismiss(animated: true)
+                SideMenuTableViewController.selectedRow = 0
+                ActivityFeedViewController.eventUpdatesDelegate?.onEventUpdates()
+                HomeViewController.groupUpdatesDelegate?.onGroupUpdates()
+                NavigationService.mainNavController.popToRootViewController(animated: false)
+            }
         }
     }
     

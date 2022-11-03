@@ -71,10 +71,11 @@ class GroupDatabaseService {
     
     // Helper func to check if user is already a member of a group.
     private static func checkIfUserIsMemberOfGroup(groupName: String, completion: @escaping(Error?, Bool) ->()) {
-        
+        guard let currentUser = UserDatabaseService.currentUserProfile else { return }
+
         databaseInstance.collection(DatabaseCollection.user_groups.rawValue)
             .whereField(DatabaseField.group_name.rawValue, isEqualTo: groupName)
-            .whereField(DatabaseField.user_id.rawValue, isEqualTo: (UserDatabaseService.currentUserProfile?.userId ?? "") as String)
+            .whereField(DatabaseField.user_id.rawValue, isEqualTo: currentUser.userId)
             .getDocuments()
         {(queryResults, error) in
 
@@ -100,7 +101,8 @@ class GroupDatabaseService {
     
     // Creates new group with current user as host.
     static func createNewGroup(groupName: String, groupPasscode: String, completion: @escaping(Error?, String?) ->()) {
-        
+        guard let currentUser = UserDatabaseService.currentUserProfile else { return }
+
         // Check if group name exists already
         checkIfGroupNameExists(groupName: groupName){ error, errorMessage in
             guard error == nil else {
@@ -128,18 +130,27 @@ class GroupDatabaseService {
                         return
                     }
                     
-                    guard let currentUser = UserDatabaseService.currentUserProfile else { return }
-                    
-                    // Set home group of current user user to this group
-                    let accountToUpdate = User(email: currentUser.email, homeGroup: groupName, userId: currentUser.userId, username: currentUser.username)
-                    UserDatabaseService.updateUserDocument(accountToUpdate: accountToUpdate) { error in
+                    // Create event
+                    let newEvent = Event(groupName: groupName, iconId: currentUser.iconId, points: 0.0, timestamp: Date().timeIntervalSince1970.description, type: EventType.GROUP_CREATED.rawValue, username: currentUser.username)
+                    EventDatabaseService.createEventDoucment(event: newEvent) { error in
                         
                         guard error == nil else {
                             completion(error, nil)
                             return
                         }
                         
-                        completion(error, nil)
+                        // Set home group of current user user to this group
+                        let accountToUpdate = User(email: currentUser.email, homeGroup: groupName, iconId: currentUser.iconId,  userId: currentUser.userId, username: currentUser.username)
+                        UserDatabaseService.updateUserDocument(accountToUpdate: accountToUpdate) { error in
+                            
+                            guard error == nil else {
+                                completion(error, nil)
+                                return
+                            }
+                            
+                            UserDatabaseService.currentUserProfile? = accountToUpdate
+                            return completion(error, nil)
+                        }
                     }
                 }
             }
@@ -148,31 +159,33 @@ class GroupDatabaseService {
     
     // Helper func to add a document to "groups" table.
     private static func createNewGroupDocument(groupName: String, groupPasscode: String, completion: @escaping(Error?) ->()) {
-        
+        guard let currentUser = UserDatabaseService.currentUserProfile else { return }
+
         databaseInstance.collection(DatabaseCollection.groups.rawValue).addDocument(data: [
             DatabaseField.group_name.rawValue: groupName,
             DatabaseField.group_passcode.rawValue: groupPasscode,
-            DatabaseField.host.rawValue: (UserDatabaseService.currentUserProfile?.userId ?? "") as String
+            DatabaseField.host.rawValue: currentUser.userId
         ]) { error in
             
             guard error == nil else {
                 completion(error)
                 return
             }
-            
             // Successfully added document to "groups" table
-            completion(error)
+            return completion(error)
         }
     }
     
     // Helper func to add a document to "userGroups" table.
     private static func createUserGroupsDocument(groupName: String, completion: @escaping(Error?) ->()) {
+        guard let currentUser = UserDatabaseService.currentUserProfile else { return }
 
         databaseInstance.collection(DatabaseCollection.user_groups.rawValue).addDocument(data: [
             DatabaseField.group_name.rawValue: groupName,
-            DatabaseField.points.rawValue: "0",
-            DatabaseField.user_id.rawValue: (UserDatabaseService.currentUserProfile?.userId ?? "") as String,
-            DatabaseField.username.rawValue: UserDatabaseService.currentUserProfile?.username ?? ""
+            DatabaseField.icon_id.rawValue: currentUser.iconId,
+            DatabaseField.points.rawValue: "0.0",
+            DatabaseField.user_id.rawValue: currentUser.userId,
+            DatabaseField.username.rawValue: currentUser.username
         ]) { error in
             
             guard error == nil else {
@@ -185,12 +198,96 @@ class GroupDatabaseService {
         }
     }
     
+    // Deletes userGroups document.
+    static func deleteUserGroupsDocument(groupName: String, userId: String, completion: @escaping(Error?) ->()) {
+        
+        databaseInstance.collection(DatabaseCollection.user_groups.rawValue)
+            .whereField(DatabaseField.group_name.rawValue, isEqualTo: groupName)
+            .whereField(DatabaseField.user_id.rawValue, isEqualTo: userId)
+            .getDocuments()
+        {(queryResults, error) in
+
+            guard error == nil else {
+                completion(error)
+                return
+            }
+                
+            guard let results = queryResults else {
+                completion(error)
+                return
+            }
+                        
+            if !results.documents.isEmpty {
+                
+                guard let document = results.documents.first else { return }
+                let docId = document.documentID
+                
+                databaseInstance.collection(DatabaseCollection.user_groups.rawValue).document(docId).delete() { error in
+                                        
+                    guard error == nil else {
+                        completion(error)
+                        return
+                    }
+                                        
+                    ActivityFeedViewController.eventUpdatesDelegate?.onEventUpdates()
+                    HomeViewController.groupUpdatesDelegate?.onGroupUpdates()
+                    
+                    guard let currentUser = UserDatabaseService.currentUserProfile else { return }
+                    
+                    // Update homegroup of user if their homegroup got deleted
+                    if currentUser.homeGroup == groupName {
+                        
+                        let updatedUser = currentUser
+                        if UserDatabaseService.groupsForCurrentUser.count > 1 {
+                            updatedUser.homeGroup = UserDatabaseService.groupsForCurrentUser.first(where: {$0 != updatedUser.homeGroup})!
+                        } else {
+                            updatedUser.homeGroup = ""
+                        }
+                        
+                        UserDatabaseService.currentUserProfile? = updatedUser
+
+                        // Create event
+                        let newEvent = Event(groupName: groupName, iconId: currentUser.iconId, points: 0.0, timestamp: Date().timeIntervalSince1970.description, type: EventType.GROUP_LEFT.rawValue, username: currentUser.username)
+                        EventDatabaseService.createEventDoucment(event: newEvent) { error in
+                            guard error == nil else {
+                                completion(error)
+                                return
+                            }
+                            
+                            UserDatabaseService.updateUserDocument(accountToUpdate: updatedUser) { error in
+                                guard error == nil else {
+                                    completion(error)
+                                    return
+                                }
+                                
+                                guard UserDatabaseService.groupsForCurrentUser.count > 1 else {
+                                    
+                                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                                    let viewController = storyboard.instantiateViewController(withIdentifier: "NoGroupsViewController") as? NoGroupsViewController
+                                    UIApplication.shared.windows.first?.rootViewController = viewController
+                                    UIApplication.shared.windows.first?.makeKeyAndVisible()
+                                    
+                                    completion(error)
+                                    return
+                                }
+                                // Successfully deleted and updated home group for current user
+                                return completion(error)
+                            }
+                        }
+                    }
+                    // Successfully deleted
+                    return completion(error)
+                }
+            }
+            // No document found
+            completion(error)
+        }
+    }
+    
     // Joins existing group.
     static func joinGroup(groupName: String, groupPasscode: String, completion: @escaping(Error?, String?, Bool) ->()) {
-        
         // Check if group credentials match a database record
         checkIfGroupCredentialsMatch(groupName: groupName, groupPasscode: groupPasscode) { error, doCredentialsMatch in
-            
             guard error == nil else {
                 completion(error, nil, false)
                 return
@@ -198,24 +295,20 @@ class GroupDatabaseService {
             
             if !doCredentialsMatch {
                 // Credentials don't match
-                completion(error, nil, false)
+                return completion(error, nil, false)
             } else {
-                
                 // Check is user is already a member of this group
                 checkIfUserIsMemberOfGroup(groupName: groupName){ error, isUserMemberInGroup in
-                    
                     guard error == nil else {
                         completion(error, nil, false)
                         return
                     }
                     
                     if isUserMemberInGroup {
-                        completion(error, "You are already a member of this group.", false)
+                        return completion(error, "You are already a member of this group.", false)
                     } else {
-                        
                         // Create users <-> groups document
                         createUserGroupsDocument(groupName: groupName){ error in
-                            
                             guard error == nil else {
                                 completion(error, nil, false)
                                 return
@@ -223,16 +316,27 @@ class GroupDatabaseService {
                             
                             guard let currentUser = UserDatabaseService.currentUserProfile else { return }
                             
-                            // Set home group of current user user to this group
-                            let accountToUpdate = User(email: currentUser.email, homeGroup: groupName, userId: currentUser.userId, username: currentUser.username)
-                            UserDatabaseService.updateUserDocument(accountToUpdate: accountToUpdate) { error in
-                                
+                            // Create event
+                            let newEvent = Event(groupName: groupName, iconId: currentUser.iconId, points: 0.0, timestamp: Date().timeIntervalSince1970.description, type: EventType.GROUP_JOINED.rawValue, username: currentUser.username)
+                            
+                            EventDatabaseService.createEventDoucment(event: newEvent) { error in
                                 guard error == nil else {
                                     completion(error, nil, false)
                                     return
                                 }
                                 
-                                completion(error, nil, true)
+                                // Set home group of current user user to this group
+                                let accountToUpdate = User(email: currentUser.email, homeGroup: groupName, iconId: currentUser.iconId,  userId: currentUser.userId, username: currentUser.username)
+                                
+                                UserDatabaseService.updateUserDocument(accountToUpdate: accountToUpdate) { error in
+                                    guard error == nil else {
+                                        completion(error, nil, false)
+                                        return
+                                    }
+                                    
+                                    UserDatabaseService.currentUserProfile? = accountToUpdate
+                                    return completion(error, nil, true)
+                                }
                             }
                         }
                     }
@@ -262,20 +366,17 @@ class GroupDatabaseService {
             if !results.documents.isEmpty {
                 
                 var groupNames: [String] = []
-                
                 for document in results.documents {
-                    
                     let data = document.data()
-                    let groupName = data[DatabaseField.group_name.rawValue] as? String ?? ""
-                    
+                    guard let groupName = data[DatabaseField.group_name.rawValue] as? String else { return }
                     groupNames.append(groupName)
                 }
                 
-                UserDatabaseService.groupsForCurrentUser = groupNames
-
-                return completion(error, groupNames)
+                let sortedGroupNames = groupNames.sorted(by: { $0 < $1 })
+                return completion(error, sortedGroupNames)
             }
             
+            // No groups for user
             completion(error, [])
         }
     }
@@ -303,17 +404,24 @@ class GroupDatabaseService {
                 var usersInGroup: [UserGroup] = []
                 
                 for document in results.documents {
+                    
                     let data = document.data()
-                    let groupName = data[DatabaseField.group_name.rawValue] as? String ?? ""
-                    let pointsInGroup = data[DatabaseField.points.rawValue] as? String ?? ""
-                    let userId = data[DatabaseField.user_id.rawValue] as? String ?? ""
-                    let username = data[DatabaseField.username.rawValue] as? String ?? ""
-                    usersInGroup.append(UserGroup(groupName: groupName, pointsInGroup: pointsInGroup, userId: userId, username: username))
+                    
+                    guard let groupName = data[DatabaseField.group_name.rawValue] as? String else { return }
+                    guard let iconId = data[DatabaseField.icon_id.rawValue] as? String else { return }
+                    guard let pointsInGroup = data[DatabaseField.points.rawValue] as? String else { return }
+                    guard let userId = data[DatabaseField.user_id.rawValue] as? String else { return }
+                    guard let username = data[DatabaseField.username.rawValue] as? String else { return }
+                    
+                    usersInGroup.append(UserGroup(groupName: groupName, iconId: iconId, pointsInGroup: pointsInGroup, userId: userId, username: username))
                 }
                 
-                return completion(error, usersInGroup)
+                let sortedUsers = usersInGroup.sorted(by: { Double($0.pointsInGroup) ?? 0.0 > Double($1.pointsInGroup) ?? 0.0 })
+                
+                return completion(error, sortedUsers)
             }
             
+            // No users found
             completion(error, [])
         }
     }
@@ -342,16 +450,20 @@ class GroupDatabaseService {
             if !results.documents.isEmpty {
                 
                 for document in results.documents {
+                    
                     let data = document.data()
-                    let host = data[DatabaseField.host.rawValue] as? String ?? ""
-                    let groupName = data[DatabaseField.group_name.rawValue] as? String ?? ""
-                    let groupPasscode = data[DatabaseField.group_passcode.rawValue] as? String ?? ""
+                
+                    guard let host = data[DatabaseField.host.rawValue] as? String else { return }
+                    guard let groupName = data[DatabaseField.group_name.rawValue] as? String else { return }
+                    guard let groupPasscode = data[DatabaseField.group_passcode.rawValue] as? String else { return }
+                    
                     group = Group(host: host, groupName: groupName, groupPasscode: groupPasscode)
                 }
                 
                 return completion(error, group)
             }
             
+            // No group found
             completion(error, defaultGroup)
         }
     }
@@ -384,6 +496,7 @@ class GroupDatabaseService {
                    
                     docRef.updateData([
                         DatabaseField.group_name.rawValue: userGroupToUpdate.groupName,
+                        DatabaseField.icon_id.rawValue: userGroupToUpdate.iconId,
                         DatabaseField.points.rawValue: userGroupToUpdate.pointsInGroup,
                         DatabaseField.user_id.rawValue: userGroupToUpdate.userId,
                         DatabaseField.username.rawValue: userGroupToUpdate.username,
@@ -395,12 +508,17 @@ class GroupDatabaseService {
                         }
                         
                         // Document updated
-                        completion(error)
+                        return completion(error)
                     }
                 }
             }
+            // No document found
+            completion(error)
         }
     }
 }
 
-
+// Delegate for updating HomeViewCcontroller after creating/joining a group.
+protocol GroupUpdatesDelegate {
+    func onGroupUpdates()
+}

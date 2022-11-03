@@ -5,10 +5,11 @@
 //  Created by Panella, Jason on 10/15/22.
 //
 
+import FirebaseAuth
 import UIKit
 
 class SignInViewController: UIViewController {
-    
+        
     @IBOutlet weak var buttonContinue: UIButton!
     @IBOutlet weak var labelError: UILabel!
     @IBOutlet weak var textfieldEmail: UITextField! {
@@ -26,64 +27,108 @@ class SignInViewController: UIViewController {
         }
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        checkIfUserIsStillSignedIn()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
     
-    // Tries to sign a user in with DatabaseService.
+    // Handles on-click for the sign-in button.
     @IBAction func signIn(_ sender: UIButton) {
         self.view.endEditing(true)
         labelError.text = ""
 
         guard let email = textfieldEmail.text else { return }
         guard let password = textfieldPassword.text else { return }
-
-        if !email.isEmpty && !password.isEmpty {
-            
-            self.showSpinner(onView: self.view)
-
-            UserDatabaseService.handleSignIn(email: email, password: password) {[weak self] error, currentUser in
-                
-                guard error == nil else {
-                    self?.labelError.text = ValidationError.invalidCredentials.localizedDescription
-                    self?.removeSpinner()
-                    return
-                }
-                
-                guard currentUser.homeGroup != "" else {
-                    self?.performSegue(withIdentifier: SegueType.toNoGroups.rawValue, sender: self)
-                    return
-                }
-                
-                GroupDatabaseService.getAllGroupsForUser(userId: UserDatabaseService.currentUserProfile?.userId ?? "") {[weak self]
-                    error, groupNames in
-                    
-                    guard error == nil else {
-                        self?.removeSpinner()
-                        return
-                    }
-                    
-                    self?.performSegue(withIdentifier: SegueType.toHome.rawValue, sender: self)
-                }
-            }
-        } else {
-            
+        
+        guard !email.isEmpty && !password.isEmpty else {
             labelError.text = ValidationError.emptyTextFields.localizedDescription
+            return
+        }
+        
+        signUserIn(email: email, password: password)
+    }
+    
+    // Uses UserDatabaseService to sign a user in.
+    func signUserIn(email: String, password: String) {
+        
+        self.showSpinner(onView: self.view)
+
+        UserDatabaseService.handleSignIn(email: email, password: password) {[weak self] error, currentUser in
+            guard error == nil else {
+                self?.labelError.text = ValidationError.invalidCredentials.localizedDescription
+                self?.removeSpinner()
+                return
+            }
+            
+            guard currentUser.username != "" else {
+                self?.removeSpinner()
+                return
+            }
+            
+            guard currentUser.homeGroup != "" else {
+                self?.performSegue(withIdentifier: SegueType.toNoGroups.rawValue, sender: self)
+                self?.removeSpinner()
+                return
+            }
+            
+            self?.getAllGroupsForUser(userId: currentUser.userId)
+            
+            self?.removeSpinner()
+
+            NavigationService.showMainNavController()
+        }
+    }
+    
+    // Checks if user is still signed in and show main nav controller if they are in a group.
+    private func checkIfUserIsStillSignedIn() {
+        let currentUser = Auth.auth().currentUser
+        guard let user = currentUser else { return }
+        let userId = user.uid
+        
+        self.showSpinner(onView: self.view)
+
+        UserDatabaseService.getUserDocument(userId: userId) { [weak self] error, currentUser in
+            guard error == nil && currentUser.username != "" else {
+                self?.removeSpinner()
+                return
+            }
+            
+            UserDatabaseService.currentUserProfile = currentUser
+                        
+            guard currentUser.homeGroup != "" else {
+                self?.performSegue(withIdentifier: SegueType.toNoGroups.rawValue, sender: self)
+                self?.removeSpinner()
+                return
+            }
+            
+            self?.getAllGroupsForUser(userId: userId)
+            
+            self?.removeSpinner()
+
+            NavigationService.showMainNavController()
+        }
+    }
+    
+    // Gets all groups for current user.
+    private func getAllGroupsForUser(userId: String) {
+        
+        GroupDatabaseService.getAllGroupsForUser(userId: userId) { [weak self] error, groupNames in
+            guard error == nil else {
+                self?.removeSpinner()
+                return
+            }
+            
+            UserDatabaseService.groupsForCurrentUser = groupNames
         }
     }
     
     // Hides keyboard when user taps screen.
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
        self.view.endEditing(true)
-    }
-    
-    // Sets up HomeViewController before segue.
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?){
-        if segue.identifier == SegueType.toHome.rawValue {
-            let tabBarController = segue.destination as! UITabBarController
-            let navController = tabBarController.viewControllers![0] as! UINavigationController
-            let homeViewController = navController.viewControllers.first as! HomeViewController
-            homeViewController.passedGroupsForUser = UserDatabaseService.groupsForCurrentUser
-        }
     }
 }

@@ -11,12 +11,14 @@ import Foundation
 class User {
     var email: String
     var homeGroup: String
+    var iconId: String
     var userId: String
     var username: String
 
-    init(email:String, homeGroup:String, userId:String, username:String) {
+    init(email:String, homeGroup:String, iconId: String, userId: String, username:String) {
         self.email = email
         self.homeGroup = homeGroup
+        self.iconId = iconId
         self.userId = userId
         self.username = username
     }

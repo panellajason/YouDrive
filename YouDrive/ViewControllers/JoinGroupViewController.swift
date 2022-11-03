@@ -8,7 +8,9 @@
 import UIKit
 
 class JoinGroupViewController: UIViewController {
-
+    
+    var shouldShowMainNavController: Bool = false
+    
     @IBOutlet weak var buttonContinue: UIButton!
     @IBOutlet weak var labelError: UILabel!
     @IBOutlet weak var textfieldGroupName: UITextField! {
@@ -30,10 +32,15 @@ class JoinGroupViewController: UIViewController {
         super.viewDidLoad()
     }
     
+    // Handles on-click for the "X" button.
+    @IBAction func handleCloseAction(_ sender: Any) {
+        self.dismiss(animated: true, completion: nil)
+    }
+    
     // Handles on-click for continue button.
     @IBAction func handleContinueButton(_ sender: UIButton) {
-        labelError.text = ""
         self.view.endEditing(true)
+        labelError.text = ""
 
         guard textfieldGroupName.text != ""  && textfieldGroupPasscode.text != "" else {
             labelError.text = "Fields cannot be empty."
@@ -45,8 +52,6 @@ class JoinGroupViewController: UIViewController {
 
     // Tries to join a group using DatabaseService.
     func joinGroup() {
-        self.showSpinner(onView: self.view)
-
         guard let groupName = textfieldGroupName.text else { return }
         guard let groupPasscode = textfieldGroupPasscode.text else { return }
         
@@ -56,10 +61,12 @@ class JoinGroupViewController: UIViewController {
             return
         }
         
+        self.showSpinner(onView: self.view)
+        
         GroupDatabaseService.joinGroup(
             groupName: groupName,
             groupPasscode: groupPasscode
-        ){[weak self] error, errorMessage, hasSuccessfullyJoined in
+        ){ [weak self] error, errorMessage, hasSuccessfullyJoined in
             
             guard error == nil else {
                 self?.removeSpinner()
@@ -74,10 +81,22 @@ class JoinGroupViewController: UIViewController {
             }
             
             if hasSuccessfullyJoined {
-                
+                self?.removeSpinner()
+
                 UserDatabaseService.currentUserProfile?.homeGroup = groupName
-                self?.performSegue(withIdentifier: SegueType.toHome.rawValue, sender: self)
+                    
+                guard let showMainNavController = self?.shouldShowMainNavController else { return }
                 
+                if showMainNavController {
+                    NavigationService.showMainNavController()
+                } else {
+                    
+                    self?.dismiss(animated: true)
+                    SideMenuTableViewController.selectedRow = 0
+                    ActivityFeedViewController.eventUpdatesDelegate?.onEventUpdates()
+                    HomeViewController.groupUpdatesDelegate?.onGroupUpdates()
+                    NavigationService.mainNavController.popToRootViewController(animated: false)
+                }
             } else {
                 
                 self?.removeSpinner()

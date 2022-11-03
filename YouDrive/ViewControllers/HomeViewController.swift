@@ -6,13 +6,17 @@
 //
 
 import DropDown
+import SideMenu
 import UIKit
 
-class HomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, AddDriveDelegate {
+class HomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, AddDriveDelegate, GroupUpdatesDelegate {
     
     // Dropdown to select a group to show.
     private let groupsDropdown: DropDown = DropDown()
+    private var sideMenu: SideMenuNavigationController?
     
+    static var groupUpdatesDelegate: GroupUpdatesDelegate?
+
     var currentGroupShowing = ""
     var groupsForUser: [String]?
     var hasLoadedData = false
@@ -46,11 +50,12 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableviewShowingGroup.dataSource = self
-        tableviewShowingGroup.delegate = self
-        tableviewShowingGroup.backgroundColor = .white
-
+        
+        SideMenuTableViewController.selectedRow = 0
+        HomeViewController.groupUpdatesDelegate = self
         setupDropdown()
+        setupSideMenu()
+        setupTableView()
     }
     
     // Handles on-click for the change group button.
@@ -59,8 +64,12 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     // Handles on-click for the plus nav bar button.
-    @IBAction func handlePlusButton(_ sender: Any) {
+    @IBAction func handleGoToAddDriveButton(_ sender: Any) {
         self.performSegue(withIdentifier: SegueType.toAddDrive.rawValue, sender: self)
+    }
+    
+    @IBAction func handleSideMenuButton(_ sender: Any) {
+        present(sideMenu!, animated: true)
     }
     
     // Uses DatabaseService to get all users in a group.
@@ -74,9 +83,37 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
                 return
             }
             
+            UserDatabaseService.driversForHomeGroup = users
+            
             self?.labelShowingGroup.text = "Showing group: " + groupName
             self?.usersInGroup = users
             self?.tableviewShowingGroup.reloadData()
+            self?.removeSpinner()
+        }
+    }
+    
+    // Handles logic for dropdown selections.
+    func handleDropdownSelection(index: Int, title: String) {
+        guard let groups = self.groupsForUser else { return }
+
+        let groupName = groups[index]
+        guard groupName != self.currentGroupShowing else {
+            return
+        }
+        
+        guard let currentUser = UserDatabaseService.currentUserProfile else { return }
+        currentUser.homeGroup = groupName
+        
+        self.showSpinner(onView: self.view)
+        
+        UserDatabaseService.updateUserDocument(accountToUpdate: currentUser) { [weak self] error in
+            
+            guard error == nil else {
+                self?.removeSpinner()
+                return
+            }
+            
+            self?.getUsersInGroup(groupName: groupName)
             self?.removeSpinner()
         }
     }
@@ -85,58 +122,54 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     func loadDropdownAndTableviewData() {
         guard let currentUser = UserDatabaseService.currentUserProfile else { return }
 
-        self.showSpinner(onView: self.view)
-
-        GroupDatabaseService.getAllGroupsForUser(userId: currentUser.userId) {[weak self] error, names in
+        GroupDatabaseService.getAllGroupsForUser(userId: currentUser.userId) {[weak self] error, groupNames in
             
-            guard error == nil && names != [] else {
+            guard error == nil && groupNames != [] else {
                 self?.removeSpinner()
                 return
             }
             
-            self?.groupsForUser = names
-            self?.groupsDropdown.dataSource = names
+            UserDatabaseService.groupsForCurrentUser = groupNames
+
+            self?.groupsForUser = groupNames
+            self?.groupsDropdown.dataSource = groupNames
             self?.getUsersInGroup(groupName: currentUser.homeGroup)
             self?.hasLoadedData = true
         }
     }
     
+    // Reload data when a new drive is added.
+    func onDriveAdded(groupName: String) {
+        groupsDropdown.clearSelection()
+        getUsersInGroup(groupName: groupName)
+    }
+    
+    // Reload data when a user's groups are updated.
+    func onGroupUpdates() {
+        hasLoadedData = false
+    }
+    
     // Sets up dropdown which displays all the groups that the current user is in.
     func setupDropdown() {
-        
         groupsDropdown.anchorView = tableviewShowingGroup
-        
-        groupsDropdown.selectionAction = {[weak self] index, title in
-            
-            guard let self = self else { return }
-            guard let groups = self.groupsForUser else { return }
-
-            let groupName = groups[index]
-
-            guard groupName != self.currentGroupShowing else {
-                return
-            }
-            
-            guard let currentUser = UserDatabaseService.currentUserProfile else { return }
-            currentUser.homeGroup = groupName
-            
-            self.showSpinner(onView: self.view)
-            
-            UserDatabaseService.updateUserDocument(accountToUpdate: currentUser) { error in
-                
-                guard error == nil else {
-                    return
-                }
-                
-                self.getUsersInGroup(groupName: groupName)
-            }
+        groupsDropdown.selectionAction = { [weak self] index, title in
+            self?.handleDropdownSelection(index: index, title: title)
         }
     }
     
-    //
-    func onDriveAdded() {
-        print("laoded")
-       loadDropdownAndTableviewData()
+    // Sets up navigation side menu.
+    func setupSideMenu() {
+        sideMenu = SideMenuNavigationController(rootViewController: SideMenuTableViewController())
+        sideMenu?.leftSide = true
+        sideMenu?.setNavigationBarHidden(true, animated: true)
+        SideMenuManager.default.leftMenuNavigationController = sideMenu
+        SideMenuManager.default.addPanGestureToPresent(toView: self.view)
+    }
+    
+    func setupTableView() {
+        tableviewShowingGroup.dataSource = self
+        tableviewShowingGroup.delegate = self
+        tableviewShowingGroup.backgroundColor = .white
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -158,7 +191,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         return resultsCell
     }
     
-    //
+    // Sets up AddDriveDelegate on segue.
     override func prepare(for segue: UIStoryboardSegue, sender: Any?){
         if segue.identifier == SegueType.toAddDrive.rawValue {
             let addDriveViewController = segue.destination as! AddDriveViewController

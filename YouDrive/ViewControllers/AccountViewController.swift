@@ -18,7 +18,7 @@ class AccountViewController: UIViewController {
         item.appearance.actionButtonColor = .systemRed
         item.actionHandler = { [weak self] _ in
             guard let self = self else { return }
-            self.signOutUser()
+
         }
         return BLTNItemManager(rootItem: item)
     }()
@@ -33,9 +33,4 @@ class AccountViewController: UIViewController {
         accountDialog.showBulletin(above: self)
     }
     
-    // Signs out user and segue to entry view controller.
-    func signOutUser() {
-        UserDatabaseService.handleSignOut()
-        self.performSegue(withIdentifier: SegueType.toEntry.rawValue, sender: self)
-    }
 }

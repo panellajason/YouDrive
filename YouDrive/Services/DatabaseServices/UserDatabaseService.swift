@@ -14,8 +14,9 @@ class UserDatabaseService {
     static var databaseInstance = Firestore.firestore()
     
     static var currentUserProfile:User?
+    static var driversForHomeGroup: [UserGroup] = []
     static var groupsForCurrentUser: [String] = []
-    
+
     // Creates user account with Firebase.
     static func createUserAccount(accountToCreate: User, password: String, completion: @escaping(Error?) ->()) {
         
@@ -33,11 +34,9 @@ class UserDatabaseService {
             accountToCreate.userId = userId
             currentUserProfile = accountToCreate
             
-            createUserDoucment(
-                email: accountToCreate.email,
-                homeGroup: accountToCreate.homeGroup,
-                username: accountToCreate.username
-            ){ error in
+            guard let currentUser = currentUserProfile else { return }
+            
+            createUserDoucment(user: currentUser){ error in
                 
                 guard error == nil else {
                     return
@@ -49,13 +48,14 @@ class UserDatabaseService {
     }
     
     // Adds a document to "users" table.
-    static func createUserDoucment(email: String, homeGroup: String, username: String, completion: @escaping(Error?) ->()) {
-     
+    static func createUserDoucment(user: User, completion: @escaping(Error?) ->()) {
+             
         databaseInstance.collection(DatabaseCollection.users.rawValue).addDocument(data: [
-            DatabaseField.email.rawValue: email,
-            DatabaseField.home_group.rawValue: homeGroup,
-            DatabaseField.user_id.rawValue: (currentUserProfile?.userId ?? "") as String,
-            DatabaseField.username.rawValue: username,
+            DatabaseField.email.rawValue: user.email,
+            DatabaseField.home_group.rawValue: user.homeGroup,
+            DatabaseField.icon_id.rawValue: user.iconId,
+            DatabaseField.user_id.rawValue: user.userId,
+            DatabaseField.username.rawValue: user.username,
         ]) { error in
             
             guard error == nil else {
@@ -78,7 +78,7 @@ class UserDatabaseService {
     // Signs in user with Firebase.
     static func handleSignIn(email: String, password: String, completion: @escaping(Error?, User) ->()) {
         
-        let defaultUserObject = User(email: "", homeGroup: "", userId: "", username: "")
+        let defaultUserObject = User(email: "", homeGroup: "", iconId: "", userId: "", username: "")
 
         Auth.auth().signIn(withEmail: email, password: password) { user, error in
             
@@ -113,14 +113,23 @@ class UserDatabaseService {
         }
         
         try! Auth.auth().signOut()
+        
         currentUserProfile = nil
+        driversForHomeGroup = []
+        groupsForCurrentUser = []
+        SideMenuTableViewController.selectedRow = 0
+        
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let viewController = storyboard.instantiateViewController(withIdentifier: "SignInViewController") as? SignInViewController
+        UIApplication.shared.windows.first?.rootViewController = viewController
+        UIApplication.shared.windows.first?.makeKeyAndVisible()
     }
     
     
     // Gets a user document.
     static func getUserDocument(userId: String, completion: @escaping(Error?, User) ->()) {
         
-        let defaultUserObject = User(email: "", homeGroup: "", userId: "", username: "")
+        let defaultUserObject = User(email: "", homeGroup: "", iconId: "",  userId: "", username: "")
         
         databaseInstance.collection(DatabaseCollection.users.rawValue)
             .whereField(DatabaseField.user_id.rawValue, isEqualTo: userId)
@@ -142,17 +151,22 @@ class UserDatabaseService {
             if !results.documents.isEmpty {
                 
                 for document in results.documents {
+                    
                     let data = document.data()
-                    let email = data[DatabaseField.email.rawValue] as? String ?? ""
-                    let hostGroup = data[DatabaseField.home_group.rawValue] as? String ?? ""
-                    let userId = data[DatabaseField.user_id.rawValue] as? String ?? ""
-                    let username = data[DatabaseField.username.rawValue] as? String ?? ""
-                    user = User(email: email, homeGroup: hostGroup, userId: userId, username: username)
+
+                    guard let email = data[DatabaseField.email.rawValue] as? String else { return }
+                    guard let homeGroup = data[DatabaseField.home_group.rawValue] as? String else { return }
+                    guard let iconId = data[DatabaseField.icon_id.rawValue] as? String else { return }
+                    guard let userId = data[DatabaseField.user_id.rawValue] as? String else { return }
+                    guard let username = data[DatabaseField.username.rawValue] as? String else { return }
+                    
+                    user = User(email: email, homeGroup: homeGroup, iconId: iconId, userId: userId, username: username)
                 }
                 
                 return completion(error, user)
             }
             
+            // No document found
             completion(error, defaultUserObject)
         }
     }
@@ -185,6 +199,7 @@ class UserDatabaseService {
                     docRef.updateData([
                         DatabaseField.email.rawValue: accountToUpdate.email,
                         DatabaseField.home_group.rawValue: accountToUpdate.homeGroup,
+                        DatabaseField.icon_id.rawValue: accountToUpdate.iconId,
                         DatabaseField.user_id.rawValue: accountToUpdate.userId,
                         DatabaseField.username.rawValue: accountToUpdate.username,
                     ]) { error in
@@ -194,12 +209,16 @@ class UserDatabaseService {
                             return
                         }
                         
+                        if accountToUpdate.userId == currentUserProfile?.userId {
+                            currentUserProfile = accountToUpdate
+                        }
+                        
                         // Document updated
-                        currentUserProfile = accountToUpdate
                         completion(error)
                     }
                 }
             }
+            // No document found to update
             completion(error)
         }
     }

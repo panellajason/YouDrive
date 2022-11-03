@@ -12,6 +12,7 @@ class HomeGroupTableViewCell: UITableViewCell {
 
     static let identifier = "HomeGroupTableViewCell"
     
+    @IBOutlet weak var imageviewAvatar: UIImageView!
     @IBOutlet weak var labelPointsInGroup: UILabel!
     @IBOutlet weak var labelUserName: UILabel!
     
@@ -24,6 +25,9 @@ class HomeGroupTableViewCell: UITableViewCell {
     }
     
     func configure(with userGroup: UserGroup) {
+        let imageName = "icon_" + userGroup.iconId
+
+        imageviewAvatar.image =  UIImage(named: imageName)
         labelPointsInGroup.text = userGroup.pointsInGroup + " points"
         labelUserName.text = userGroup.username
     }

@@ -10,12 +10,9 @@ import Foundation
 // Segue names.
 enum SegueType: String {
     case toAddDrive
-    case toCreateAccount
     case toCreateGroup
-    case toEntry
+    case toGroupDetail
     case toJoinGroup
-    case toHome
     case toNoGroups
     case toSearchResults
-    case toSignIn
 }
