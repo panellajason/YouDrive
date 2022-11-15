@@ -13,7 +13,7 @@ class NavigationService {
     static var mainNavController = UINavigationController()
 
     
-    static func showMainNavController () {
+    static func showMainNavController(shouldPassGroups: Bool) {
         // Nav controller
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let navController = storyboard.instantiateViewController(withIdentifier: "MainNavigationController") as? UINavigationController
@@ -25,7 +25,10 @@ class NavigationService {
         
         // Home view controller
         let viewController = storyboard.instantiateViewController(withIdentifier: "HomeViewController") as! HomeViewController
-        viewController.passedGroupsForUser = UserDatabaseService.groupsForCurrentUser
-        navController?.pushViewController(viewController, animated: true)   
+        
+        if shouldPassGroups {
+            viewController.passedGroupsForUser = UserDatabaseService.groupsForCurrentUser
+        }
+        navController?.pushViewController(viewController, animated: true)
     }
 }

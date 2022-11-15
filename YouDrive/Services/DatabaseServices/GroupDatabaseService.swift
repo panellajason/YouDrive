@@ -229,8 +229,10 @@ class GroupDatabaseService {
                         return
                     }
                                         
+                    ActivityFeedViewController.groupUpdatesDelegate?.onGroupUpdates()
                     ActivityFeedViewController.eventUpdatesDelegate?.onEventUpdates()
                     HomeViewController.groupUpdatesDelegate?.onGroupUpdates()
+                    ManageGroupsViewController.groupUpdatesDelegate?.onGroupUpdates()
                     
                     guard let currentUser = UserDatabaseService.currentUserProfile else { return }
                     

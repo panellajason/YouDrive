@@ -191,31 +191,29 @@ class UserDatabaseService {
                         
             if !results.documents.isEmpty {
                 
-                for document in results.documents {
+                guard let document = results.documents.first else { return }
+                let docId = document.documentID
+                let docRef =  databaseInstance.collection(DatabaseCollection.users.rawValue).document(docId)
+               
+                docRef.updateData([
+                    DatabaseField.email.rawValue: accountToUpdate.email,
+                    DatabaseField.home_group.rawValue: accountToUpdate.homeGroup,
+                    DatabaseField.icon_id.rawValue: accountToUpdate.iconId,
+                    DatabaseField.user_id.rawValue: accountToUpdate.userId,
+                    DatabaseField.username.rawValue: accountToUpdate.username,
+                ]) { error in
                     
-                    let docId = document.documentID
-                    let docRef =  databaseInstance.collection(DatabaseCollection.users.rawValue).document(docId)
-                   
-                    docRef.updateData([
-                        DatabaseField.email.rawValue: accountToUpdate.email,
-                        DatabaseField.home_group.rawValue: accountToUpdate.homeGroup,
-                        DatabaseField.icon_id.rawValue: accountToUpdate.iconId,
-                        DatabaseField.user_id.rawValue: accountToUpdate.userId,
-                        DatabaseField.username.rawValue: accountToUpdate.username,
-                    ]) { error in
-                        
-                        guard error == nil else {
-                            completion(error)
-                            return
-                        }
-                        
-                        if accountToUpdate.userId == currentUserProfile?.userId {
-                            currentUserProfile = accountToUpdate
-                        }
-                        
-                        // Document updated
+                    guard error == nil else {
                         completion(error)
+                        return
                     }
+                    
+                    if accountToUpdate.userId == currentUserProfile?.userId {
+                        currentUserProfile = accountToUpdate
+                    }
+                    
+                    // Document updated
+                    completion(error)
                 }
             }
             // No document found to update

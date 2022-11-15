@@ -8,8 +8,9 @@
 import UIKit
 
 class SideMenuTableViewController: UITableViewController {
-    
-    var menuItems = ["Home", "Activity feed", "Manage groups", "View graphs", "Sign out"]
+
+    var menuItems: [String] = [SideBarNavItem.Home.rawValue, SideBarNavItem.ActivityFeed.rawValue, SideBarNavItem.ManageGroups.rawValue, SideBarNavItem.SignOut.rawValue]
+
     static var selectedRow = 0
     
     override func viewDidLoad() {
@@ -21,6 +22,7 @@ class SideMenuTableViewController: UITableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+
         let indexPath = IndexPath(row: SideMenuTableViewController.selectedRow, section: 0)
         tableView.selectRow(at: indexPath, animated: false, scrollPosition: .bottom)
     }
@@ -33,25 +35,25 @@ class SideMenuTableViewController: UITableViewController {
 
         switch selectedIndex {
             
-        case menuItems.firstIndex(of: "Home"):
+        case menuItems.firstIndex(of: SideBarNavItem.Home.rawValue):
             let homeVc = storyboard.instantiateViewController(withIdentifier: "HomeViewController") as! HomeViewController
             homeVc.passedGroupsForUser = UserDatabaseService.groupsForCurrentUser
             NavigationService.mainNavController.popViewController(animated: false)
             break
         
-        case menuItems.firstIndex(of: "Activity feed"):
+        case menuItems.firstIndex(of: SideBarNavItem.ActivityFeed.rawValue):
             NavigationService.mainNavController.popViewController(animated: false)
             let viewController = storyboard.instantiateViewController(withIdentifier: "ActivityFeedViewController") as! ActivityFeedViewController
             NavigationService.mainNavController.pushViewController(viewController, animated: false)
             break
             
-        case menuItems.firstIndex(of: "Manage groups"):
+        case menuItems.firstIndex(of: SideBarNavItem.ManageGroups.rawValue):
             NavigationService.mainNavController.popViewController(animated: false)
             let viewController = storyboard.instantiateViewController(withIdentifier: "ManageGroupsViewController") as! ManageGroupsViewController
             NavigationService.mainNavController.pushViewController(viewController, animated: false)
             break
         
-        case menuItems.firstIndex(of: "Sign out"):
+        case menuItems.firstIndex(of: SideBarNavItem.SignOut.rawValue):
             UserDatabaseService.handleSignOut()
             break
         default:
@@ -78,8 +80,13 @@ class SideMenuTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         cell.textLabel?.text = menuItems[indexPath.row]
-        cell.textLabel?.textColor = .black
         cell.backgroundColor = .white
+        
+        if indexPath.row == SideMenuTableViewController.selectedRow {
+            cell.textLabel?.textColor = .white
+        } else {
+            cell.textLabel?.textColor = .black
+        }
         
         let selectedColor = UIView()
         selectedColor.backgroundColor = UIColor.systemBlue

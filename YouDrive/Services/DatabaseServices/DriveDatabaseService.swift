@@ -90,15 +90,15 @@ class DriveDatabaseService {
                     guard let iconId = data[DatabaseField.icon_id.rawValue] as? String else { return }
                     guard let location = data[DatabaseField.location.rawValue] as? String else { return }
                     guard let numberOfPassengers = data[DatabaseField.number_of_passengers.rawValue] as? String else { return }
-                    guard let points = data[DatabaseField.username.rawValue] as? String else { return }
+                    guard let points = data[DatabaseField.points.rawValue] as? Double else { return }
                     guard let timestamp = data[DatabaseField.timestamp.rawValue] as? String else { return }
-                    guard let user_id = data[DatabaseField.points.rawValue] as? String else { return }
+                    guard let user_id = data[DatabaseField.user_id.rawValue] as? String else { return }
                     guard let username = data[DatabaseField.username.rawValue] as? String else { return }
 
-                    let user = UserGroup(groupName: groupName, iconId: iconId, pointsInGroup: points, userId: user_id, username: username)
-                    guard let pointsDouble = Double(points) else { return }
+                    let user = UserGroup(groupName: groupName, iconId: iconId, pointsInGroup: points.description, userId: user_id, username: username)
+                    //guard let pointsDouble = Double(points) else { return }
 
-                    drivesInGroup.append(Drive(distance: distance, groupName: groupName, location: location, numberOfPassengers: numberOfPassengers, pointsEarned: pointsDouble, timestamp: timestamp, user: user))
+                    drivesInGroup.append(Drive(distance: distance, groupName: groupName, location: location, numberOfPassengers: numberOfPassengers, pointsEarned: points, timestamp: timestamp, user: user))
                 }
                 
                 let sortedDrives = drivesInGroup.sorted(by: { $0.timestamp > $1.timestamp })

@@ -12,24 +12,35 @@ class ActivityFeedViewController: UIViewController, UITableViewDelegate, UITable
 
     private static var eventList: [Event] = []
     private static var hasLoadedData = false
+    private static var shouldGetFreshGroups = false
     private var sideMenu: SideMenuNavigationController?
 
     static var eventUpdatesDelegate: EventUpdatesDelegate?
+    static var groupUpdatesDelegate: GroupUpdatesDelegate?
 
     @IBOutlet weak var tableViewActivityFeed: UITableView!
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        if ActivityFeedViewController.shouldGetFreshGroups {
+            getFreshGroupsForUser()
+            ActivityFeedViewController.shouldGetFreshGroups = false
+            return
+        }
+        
         if !ActivityFeedViewController.hasLoadedData {
             loadTableviewData()
+            return
         }
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         ActivityFeedViewController.eventUpdatesDelegate = self
-
+        ActivityFeedViewController.groupUpdatesDelegate = self
+        
         setupSideMenu()
         setupTableView()
     }
@@ -39,12 +50,10 @@ class ActivityFeedViewController: UIViewController, UITableViewDelegate, UITable
     }
     
     // Uses DatabaseService to getAllGroupsForUser.
-    func getFreshGroupsForUser() {
-        self.showSpinner(onView: self.view)
+    private func getFreshGroupsForUser() {
         guard let currentUser = UserDatabaseService.currentUserProfile else { return }
 
-        GroupDatabaseService.getAllGroupsForUser(userId: currentUser.userId) {[weak self] error, groupNames in
-            
+        GroupDatabaseService.getAllGroupsForUser(userId: currentUser.userId) { [weak self] error, groupNames in
             guard error == nil && groupNames != [] else {
                 self?.removeSpinner()
                 return
@@ -52,20 +61,17 @@ class ActivityFeedViewController: UIViewController, UITableViewDelegate, UITable
             
             UserDatabaseService.groupsForCurrentUser = groupNames
 
-            ActivityFeedViewController.hasLoadedData = true
-            self?.tableViewActivityFeed.reloadData()
-            self?.removeSpinner()
+            self?.loadTableviewData()
         }
     }
     
     // Gets all events for current user.
-    func loadTableviewData() {
+    private func loadTableviewData() {
         self.showSpinner(onView: self.view)
                 
         for groupName in UserDatabaseService.groupsForCurrentUser {
 
             EventDatabaseService.getEventsForGroup(groupName: groupName) { [weak self] error, events in
-
                 guard error == nil && events.count != 0 else {
                     self?.removeSpinner()
                     return
@@ -84,13 +90,13 @@ class ActivityFeedViewController: UIViewController, UITableViewDelegate, UITable
         }
     }
     
-    func onGroupUpdates() {
+    func onEventUpdates() {
         ActivityFeedViewController.hasLoadedData = false
         ActivityFeedViewController.eventList = []
     }
     
-    func onEventUpdates() {
-        ActivityFeedViewController.hasLoadedData = false
+    func onGroupUpdates() {
+        ActivityFeedViewController.shouldGetFreshGroups = true
         ActivityFeedViewController.eventList = []
     }
     
@@ -103,14 +109,14 @@ class ActivityFeedViewController: UIViewController, UITableViewDelegate, UITable
         SideMenuManager.default.addPanGestureToPresent(toView: self.view)
     }
     
-    func setupTableView() {
+    private func setupTableView() {
         tableViewActivityFeed.dataSource = self
         tableViewActivityFeed.delegate = self
         tableViewActivityFeed.backgroundColor = .white
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        // segue to player screen??
+       
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

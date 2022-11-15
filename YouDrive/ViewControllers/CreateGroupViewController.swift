@@ -82,26 +82,23 @@ class CreateGroupViewController: UIViewController {
             groupPasscode: groupPasscode
         ){ [weak self] error, errorString in
             
+            self?.removeSpinner()
+
             guard error == nil else {
-                self?.removeSpinner()
-                self?.labelError.text = "Unable to create group, try again."
+                self?.labelError.text = "Unable to create group, please try again."
                 return
             }
             
             guard errorString == nil else {
-                self?.removeSpinner()
                 self?.labelError.text = errorString
                 return
             }
             
-            self?.removeSpinner()
             
             guard let showMainNavController = self?.shouldShowMainNavController else { return }
-            
             if showMainNavController {
-                NavigationService.showMainNavController()
+                NavigationService.showMainNavController(shouldPassGroups: false)
             } else {
-                
                 self?.dismiss(animated: true)
                 SideMenuTableViewController.selectedRow = 0
                 ActivityFeedViewController.eventUpdatesDelegate?.onEventUpdates()

@@ -24,11 +24,13 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     var usersInGroup: [UserGroup] = []
         
     @IBOutlet weak var buttonChangeShowingGroup: UIButton!
+    @IBOutlet weak var labelDropdownAnchor: UILabel!
     @IBOutlet weak var labelShowingGroup: UILabel!
     @IBOutlet weak var tableviewShowingGroup: UITableView!
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
         guard let currentUser = UserDatabaseService.currentUserProfile else { return }
 
         // Check if groups for current user have already been populated
@@ -151,7 +153,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     // Sets up dropdown which displays all the groups that the current user is in.
     func setupDropdown() {
-        groupsDropdown.anchorView = tableviewShowingGroup
+        groupsDropdown.anchorView = labelDropdownAnchor
         groupsDropdown.selectionAction = { [weak self] index, title in
             self?.handleDropdownSelection(index: index, title: title)
         }

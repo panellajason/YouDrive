@@ -68,29 +68,25 @@ class JoinGroupViewController: UIViewController {
             groupPasscode: groupPasscode
         ){ [weak self] error, errorMessage, hasSuccessfullyJoined in
             
+            self?.removeSpinner()
+
             guard error == nil else {
-                self?.removeSpinner()
-                self?.labelError.text = "Unable to join group: Server error."
+                self?.labelError.text = "Unable to join group, please try again."
                 return
             }
             
             guard errorMessage == nil else {
-                self?.removeSpinner()
                 self?.labelError.text = errorMessage
                 return
             }
-            
+                        
             if hasSuccessfullyJoined {
-                self?.removeSpinner()
-
                 UserDatabaseService.currentUserProfile?.homeGroup = groupName
                     
                 guard let showMainNavController = self?.shouldShowMainNavController else { return }
-                
                 if showMainNavController {
-                    NavigationService.showMainNavController()
+                    NavigationService.showMainNavController(shouldPassGroups: false)
                 } else {
-                    
                     self?.dismiss(animated: true)
                     SideMenuTableViewController.selectedRow = 0
                     ActivityFeedViewController.eventUpdatesDelegate?.onEventUpdates()
@@ -98,8 +94,6 @@ class JoinGroupViewController: UIViewController {
                     NavigationService.mainNavController.popToRootViewController(animated: false)
                 }
             } else {
-                
-                self?.removeSpinner()
                 self?.labelError.text = "Group name and/or passcode incorrect."
             }
         }

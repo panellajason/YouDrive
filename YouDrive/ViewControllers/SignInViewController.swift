@@ -80,7 +80,7 @@ class SignInViewController: UIViewController {
             
             self?.removeSpinner()
 
-            NavigationService.showMainNavController()
+            NavigationService.showMainNavController(shouldPassGroups: true)
         }
     }
     
@@ -110,7 +110,7 @@ class SignInViewController: UIViewController {
             
             self?.removeSpinner()
 
-            NavigationService.showMainNavController()
+            NavigationService.showMainNavController(shouldPassGroups: true)
         }
     }
     

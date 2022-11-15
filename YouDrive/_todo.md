@@ -1,5 +1,5 @@
 - icons to side menu
-- Delete drives
+- Delete drives (update user groups)
 - Edit user
 
 

@@ -5,49 +5,71 @@
 //  Created by Panella, Jason on 11/2/22.
 //
 
+import DropDown
 import SideMenu
 import UIKit
 
 class ManageGroupsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, GroupUpdatesDelegate {
 
+    private let moreOptionsDropdown: DropDown = DropDown()
+    
     private var groupsList: [String] = []
+    private var selectedGroupName: String?
     private var sideMenu: SideMenuNavigationController?
 
-    @IBOutlet weak var tableViewManageGroups: UITableView!
+    static var groupUpdatesDelegate: GroupUpdatesDelegate?
 
+    @IBOutlet weak var moreButton: UIBarButtonItem!
+    @IBOutlet weak var tableViewManageGroups: UITableView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        ManageGroupsViewController.groupUpdatesDelegate = self
         
         groupsList = UserDatabaseService.groupsForCurrentUser
+        setupDropdown()
         setupTableView()
         setupSideMenu()
+    }
+    
+    // Handles on-click for the change moere button.
+    @IBAction func handleMoreButton(_ sender: Any) {
+        moreOptionsDropdown.show()
     }
     
     @IBAction func handleSideMenuButton(_ sender: Any) {
         present(sideMenu!, animated: true)
     }
     
-    private func leaveGroup(indexToDelete: Int) {
+    // Uses DatabaseService to getAllGroupsForUser.
+    func getFreshGroupsForUser() {
         guard let currentUser = UserDatabaseService.currentUserProfile else { return }
-        self.showSpinner(onView: self.view)
-                    
-        GroupDatabaseService.deleteUserGroupsDocument(groupName: groupsList[indexToDelete], userId: currentUser.userId) { [weak self] error in
-            
-            guard error == nil else {
+
+        GroupDatabaseService.getAllGroupsForUser(userId: currentUser.userId) { [weak self] error, groupNames in
+            guard error == nil && groupNames != [] else {
                 return
             }
             
-            print("h")
+            self?.groupsList = groupNames
             self?.tableViewManageGroups.reloadData()
-            self?.removeSpinner()
+        }
+    }
+    
+    private func handleDropdownSelection(title: String) {
+        var viewController: UIViewController
+        if title == ManageGroupOptions.CreateGroup.rawValue {
+            viewController = storyboard?.instantiateViewController(withIdentifier: "CreateGroupViewController") as! CreateGroupViewController
+        } else {
+            viewController = storyboard?.instantiateViewController(withIdentifier: "JoinGroupViewController") as! JoinGroupViewController
         }
         
-        groupsList.remove(at: indexToDelete)
+        present(viewController, animated: true)
+        moreOptionsDropdown.clearSelection()
     }
     
     // Reload data when a user's groups are updated.
     func onGroupUpdates() {
-        groupsList = UserDatabaseService.groupsForCurrentUser
+        getFreshGroupsForUser()
     }
     
     // Sets up navigation side menu.
@@ -56,7 +78,17 @@ class ManageGroupsViewController: UIViewController, UITableViewDelegate, UITable
         sideMenu?.leftSide = true
         sideMenu?.setNavigationBarHidden(true, animated: true)
         SideMenuManager.default.leftMenuNavigationController = sideMenu
-        //SideMenuManager.default.addPanGestureToPresent(toView: self.view)
+        SideMenuManager.default.addPanGestureToPresent(toView: self.view)
+    }
+    
+    // Sets up dropdown which displays create and join group buttons.
+    private func setupDropdown() {
+        moreOptionsDropdown.anchorView = moreButton
+        moreOptionsDropdown.bottomOffset = CGPoint(x: CGFloat(0), y: CGFloat(35))
+        moreOptionsDropdown.dataSource = [ManageGroupOptions.CreateGroup.rawValue, ManageGroupOptions.JoinGroup.rawValue]
+        moreOptionsDropdown.selectionAction = { [weak self] index, title in
+            self?.handleDropdownSelection(title: title)
+        }
     }
     
     private func setupTableView() {
@@ -64,25 +96,9 @@ class ManageGroupsViewController: UIViewController, UITableViewDelegate, UITable
         tableViewManageGroups.delegate = self
         tableViewManageGroups.backgroundColor = .white
     }
-    
-    private func showLeaveGroupConfirmation(indexToDelete: Int) {
-        let alertController = UIAlertController(title: "Are you sure you want to leave this group?", message: "", preferredStyle: .alert)
-        
-        let okAction = UIAlertAction(title: "Leave", style: UIAlertAction.Style.default) { [weak self] UIAlertAction in
-            self?.leaveGroup(indexToDelete: indexToDelete)
-        }
-        
-        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel) { UIAlertAction in
-            print("Cancel Pressed")
-        }
-        
-        alertController.addAction(okAction)
-        alertController.addAction(cancelAction)
-
-        self.present(alertController, animated: true, completion: nil)
-    }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        selectedGroupName = groupsList[indexPath.row]
         self.performSegue(withIdentifier: SegueType.toGroupDetail.rawValue, sender: self)
     }
     
@@ -101,17 +117,10 @@ class ManageGroupsViewController: UIViewController, UITableViewDelegate, UITable
         return resultsCell
     }
     
-    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return true
-    }
-    
-    func tableView(_: UITableView, titleForDeleteConfirmationButtonForRowAt indexPath: IndexPath) -> String? {
-        return "Leave group"
-    }
-
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if (editingStyle == .delete) {
-            showLeaveGroupConfirmation(indexToDelete: indexPath.row)
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?){
+        if segue.identifier == SegueType.toGroupDetail.rawValue {
+            let GroupDetailViewController = segue.destination as! GroupDetailViewController
+            GroupDetailViewController.passedGroupName = selectedGroupName
         }
     }
 }
