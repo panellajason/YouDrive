@@ -18,10 +18,12 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
 
     let locationManager = CLLocationManager()
     
+    private var shouldSearch = false
+    
     var addDriveDelegate: AddDriveDelegate?
     var searchResults: [MKMapItem]!
     var selectedLocation: String?
-    var selectedLocationDistance: String?
+    var selectedLocationDistance: Double?
     var userObjectsInGroup: [UserGroup] = []
     var usersInGroup: [String] = []
 
@@ -93,15 +95,14 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
     // Handles on-click for the search button.
     @IBAction func handleSearchButton(_ sender: Any) {
         self.view.endEditing(true)
-
         guard textfieldSearch.text != "" else {
             labelSearch.text = "Enter a location."
             return
         }
-        
         guard SearchService.currentLocation != nil else {
             labelSearch.text = "Cannot determine your location."
             locationManager.requestWhenInUseAuthorization()
+            shouldSearch = true
             return
         }
         
@@ -111,13 +112,11 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
     // Handles on-click for the submit button.
     @IBAction func handleSubmitButton(_ sender: Any) {
         self.view.endEditing(true)
-
         guard selectedLocation != nil else {
             labelError.textColor = .red
             labelError.text = "No location selected."
             return
         }
-        
         guard textfieldPassengers.text != "" else {
             labelError.textColor = .red
             labelError.text = "Enter number of passengers."
@@ -128,53 +127,41 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
     }
     
     // Shows drivers dropdown.
-    @objc func editDriver() {
+    @objc private func editDriver() {
         self.view.endEditing(true)
-
         driversDropdown.show()
     }
     
     // Shows groups dropdown.
-    @objc func editGroup() {
+    @objc private func editGroup() {
         self.view.endEditing(true)
-
         groupsDropdown.show()
     }
     
     // Listens for textfieldPassengers updates to calculate points.
-    @objc final private func updatePointsLabel(textField: UITextField) {
-        
-        guard selectedLocation != nil else {
-            return
-        }
-        
+    @objc private func updatePointsLabel(textField: UITextField) {
+        guard selectedLocation != nil else { return }
         guard textField.text?.count != 0 else {
             labelError.text = ""
             return
         }
-                
+        
         calculatePoints()
     }
     
     // Uses DriveDatabaseService to add a new drive.
-    func addDrive() {
-        
+    private func addDrive() {
         guard let user = userObjectsInGroup.first(where: {$0.username == labelDriver.text}) else { return }
-
-        guard let distance = selectedLocationDistance?.description else { return }
+        guard let distance = selectedLocationDistance else { return }
         guard let groupName = labelGroup.text else { return }
         guard let location = selectedLocation else { return }
         guard let numOfPassengers = textfieldPassengers.text else { return }
-                
-        guard let distanceDouble = Double(distance) else { return }
         guard let passengersDouble = Double(numOfPassengers) else { return }
+        guard let peopleInCar = Int(numOfPassengers) else { return }
+        let pointsEarned = (distance * passengersDouble) * 2.0
         
-        let pointsEarned = (distanceDouble * passengersDouble) * 2
-        
-        let driveToAdd = Drive(distance: distance, groupName: groupName, location: location, numberOfPassengers: numOfPassengers, pointsEarned: pointsEarned.rounded(toPlaces: 1), timestamp: Date().timeIntervalSince1970.description, user: user)
-        
+        let driveToAdd = Drive(distance: distance, groupName: groupName, location: location, peopleInCar: peopleInCar, pointsEarned: pointsEarned.rounded(toPlaces: 1), timestamp: Date().timeIntervalSince1970.description, user: user)
         DriveDatabaseService.addDriveToGroup(driveToAdd: driveToAdd){ [weak self] error in
-            
             guard error == nil else {
                 self?.removeSpinner()
                 self?.labelError.textColor = .red
@@ -183,60 +170,54 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
             }
             
             ActivityFeedViewController.eventUpdatesDelegate?.onEventUpdates()
-
             self?.addDriveDelegate?.onDriveAdded(groupName: groupName)
             self?.dismiss(animated: true, completion: nil)
         }
     }
     
     // Calculates number of points from drive.
-    func calculatePoints() {
-        
+    private func calculatePoints() {
         guard let distance = selectedLocationDistance else { return }
         guard let passengers = textfieldPassengers.text else { return }
-        
-        guard let distanceDouble = Double(distance) else { return }
         guard let passengersDouble = Double(passengers) else { return }
-        
-        let points = (distanceDouble * passengersDouble) * 2
+        let points = (distance * passengersDouble) * 2.0
         
         labelError.textColor = .black
         labelError.text = "Points earned: " + points.rounded(toPlaces: 1).description
     }
     
     // Resets all labels and textviews.
-    func refresh() {
+    private func refresh() {
         self.view.endEditing(true)
-        
         labelError.textColor = .red
         labelError.text = ""
         labelSearch.text = ""
         textfieldPassengers.text = ""
         textfieldSearch.text = ""
         selectedLocation = nil
-        selectedLocationDistance = ""
+        selectedLocationDistance = 0.0
         
         guard let homeGroup = UserDatabaseService.currentUserProfile?.homeGroup else { return }
         labelGroup.text = homeGroup
         groupsDropdown.clearSelection()
         
-        labelDriver.text = UserDatabaseService.driversForHomeGroup[0].username
-        driversDropdown.clearSelection()
         var driversList: [String] = []
         for userGroup in UserDatabaseService.driversForHomeGroup {
             driversList.append(userGroup.username)
         }
         driversDropdown.dataSource = driversList
+        
+        guard let currentUser = UserDatabaseService.currentUserProfile else { return }
+        driversDropdown.selectRow(at: driversList.firstIndex(of: currentUser.username))
+        labelDriver.text = currentUser.username
     }
     
     // Uses SearchService to search for locations based on search query.
-    func search() {
+    private func search() {
         self.showSpinner(onView: self.view)
-        
         guard let searchQuery = textfieldSearch.text else { return }
 
         SearchService.searchForLocations(searchQuery: searchQuery) {[weak self] error, mapItems in
-            
             guard error == nil && !mapItems.isEmpty else {
                 self?.removeSpinner()
                 self?.labelError.textColor = .red
@@ -261,8 +242,7 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
     }
     
     // Sets up dropdown which displays all the drivers in selected group.
-    func setupDriverDropdown() {
-        
+    private func setupDriverDropdown() {
         driversDropdown.anchorView = dropdownAnchor2
         
         var driversList: [String] = []
@@ -273,30 +253,27 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
         usersInGroup = driversList
         userObjectsInGroup = UserDatabaseService.driversForHomeGroup
         
+        guard let currentUser = UserDatabaseService.currentUserProfile else { return }
+        driversDropdown.selectRow(at: driversList.firstIndex(of: currentUser.username))
+        labelDriver.text = currentUser.username
+        
         driversDropdown.selectionAction = { [weak self] index, title in
             self?.labelDriver.text = title
         }
     }
     
     // Sets up dropdown which displays all the groups that the current user is in.
-    func setupGroupDropdown() {
-        
+    private func setupGroupDropdown() {
         groupsDropdown.anchorView = dropdownAnchor
         groupsDropdown.dataSource = UserDatabaseService.groupsForCurrentUser
         
         groupsDropdown.selectionAction = { [weak self] index, title in
-            
-            guard self?.labelGroup.text != title else {
-                return
-            }
+            guard self?.labelGroup.text != title else { return }
             
             self?.labelGroup.text = title
             
             GroupDatabaseService.getAllUsersInGroup(groupName: title) {[weak self] error, users in
-                
-                guard error == nil && users.count != 0 else {
-                    return
-                }
+                guard error == nil && users.count != 0 else { return }
                 
                 var driversList: [String] = []
                 for userGroup in users {
@@ -310,20 +287,17 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
                 self?.usersInGroup = driversList
                 self?.userObjectsInGroup = users
             }
-            
         }
     }
     
     // Sets up location manager.
-    func setupLocationManager() {
+    private func setupLocationManager() {
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
-        
-        startUpdatingLocationIfAllowed(status: locationManager.authorizationStatus)
     }
     
     // Starts updating location if allowed from user.
-    func startUpdatingLocationIfAllowed(status: CLAuthorizationStatus) {
+    private func startUpdatingLocationIfAllowed(status: CLAuthorizationStatus) {
         switch status {
             case CLAuthorizationStatus.authorizedAlways:
                 self.locationManager.startUpdatingLocation()
@@ -346,10 +320,10 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
     func onLocationSelected(location: MKMapItem) {
         selectedLocation = location.name?.description
         textfieldSearch.text = selectedLocation
-        selectedLocationDistance = SearchService.caclulateDistance(destination: location.placemark.coordinate).description
+        selectedLocationDistance = SearchService.caclulateDistance(destination: location.placemark.coordinate)
         
         guard let distance = selectedLocationDistance else { return }
-        labelSearch.text = "Distance: " + distance + " miles"
+        labelSearch.text = "Distance: " + distance.description + " miles"
         
         guard let numOfPassengers = textfieldPassengers.text else { return }
         if numOfPassengers.count > 0 {
@@ -361,6 +335,12 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location: CLLocationCoordinate2D = manager.location?.coordinate else { return }
         SearchService.currentLocation = location
+        
+        if shouldSearch {
+            search()
+            labelSearch.text = ""
+            shouldSearch = false
+        }
     }
     
     // Checks if location tracking is allowed when authorization status changes.

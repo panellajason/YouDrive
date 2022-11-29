@@ -13,6 +13,8 @@ class ActivityFeedViewController: UIViewController, UITableViewDelegate, UITable
     private static var eventList: [Event] = []
     private static var hasLoadedData = false
     private static var shouldGetFreshGroups = false
+    
+    private var refreshControl: UIRefreshControl!
     private var sideMenu: SideMenuNavigationController?
 
     static var eventUpdatesDelegate: EventUpdatesDelegate?
@@ -22,7 +24,7 @@ class ActivityFeedViewController: UIViewController, UITableViewDelegate, UITable
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+                
         if ActivityFeedViewController.shouldGetFreshGroups {
             getFreshGroupsForUser()
             ActivityFeedViewController.shouldGetFreshGroups = false
@@ -49,31 +51,33 @@ class ActivityFeedViewController: UIViewController, UITableViewDelegate, UITable
         present(sideMenu!, animated: true)
     }
     
+    @objc func refreshTableview(_ sender: Any) {
+        getFreshGroupsForUser()
+        refreshControl.endRefreshing()
+    }
+    
     // Uses DatabaseService to getAllGroupsForUser.
     private func getFreshGroupsForUser() {
         guard let currentUser = UserDatabaseService.currentUserProfile else { return }
 
         GroupDatabaseService.getAllGroupsForUser(userId: currentUser.userId) { [weak self] error, groupNames in
             guard error == nil && groupNames != [] else {
-                self?.removeSpinner()
                 return
             }
             
             UserDatabaseService.groupsForCurrentUser = groupNames
-
             self?.loadTableviewData()
         }
     }
     
     // Gets all events for current user.
     private func loadTableviewData() {
-        self.showSpinner(onView: self.view)
-                
+        ActivityFeedViewController.eventList = []
+
         for groupName in UserDatabaseService.groupsForCurrentUser {
 
             EventDatabaseService.getEventsForGroup(groupName: groupName) { [weak self] error, events in
                 guard error == nil && events.count != 0 else {
-                    self?.removeSpinner()
                     return
                 }
 
@@ -85,7 +89,6 @@ class ActivityFeedViewController: UIViewController, UITableViewDelegate, UITable
                 
                 ActivityFeedViewController.hasLoadedData = true
                 self?.tableViewActivityFeed.reloadData()
-                self?.removeSpinner()
             }
         }
     }
@@ -113,6 +116,9 @@ class ActivityFeedViewController: UIViewController, UITableViewDelegate, UITable
         tableViewActivityFeed.dataSource = self
         tableViewActivityFeed.delegate = self
         tableViewActivityFeed.backgroundColor = .white
+        refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(refreshTableview), for: .valueChanged)
+        tableViewActivityFeed.addSubview(refreshControl)
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -130,7 +136,10 @@ class ActivityFeedViewController: UIViewController, UITableViewDelegate, UITable
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let resultsCell = tableView.dequeueReusableCell(withIdentifier: ActivityFeedTableViewCell.identifier,
                                                         for: indexPath) as! ActivityFeedTableViewCell
-        resultsCell.configure(with: ActivityFeedViewController.eventList[indexPath.row])
+        if ActivityFeedViewController.eventList.count != 0 {
+            resultsCell.configure(with: ActivityFeedViewController.eventList[indexPath.row])
+        }
+        
         return resultsCell
     }
 }

@@ -13,8 +13,8 @@ class IconCollectionViewCell: UICollectionViewCell {
 
     @IBOutlet weak var imageView: UIImageView!
     
-    func configure(iconId: String) {
-        let iconImageId = WidgetService.ICON_PREFIX + iconId
+    func configure(iconId: Int) {
+        let iconImageId = WidgetService.ICON_PREFIX + iconId.description
         imageView.image = UIImage(named: iconImageId)
     }
 }

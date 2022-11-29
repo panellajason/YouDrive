@@ -21,18 +21,19 @@ class SideMenuTableViewController: UITableViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
 
         let indexPath = IndexPath(row: SideMenuTableViewController.selectedRow, section: 0)
         tableView.selectRow(at: indexPath, animated: false, scrollPosition: .bottom)
     }
     
+    
+    
     private func handleNavItemClick(selectedIndex: Int) {
         self.dismiss(animated: true)
-
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
         SideMenuTableViewController.selectedRow = selectedIndex
-
+        
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        
         switch selectedIndex {
             
         case menuItems.firstIndex(of: SideBarNavItem.Home.rawValue):
@@ -62,10 +63,11 @@ class SideMenuTableViewController: UITableViewController {
     }
     
     private func setupTableView() {
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.register(UINib(nibName: "SideMenuTableViewCell", bundle: nil), forCellReuseIdentifier: "SideMenuTableViewCell")
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         tableView.separatorColor = .clear
         tableView.backgroundColor = .white
+        tableView.bounces = false
         tableView.allowsMultipleSelection = false
     }
     
@@ -78,21 +80,13 @@ class SideMenuTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.textLabel?.text = menuItems[indexPath.row]
-        cell.backgroundColor = .white
-        
-        if indexPath.row == SideMenuTableViewController.selectedRow {
-            cell.textLabel?.textColor = .white
-        } else {
-            cell.textLabel?.textColor = .black
-        }
-        
-        let selectedColor = UIView()
-        selectedColor.backgroundColor = UIColor.systemBlue
-        cell.selectedBackgroundView = selectedColor
-        
-        return cell
+        let resultsCell = tableView.dequeueReusableCell(withIdentifier: SideMenuTableViewCell.identifier,
+                                                    for: indexPath) as! SideMenuTableViewCell
+        resultsCell.configure(with: menuItems[indexPath.row])
+        let backgroundView = UIView()
+        backgroundView.backgroundColor = .lightGray
+        resultsCell.selectedBackgroundView = backgroundView
+        return resultsCell
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

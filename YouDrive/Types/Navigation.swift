@@ -17,7 +17,7 @@ enum SegueType: String {
     case toSearchResults
 }
 
-// Side bar items.
+// Side bar menu items.
 enum SideBarNavItem: String {
     case Home = "Home"
     case ActivityFeed = "Activity feed"

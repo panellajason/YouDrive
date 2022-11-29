@@ -38,6 +38,8 @@
 		FACEA7FF28FB120E00CAA2AD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FACEA7FE28FB120E00CAA2AD /* Assets.xcassets */; };
 		FACEA80228FB120E00CAA2AD /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FACEA80028FB120E00CAA2AD /* LaunchScreen.storyboard */; };
 		FACEA80A28FB16CE00CAA2AD /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FACEA80928FB16CE00CAA2AD /* GoogleService-Info.plist */; };
+		FAD4FCE52925E02400DB37DB /* SideMenuTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD4FCE32925E02400DB37DB /* SideMenuTableViewCell.swift */; };
+		FAD4FCE62925E02400DB37DB /* SideMenuTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FAD4FCE42925E02400DB37DB /* SideMenuTableViewCell.xib */; };
 		FAE2DDCD290F90BD004664FE /* SideMenuTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE2DDCC290F90BD004664FE /* SideMenuTableViewController.swift */; };
 		FAEF21AB28FB26B0008432C3 /* SignInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEF21AA28FB26B0008432C3 /* SignInViewController.swift */; };
 		FAEF21AF28FB2E91008432C3 /* CreateAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAEF21AE28FB2E91008432C3 /* CreateAccountViewController.swift */; };
@@ -87,6 +89,8 @@
 		FACEA80128FB120E00CAA2AD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		FACEA80328FB120E00CAA2AD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FACEA80928FB16CE00CAA2AD /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		FAD4FCE32925E02400DB37DB /* SideMenuTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuTableViewCell.swift; sourceTree = "<group>"; };
+		FAD4FCE42925E02400DB37DB /* SideMenuTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SideMenuTableViewCell.xib; sourceTree = "<group>"; };
 		FAE2DDCC290F90BD004664FE /* SideMenuTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuTableViewController.swift; sourceTree = "<group>"; };
 		FAEF21AA28FB26B0008432C3 /* SignInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
 		FAEF21AE28FB2E91008432C3 /* CreateAccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateAccountViewController.swift; sourceTree = "<group>"; };
@@ -194,10 +198,10 @@
 				FA6B02D72914EA190061BE8D /* ActivityFeedViewController.swift */,
 				FAEF21BC28FCCDAE008432C3 /* AddDriveViewController.swift */,
 				FAEF21AE28FB2E91008432C3 /* CreateAccountViewController.swift */,
+				FAAF184329046D2F005E5E95 /* JoinGroupViewController.swift */,
 				FA38505928FE7B4F00133A93 /* CreateGroupViewController.swift */,
 				FA6B02E42918CFC60061BE8D /* GroupDetailViewController.swift */,
 				FAEF21B028FB333D008432C3 /* HomeViewController.swift */,
-				FAAF184329046D2F005E5E95 /* JoinGroupViewController.swift */,
 				FA6B02CF29124E610061BE8D /* ManageGroupsViewController.swift */,
 				FA38505528FE591900133A93 /* NoGroupsViewController.swift */,
 				FAEF21BE28FD26AC008432C3 /* SearchResultsViewController.swift */,
@@ -239,6 +243,8 @@
 				FA6B02D529139D6E0061BE8D /* IconCollectionViewCell.swift */,
 				FA6B02DF291725700061BE8D /* ManageGroupsTableViewCell.swift */,
 				FAEF21C128FD2C2D008432C3 /* SearchResultsTableViewCell.swift */,
+				FAD4FCE32925E02400DB37DB /* SideMenuTableViewCell.swift */,
+				FAD4FCE42925E02400DB37DB /* SideMenuTableViewCell.xib */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -304,6 +310,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FACEA80228FB120E00CAA2AD /* LaunchScreen.storyboard in Resources */,
+				FAD4FCE62925E02400DB37DB /* SideMenuTableViewCell.xib in Resources */,
 				FACEA80A28FB16CE00CAA2AD /* GoogleService-Info.plist in Resources */,
 				FACEA7FF28FB120E00CAA2AD /* Assets.xcassets in Resources */,
 				FACEA7FD28FB120B00CAA2AD /* Main.storyboard in Resources */,
@@ -377,6 +384,7 @@
 				FA6B02D82914EA190061BE8D /* ActivityFeedViewController.swift in Sources */,
 				FAEF21AB28FB26B0008432C3 /* SignInViewController.swift in Sources */,
 				FA38505628FE591900133A93 /* NoGroupsViewController.swift in Sources */,
+				FAD4FCE52925E02400DB37DB /* SideMenuTableViewCell.swift in Sources */,
 				FAAF18422903E31E005E5E95 /* Group.swift in Sources */,
 				FAE2DDCD290F90BD004664FE /* SideMenuTableViewController.swift in Sources */,
 				FACEA7F628FB120B00CAA2AD /* AppDelegate.swift in Sources */,
@@ -540,28 +548,33 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 55A645456R;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = YouDrive/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "You-Drive";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "We use location for calculating distance.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We use location for calculating distance.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.bois.YouDrive;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -571,28 +584,33 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 55A645456R;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = YouDrive/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "You-Drive";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "We use location for calculating distance.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We use location for calculating distance.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.bois.YouDrive;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

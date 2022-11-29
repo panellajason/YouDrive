@@ -44,7 +44,6 @@ class SignInViewController: UIViewController {
 
         guard let email = textfieldEmail.text else { return }
         guard let password = textfieldPassword.text else { return }
-        
         guard !email.isEmpty && !password.isEmpty else {
             labelError.text = ValidationError.emptyTextFields.localizedDescription
             return
@@ -55,31 +54,20 @@ class SignInViewController: UIViewController {
     
     // Uses UserDatabaseService to sign a user in.
     func signUserIn(email: String, password: String) {
-        
         self.showSpinner(onView: self.view)
-
         UserDatabaseService.handleSignIn(email: email, password: password) {[weak self] error, currentUser in
+            self?.removeSpinner()
             guard error == nil else {
                 self?.labelError.text = ValidationError.invalidCredentials.localizedDescription
-                self?.removeSpinner()
                 return
             }
-            
-            guard currentUser.username != "" else {
-                self?.removeSpinner()
-                return
-            }
-            
+            guard currentUser.username != "" else { return }
             guard currentUser.homeGroup != "" else {
                 self?.performSegue(withIdentifier: SegueType.toNoGroups.rawValue, sender: self)
-                self?.removeSpinner()
                 return
             }
             
             self?.getAllGroupsForUser(userId: currentUser.userId)
-            
-            self?.removeSpinner()
-
             NavigationService.showMainNavController(shouldPassGroups: true)
         }
     }
@@ -91,32 +79,23 @@ class SignInViewController: UIViewController {
         let userId = user.uid
         
         self.showSpinner(onView: self.view)
-
         UserDatabaseService.getUserDocument(userId: userId) { [weak self] error, currentUser in
-            guard error == nil && currentUser.username != "" else {
-                self?.removeSpinner()
-                return
-            }
+            self?.removeSpinner()
+            guard error == nil && currentUser.username != "" else { return }
             
             UserDatabaseService.currentUserProfile = currentUser
                         
             guard currentUser.homeGroup != "" else {
                 self?.performSegue(withIdentifier: SegueType.toNoGroups.rawValue, sender: self)
-                self?.removeSpinner()
                 return
             }
             
             self?.getAllGroupsForUser(userId: userId)
-            
-            self?.removeSpinner()
-
-            NavigationService.showMainNavController(shouldPassGroups: true)
         }
     }
     
     // Gets all groups for current user.
     private func getAllGroupsForUser(userId: String) {
-        
         GroupDatabaseService.getAllGroupsForUser(userId: userId) { [weak self] error, groupNames in
             guard error == nil else {
                 self?.removeSpinner()
@@ -124,6 +103,7 @@ class SignInViewController: UIViewController {
             }
             
             UserDatabaseService.groupsForCurrentUser = groupNames
+            NavigationService.showMainNavController(shouldPassGroups: true)
         }
     }
     

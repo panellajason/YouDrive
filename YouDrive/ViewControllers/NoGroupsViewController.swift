@@ -20,7 +20,7 @@ class NoGroupsViewController: UIViewController, UITextFieldDelegate {
         super.viewDidLoad()
         
         guard let currentUser = UserDatabaseService.currentUserProfile else { return }
-        imageViewIcon.image = UIImage(named: WidgetService.ICON_PREFIX + currentUser.iconId)
+        imageViewIcon.image = UIImage(named: WidgetService.ICON_PREFIX + currentUser.iconId.description)
         labelUsername.text = currentUser.username
     }
     

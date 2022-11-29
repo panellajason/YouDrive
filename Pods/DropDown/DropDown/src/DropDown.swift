@@ -538,6 +538,7 @@ private extension DropDown {
 
 		tableView.backgroundColor = tableViewBackgroundColor
 		tableView.separatorColor = separatorColor
+        tableView.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
 		tableView.layer.cornerRadius = cornerRadius
 		tableView.layer.masksToBounds = true
 	}
@@ -1063,6 +1064,7 @@ extension DropDown: UITableViewDataSource, UITableViewDelegate {
 		}
 		
 		cell.optionLabel.textColor = textColor
+        cell.optionLabel.textAlignment = .center
 		cell.optionLabel.font = textFont
 		cell.selectedBackgroundColor = selectionBackgroundColor
         cell.highlightTextColor = selectedTextColor

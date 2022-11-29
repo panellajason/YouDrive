@@ -10,7 +10,7 @@ import UIKit
 class CreateAccountViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
     var iconIdList = WidgetService.getIconIdList()
-    var selectedIcon = ""
+    var selectedIcon = 0
     
     @IBOutlet weak var collectionViewIcons: UICollectionView!
     @IBOutlet weak var buttonContinute: UIButton!
@@ -92,7 +92,7 @@ class CreateAccountViewController: UIViewController, UICollectionViewDataSource,
             return
         }
         
-        guard selectedIcon != "" else {
+        guard selectedIcon != 0 else {
             labelError.text = "Please select an icon."
             return
         }
@@ -108,19 +108,14 @@ class CreateAccountViewController: UIViewController, UICollectionViewDataSource,
     
     // Uses UserDatabaseService to create a user account.
     func createAccount(accountToCreate: User, password: String) {
-        
         self.showSpinner(onView: self.view)
-
         UserDatabaseService.createUserAccount(accountToCreate: accountToCreate, password: password) { [weak self] error in
-            
+            self?.removeSpinner()
             guard error == nil else {
                 self?.labelError.text = error?.localizedDescription
-                self?.removeSpinner()
                 return
             }
-            
             self?.performSegue(withIdentifier: SegueType.toNoGroups.rawValue, sender: self)
-            self?.removeSpinner()
         }
     }
     
@@ -133,9 +128,8 @@ class CreateAccountViewController: UIViewController, UICollectionViewDataSource,
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: IconCollectionViewCell.identifier, for: indexPath) as! IconCollectionViewCell
-        let iconId: String = iconIdList[indexPath.row]
+        let iconId: Int = iconIdList[indexPath.row]
         cell.configure(iconId: iconId)
         
         let selectedColor = UIView()

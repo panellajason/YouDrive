@@ -32,9 +32,10 @@ class ManageGroupsViewController: UIViewController, UITableViewDelegate, UITable
         setupSideMenu()
     }
     
-    // Handles on-click for the change moere button.
+    // Handles on-click for the more options button.
     @IBAction func handleMoreButton(_ sender: Any) {
         moreOptionsDropdown.show()
+        moreOptionsDropdown.clearSelection()
     }
     
     @IBAction func handleSideMenuButton(_ sender: Any) {
@@ -44,12 +45,8 @@ class ManageGroupsViewController: UIViewController, UITableViewDelegate, UITable
     // Uses DatabaseService to getAllGroupsForUser.
     func getFreshGroupsForUser() {
         guard let currentUser = UserDatabaseService.currentUserProfile else { return }
-
         GroupDatabaseService.getAllGroupsForUser(userId: currentUser.userId) { [weak self] error, groupNames in
-            guard error == nil && groupNames != [] else {
-                return
-            }
-            
+            guard error == nil && groupNames != [] else { return }
             self?.groupsList = groupNames
             self?.tableViewManageGroups.reloadData()
         }
@@ -64,7 +61,6 @@ class ManageGroupsViewController: UIViewController, UITableViewDelegate, UITable
         }
         
         present(viewController, animated: true)
-        moreOptionsDropdown.clearSelection()
     }
     
     // Reload data when a user's groups are updated.
@@ -85,6 +81,9 @@ class ManageGroupsViewController: UIViewController, UITableViewDelegate, UITable
     private func setupDropdown() {
         moreOptionsDropdown.anchorView = moreButton
         moreOptionsDropdown.bottomOffset = CGPoint(x: CGFloat(0), y: CGFloat(35))
+        moreOptionsDropdown.backgroundColor = .darkGray
+        moreOptionsDropdown.separatorColor = .black
+        moreOptionsDropdown.textColor = .white
         moreOptionsDropdown.dataSource = [ManageGroupOptions.CreateGroup.rawValue, ManageGroupOptions.JoinGroup.rawValue]
         moreOptionsDropdown.selectionAction = { [weak self] index, title in
             self?.handleDropdownSelection(title: title)

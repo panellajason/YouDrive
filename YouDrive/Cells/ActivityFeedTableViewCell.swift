@@ -20,7 +20,7 @@ class ActivityFeedTableViewCell: UITableViewCell {
     
     func configure(with event: Event) {
         
-        imageViewIcon.image = UIImage(named: WidgetService.ICON_PREFIX + event.iconId)
+        imageViewIcon.image = UIImage(named: WidgetService.ICON_PREFIX + event.iconId.description)
 
         guard let timestamp = TimeInterval(event.timestamp) else { return }
         let dateObj = Date(timeIntervalSince1970: timestamp)
@@ -30,6 +30,10 @@ class ActivityFeedTableViewCell: UITableViewCell {
             
         case EventType.DRIVE_ADDED.rawValue:
             labelEvent.text = event.username + " received " + event.points.rounded(toPlaces: 1).description + " points in group: " + event.groupName
+            break
+            
+        case EventType.DRIVE_DELETED.rawValue:
+            labelEvent.text = event.username + "'s drive for " + event.points.rounded(toPlaces: 1).description + " points in group: " + event.groupName + " was deleted"
             break
             
         case EventType.GROUP_CREATED.rawValue:

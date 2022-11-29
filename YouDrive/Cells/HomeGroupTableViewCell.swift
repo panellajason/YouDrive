@@ -25,10 +25,10 @@ class HomeGroupTableViewCell: UITableViewCell {
     }
     
     func configure(with userGroup: UserGroup) {
-        let imageName = "icon_" + userGroup.iconId
+        let imageName = "icon_" + userGroup.iconId.description
 
         imageviewAvatar.image =  UIImage(named: imageName)
-        labelPointsInGroup.text = userGroup.pointsInGroup + " points"
+        labelPointsInGroup.text = userGroup.pointsInGroup.description + " points"
         labelUserName.text = userGroup.username
     }
 }

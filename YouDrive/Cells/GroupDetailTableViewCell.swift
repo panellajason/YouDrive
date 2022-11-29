@@ -26,7 +26,7 @@ class GroupDetailTableViewCell: UITableViewCell {
     }
     
     func configure(with drive: Drive) {
-        let imageName = "icon_" + drive.user.iconId
+        let imageName = "icon_" + drive.user.iconId.description
         imageviewAvatar.image =  UIImage(named: imageName)
         
         guard let timestamp = TimeInterval(drive.timestamp) else { return }

@@ -62,19 +62,16 @@ class JoinGroupViewController: UIViewController {
         }
         
         self.showSpinner(onView: self.view)
-        
         GroupDatabaseService.joinGroup(
             groupName: groupName,
             groupPasscode: groupPasscode
         ){ [weak self] error, errorMessage, hasSuccessfullyJoined in
-            
             self?.removeSpinner()
-
             guard error == nil else {
                 self?.labelError.text = "Unable to join group, please try again."
                 return
             }
-            
+
             guard errorMessage == nil else {
                 self?.labelError.text = errorMessage
                 return

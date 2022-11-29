@@ -5,20 +5,24 @@
 //  Created by Panella, Jason on 11/6/22.
 //
 
+import DropDown
 import UIKit
 
 class GroupDetailViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+
+    private let moreOptionsDropdown: DropDown = DropDown()
 
     private var drivesList: [Drive] = []
     
     var passedGroupName: String?
 
+    @IBOutlet weak var moreButton: UIButton!
     @IBOutlet weak var labelTitle: UILabel!
     @IBOutlet weak var tableViewDrives: UITableView!
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-            
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
         guard let groupName = self.passedGroupName else {
             self.dismiss(animated: true)
             return
@@ -26,11 +30,8 @@ class GroupDetailViewController: UIViewController, UITableViewDelegate, UITableV
         
         labelTitle.text = groupName
         getAllDrivesForGroup(groupName: groupName)
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
         
+        setupDropdown()
         setupTableView()
     }
     
@@ -39,9 +40,26 @@ class GroupDetailViewController: UIViewController, UITableViewDelegate, UITableV
         self.dismiss(animated: true, completion: nil)
     }
     
-    // Handles on-click for the leave group button.
-    @IBAction func handleLeaveGroupButton(_ sender: Any) {
-        showLeaveGroupConfirmation()
+    private func deleteDrive(index: Int) {
+        self.showSpinner(onView: self.view)
+        
+        DriveDatabaseService.deleteDriveDocument(driveToDelete: drivesList[index]) { error in
+            self.removeSpinner()
+            guard error == nil else { return }
+        }
+        
+        drivesList.remove(at: index)
+        tableViewDrives.reloadData()
+        
+        if drivesList.count == 0 {
+            tableViewDrives.backgroundColor = .clear
+        }
+    }
+    
+    // Handles on-click for the more options button.
+    @IBAction func handleMoreOptionsButton(_ sender: Any) {
+        moreOptionsDropdown.show()
+        moreOptionsDropdown.clearSelection()
     }
     
     // Gets all drives for a group.
@@ -50,8 +68,10 @@ class GroupDetailViewController: UIViewController, UITableViewDelegate, UITableV
                 
         DriveDatabaseService.getAllDrivesForGroupName(groupName: groupName) { [weak self] error, drives in
             self?.removeSpinner()
+            guard error == nil else { return }
             
-            guard error == nil && drives.count != 0 else {
+            if drives.count == 0 {
+                self?.tableViewDrives.backgroundColor = .clear
                 return
             }
             
@@ -68,26 +88,37 @@ class GroupDetailViewController: UIViewController, UITableViewDelegate, UITableV
                     
         GroupDatabaseService.deleteUserGroupsDocument(groupName: groupName, userId: currentUser.userId) { [weak self] error in
             self?.removeSpinner()
-
-            guard error == nil else {
-                return
-            }
+            guard error == nil else { return }
             self?.dismiss(animated: true)
         }
     }
     
     // Shows confirmation dialog before leaving group.
-    private func showLeaveGroupConfirmation() {
-        let alertController = UIAlertController(title: "Are you sure you want to leave this group?", message: "", preferredStyle: .alert)
-        
-        let okAction = UIAlertAction(title: "Leave", style: UIAlertAction.Style.default) { [weak self] UIAlertAction in
-            self?.leaveGroup()
+    private func showDeleteDriveConfirmation(index: Int) {
+        let alertController = UIAlertController(title: "Are you sure you want to delete this drive?", message: "", preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "Delete", style: UIAlertAction.Style.default) { [weak self] UIAlertAction in
+            self?.deleteDrive(index: index)
         }
-        
+        okAction.setValue(UIColor.red, forKey: "titleTextColor")
         let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel) { UIAlertAction in
             print("Cancel Pressed")
         }
-        
+        alertController.addAction(okAction)
+        alertController.addAction(cancelAction)
+
+        self.present(alertController, animated: true, completion: nil)
+    }
+    
+    // Shows confirmation dialog before leaving group.
+    private func showLeaveGroupConfirmation() {
+        let alertController = UIAlertController(title: "Are you sure you want to leave this group?", message: "", preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "Leave", style: UIAlertAction.Style.default) { [weak self] UIAlertAction in
+            self?.leaveGroup()
+        }
+        okAction.setValue(UIColor.red, forKey: "titleTextColor")
+        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel) { UIAlertAction in
+            print("Cancel Pressed")
+        }
         alertController.addAction(okAction)
         alertController.addAction(cancelAction)
 
@@ -98,6 +129,18 @@ class GroupDetailViewController: UIViewController, UITableViewDelegate, UITableV
         tableViewDrives.dataSource = self
         tableViewDrives.delegate = self
         tableViewDrives.backgroundColor = .white
+    }
+    
+    private func setupDropdown() {
+        moreOptionsDropdown.anchorView = moreButton
+        moreOptionsDropdown.bottomOffset = CGPoint(x: CGFloat(-50), y: CGFloat(35))
+        moreOptionsDropdown.textColor = .red
+        moreOptionsDropdown.selectedTextColor = .red
+        moreOptionsDropdown.backgroundColor = .white
+        moreOptionsDropdown.dataSource = ["Leave group"]
+        moreOptionsDropdown.selectionAction = { [weak self] index, title in
+            self?.showLeaveGroupConfirmation()
+        }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -125,7 +168,7 @@ class GroupDetailViewController: UIViewController, UITableViewDelegate, UITableV
 
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if (editingStyle == .delete) {
-            print("deleted")
+            showDeleteDriveConfirmation(index: indexPath.row)
         }
     }
 }

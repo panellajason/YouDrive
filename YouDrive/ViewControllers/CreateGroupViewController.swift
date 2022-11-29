@@ -76,14 +76,11 @@ class CreateGroupViewController: UIViewController {
     // Uses DatabaseService to create new group.
     private func createNewGroup(groupName: String, groupPasscode: String) {
         self.showSpinner(onView: self.view)
-
         GroupDatabaseService.createNewGroup(
             groupName: groupName,
             groupPasscode: groupPasscode
         ){ [weak self] error, errorString in
-            
             self?.removeSpinner()
-
             guard error == nil else {
                 self?.labelError.text = "Unable to create group, please try again."
                 return

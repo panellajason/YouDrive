@@ -10,13 +10,13 @@ import Foundation
 // Object for defining an activity feed event.
 class Event {
     var groupName: String
-    var iconId: String
+    var iconId: Int
     var points: Double
     var timestamp: String
     var type: String
     var username: String
 
-    init(groupName: String, iconId: String, points: Double, timestamp: String, type: String, username: String) {
+    init(groupName: String, iconId: Int, points: Double, timestamp: String, type: String, username: String) {
         self.groupName = groupName
         self.iconId = iconId
         self.points = points
@@ -28,6 +28,7 @@ class Event {
 
 enum EventType: String {
     case DRIVE_ADDED
+    case DRIVE_DELETED
     case GROUP_CREATED
     case GROUP_JOINED
     case GROUP_LEFT
