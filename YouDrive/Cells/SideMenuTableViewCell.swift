@@ -18,9 +18,16 @@ class SideMenuTableViewCell: UITableViewCell {
         super.awakeFromNib()
     }
     
+    override func setSelected(_ selected: Bool, animated: Bool) {
+        super.setSelected(selected, animated: animated)
+       
+        imageview.tintColor = selected ? .white : .label
+        label.textColor = selected ? .white : .label
+    }
+    
     func configure(with navLabel: String) {
         label.text = navLabel
-        
+                
         switch navLabel {
         case SideBarNavItem.Home.rawValue:
             imageview.image = UIImage(systemName: "house", withConfiguration: UIImage.SymbolConfiguration(scale: .medium))
@@ -31,8 +38,8 @@ class SideMenuTableViewCell: UITableViewCell {
         case SideBarNavItem.ManageGroups.rawValue:
             imageview.image = UIImage(systemName: "person.2", withConfiguration: UIImage.SymbolConfiguration(scale: .medium))
             break
-        case SideBarNavItem.SignOut.rawValue:
-            imageview.image = UIImage(systemName: "iphone.and.arrow.forward", withConfiguration: UIImage.SymbolConfiguration(scale: .large))
+        case SideBarNavItem.Account.rawValue:
+            imageview.image = UIImage(systemName: "gearshape", withConfiguration: UIImage.SymbolConfiguration(scale: .medium))
             break
         default:
             break

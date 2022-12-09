@@ -13,9 +13,8 @@ class SearchService {
     static var currentLocation : CLLocationCoordinate2D!
 
     // Calculates distance in miles between two points.
-    static func caclulateDistance(destination: CLLocationCoordinate2D) -> Double {
-        
-        let currentPoint = CLLocation(latitude: currentLocation.latitude, longitude: currentLocation.longitude)
+    static func caclulateDistance(destination: CLLocationCoordinate2D, startLocation: CLLocationCoordinate2D) -> Double {
+        let currentPoint = CLLocation(latitude: startLocation.latitude, longitude: startLocation.longitude)
         let endPoint = CLLocation(latitude: destination.latitude ,longitude: destination.longitude)
         
         let distanceInMeters = currentPoint.distance(from: endPoint)
@@ -25,34 +24,29 @@ class SearchService {
     }
     
     // Uses Apple's MKLocalSearch api to search for locations by using a query string.
-    static func searchForLocations(searchQuery: String, completion: @escaping(Error?, [MKMapItem]) -> ()) {
-        
-        guard SearchService.currentLocation != nil else {
-            print("Search not allowed: Location is nil.")
-            return
-        }
-        
+    static func searchForLocations(searchLocation: CLLocationCoordinate2D, searchQuery: String, completion: @escaping(Error?, [MKMapItem]) -> ()) {
         let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
-        let region = MKCoordinateRegion(center: SearchService.currentLocation, span: span)
+        let region = MKCoordinateRegion(center: searchLocation, span: span)
         
         let searchRequest = MKLocalSearch.Request()
         searchRequest.naturalLanguageQuery = searchQuery
         searchRequest.region = region
                 
         let search = MKLocalSearch(request: searchRequest)
-
         search.start { response, error in
-            guard error == nil else {
-                completion(error, [])
-                return
-            }
-            
-            completion(error, response?.mapItems ?? [])
+            guard error == nil else { return completion(error, []) }
+            return completion(error, response?.mapItems ?? [])
         }
     }
 }
 
 // Delegate for updating AddDriveViewCcontroller after selecting a location in SearchResultsViewController.
 protocol SearchDelegate {
-    func onLocationSelected(location: MKMapItem)
+    func onLocationSelected(location: MKMapItem, type: String)
+}
+
+// Types of lcoation searches.
+enum SearchType: String {
+    case END_LOCATION
+    case STARTING_LOCATION
 }

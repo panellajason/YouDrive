@@ -15,6 +15,7 @@ class UserDatabaseService {
     static var databaseInstance = Firestore.firestore()
     static var driversForHomeGroup: [UserGroup] = []
     static var groupsForCurrentUser: [String] = []
+    static var hasReachedMaxGroups = false
     
     static let defaultUserObject = User(email: "", homeGroup: "", iconId: 2, userId: "", username: "")
 
@@ -53,6 +54,31 @@ class UserDatabaseService {
         }
     }
     
+    // Edits all documents related to the passed in account.
+    static func editUser(accountToUpdate: User, completion: @escaping(Error?) ->()) {
+        let batch1 = databaseInstance.batch()
+
+        UserDatabaseService.updateUserDocument(accountToUpdate: accountToUpdate, batch: batch1) { error, writeBatchAccount in
+            guard error == nil else { return completion(error) }
+            guard let batch2 = writeBatchAccount else { return completion(error) }
+
+            GroupDatabaseService.updateAllUserGroupsDocuments(accountToUpdate: accountToUpdate, batch: batch2) { error, writeBatchGroups in
+                guard error == nil else { return completion(error) }
+                guard let batch3 = writeBatchGroups else { return completion(error) }
+
+                DriveDatabaseService.updateAllDrivesForUser(accountToUpdate: accountToUpdate, batch: batch3) { error, writeBatchDrives in
+                    guard error == nil else { return completion(error) }
+                    guard let batch4 = writeBatchDrives else { return completion(error) }
+
+                    EventDatabaseService.updateAllEventsForUser(accountToUpdate: accountToUpdate, batch: batch4) { error in
+                        guard error == nil else { return completion(error) }
+                        return completion(error)
+                    }
+                }
+            }
+        }
+    }
+    
     // Sends password recovery email.
     static func handlePasswordRecoveryEmail (email: String, completion: @escaping(Error?) ->()) {
         Auth.auth().sendPasswordReset(withEmail: email) { error in
@@ -71,6 +97,7 @@ class UserDatabaseService {
             getUserDocument(userId: userId) { error, currentUser in
                 guard error == nil else { return completion(error, defaultUserObject) }
                 currentUserProfile = currentUser
+                ActivityFeedViewController.accountUpdatesDelegate?.onAccountUpdated()
                 return completion(error, currentUser)
             }
         }
@@ -81,17 +108,18 @@ class UserDatabaseService {
         let currentUser = Auth.auth().currentUser
         guard currentUser != nil else { return }
         
-        try! Auth.auth().signOut()
+        do {
+            try Auth.auth().signOut()
+        } catch {
+            print("Unable to sign out with FirebaseAuth.")
+            return
+        }
         
         currentUserProfile = nil
         driversForHomeGroup = []
         groupsForCurrentUser = []
-        SideMenuTableViewController.selectedRow = 0
         
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let viewController = storyboard.instantiateViewController(withIdentifier: "SignInViewController") as? SignInViewController
-        UIApplication.shared.windows.first?.rootViewController = viewController
-        UIApplication.shared.windows.first?.makeKeyAndVisible()
+        NavigationService.showSignInViewController()
     }
     
     
@@ -126,19 +154,31 @@ class UserDatabaseService {
     }
     
     // Updates user document.
-    static func updateUserDocument(accountToUpdate: User, completion: @escaping(Error?) ->()) {
+    static func updateUserDocument(accountToUpdate: User, batch: WriteBatch?, completion: @escaping(Error?, WriteBatch?) ->()) {
         databaseInstance.collection(DatabaseCollection.users.rawValue)
             .whereField(DatabaseField.user_id.rawValue, isEqualTo: accountToUpdate.userId)
             .getDocuments()
         {(queryResults, error) in
-            guard error == nil else { return completion(error) }
-            guard let results = queryResults else { return completion(error) }
+            guard error == nil else { return completion(error, nil) }
+            guard let results = queryResults else { return completion(error, nil) }
                         
             if !results.documents.isEmpty {
-                guard let document = results.documents.first else { return }
+                guard let document = results.documents.first else { return completion(error, nil) }
                 let docId = document.documentID
                 let docRef =  databaseInstance.collection(DatabaseCollection.users.rawValue).document(docId)
                
+                if batch != nil {
+                    guard let writeBatch = batch else { return completion(error, nil) }
+                    writeBatch.updateData([
+                        DatabaseField.email.rawValue: accountToUpdate.email,
+                        DatabaseField.home_group.rawValue: accountToUpdate.homeGroup,
+                        DatabaseField.icon_id.rawValue: accountToUpdate.iconId,
+                        DatabaseField.user_id.rawValue: accountToUpdate.userId,
+                        DatabaseField.username.rawValue: accountToUpdate.username,
+                    ], forDocument: docRef)
+                    return completion(error, writeBatch)
+                }
+                
                 docRef.updateData([
                     DatabaseField.email.rawValue: accountToUpdate.email,
                     DatabaseField.home_group.rawValue: accountToUpdate.homeGroup,
@@ -146,17 +186,22 @@ class UserDatabaseService {
                     DatabaseField.user_id.rawValue: accountToUpdate.userId,
                     DatabaseField.username.rawValue: accountToUpdate.username,
                 ]) { error in
-                    guard error == nil else { return completion(error) }
-                    
+                    guard error == nil else { return completion(error, nil) }
+
                     if accountToUpdate.userId == currentUserProfile?.userId {
                         currentUserProfile = accountToUpdate
                     }
                     // Document updated
-                    return completion(error)
+                    return completion(error, nil)
                 }
             }
             // No document found to update
-            return completion(error)
+            return completion(error, nil)
         }
     }
+}
+
+// Reload data when account is updated.
+protocol AccountUpdatesDelegate {
+    func onAccountUpdated()
 }

@@ -63,7 +63,7 @@ class GroupDetailViewController: UIViewController, UITableViewDelegate, UITableV
     }
     
     // Gets all drives for a group.
-    func getAllDrivesForGroup(groupName: String) {
+    private func getAllDrivesForGroup(groupName: String) {
         self.showSpinner(onView: self.tableViewDrives)
                 
         DriveDatabaseService.getAllDrivesForGroupName(groupName: groupName) { [weak self] error, drives in
@@ -128,16 +128,15 @@ class GroupDetailViewController: UIViewController, UITableViewDelegate, UITableV
     private func setupTableView() {
         tableViewDrives.dataSource = self
         tableViewDrives.delegate = self
-        tableViewDrives.backgroundColor = .white
     }
     
     private func setupDropdown() {
         moreOptionsDropdown.anchorView = moreButton
-        moreOptionsDropdown.bottomOffset = CGPoint(x: CGFloat(-50), y: CGFloat(35))
+        moreOptionsDropdown.bottomOffset = CGPoint(x: CGFloat(-80), y: CGFloat(30))
         moreOptionsDropdown.textColor = .red
         moreOptionsDropdown.selectedTextColor = .red
         moreOptionsDropdown.backgroundColor = .white
-        moreOptionsDropdown.dataSource = ["Leave group"]
+        moreOptionsDropdown.dataSource = [ManageGroupOptions.LeaveGroup.rawValue]
         moreOptionsDropdown.selectionAction = { [weak self] index, title in
             self?.showLeaveGroupConfirmation()
         }
@@ -148,12 +147,12 @@ class GroupDetailViewController: UIViewController, UITableViewDelegate, UITableV
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 55
+        return 60
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let resultsCell = tableView.dequeueReusableCell(withIdentifier: GroupDetailTableViewCell.identifier,
-                                                        for: indexPath) as! GroupDetailTableViewCell
+        let resultsCell = tableView.dequeueReusableCell(withIdentifier: DriveTableViewCell.identifier,
+                                                        for: indexPath) as! DriveTableViewCell
         resultsCell.configure(with: drivesList[indexPath.row])
         return resultsCell
     }

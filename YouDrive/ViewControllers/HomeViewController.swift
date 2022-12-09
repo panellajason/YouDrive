@@ -9,16 +9,18 @@ import DropDown
 import SideMenu
 import UIKit
 
-class HomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, AddDriveDelegate, GroupUpdatesDelegate {
+class HomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, AccountUpdatesDelegate, AddDriveDelegate, GroupUpdatesDelegate {
     
     // Dropdown to select a group to show.
     private let groupsDropdown: DropDown = DropDown()
     
     private var refreshControl: UIRefreshControl!
+    private var selectedUser: UserGroup?
     private var sideMenu: SideMenuNavigationController?
     
+    static var accountUpdatesDelegate: AccountUpdatesDelegate?
     static var groupUpdatesDelegate: GroupUpdatesDelegate?
-
+    
     var currentGroupShowing = ""
     var groupsForUser: [String]?
     var hasLoadedData = false
@@ -38,6 +40,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         guard passedGroupsForUser == [] else {
             groupsForUser = passedGroupsForUser
             groupsDropdown.dataSource = passedGroupsForUser
+            groupsDropdown.selectRow(at: passedGroupsForUser.firstIndex(of: currentUser.homeGroup))
             getUsersInGroup(groupName: currentUser.homeGroup)
             
             checkIfChangeButtonShouldBeHidden(groupNames: passedGroupsForUser)
@@ -57,6 +60,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         super.viewDidLoad()
         
         SideMenuTableViewController.selectedRow = 0
+        HomeViewController.accountUpdatesDelegate = self
         HomeViewController.groupUpdatesDelegate = self
         setupDropdown()
         setupSideMenu()
@@ -66,7 +70,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     // Handles on-click for the change group button.
     @IBAction func handleChangeGroupButton(_ sender: Any) {
         groupsDropdown.show()
-        groupsDropdown.clearSelection()
     }
     
     // Handles on-click for the plus nav bar button.
@@ -84,11 +87,8 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     private func checkIfChangeButtonShouldBeHidden(groupNames: [String]) {
-        if groupNames.count < 2 {
-            buttonChangeShowingGroup.isHidden = true
-        } else {
-            buttonChangeShowingGroup.isHidden = false
-        }
+        buttonChangeShowingGroup.isHidden = groupNames.count < 2 ? true : false
+        UserDatabaseService.hasReachedMaxGroups = groupNames.count > 10 ? true : false
     }
     
     // Uses DatabaseService to get all users in a group.
@@ -117,7 +117,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         currentUser.homeGroup = groupName
         
         self.showSpinner(onView: self.view)
-        UserDatabaseService.updateUserDocument(accountToUpdate: currentUser) { [weak self] error in
+        UserDatabaseService.updateUserDocument(accountToUpdate: currentUser, batch: nil) { [weak self] error, batch in
             self?.removeSpinner()
             guard error == nil else { return }
             self?.getUsersInGroup(groupName: groupName)
@@ -137,15 +137,20 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
 
             self?.groupsForUser = groupNames
             self?.groupsDropdown.dataSource = groupNames
+            self?.groupsDropdown.selectRow(at: groupNames.firstIndex(of: currentUser.homeGroup))
             self?.getUsersInGroup(groupName: currentUser.homeGroup)
             self?.hasLoadedData = true
             self?.checkIfChangeButtonShouldBeHidden(groupNames: groupNames)
         }
     }
     
+    // Reload data when account is updated.
+    func onAccountUpdated() {
+        hasLoadedData = false
+    }
+    
     // Reload data when a new drive is added.
     func onDriveAdded(groupName: String) {
-        groupsDropdown.clearSelection()
         getUsersInGroup(groupName: groupName)
     }
     
@@ -157,9 +162,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     // Sets up dropdown which displays all the groups that the current user is in.
     func setupDropdown() {
         groupsDropdown.anchorView = buttonChangeShowingGroup
-        groupsDropdown.backgroundColor = .darkGray
-        groupsDropdown.textColor = .white
-        groupsDropdown.separatorColor = .black
         groupsDropdown.bottomOffset = CGPoint(x: CGFloat(-8), y: CGFloat(32))
         groupsDropdown.selectionAction = { [weak self] index, title in
             self?.handleDropdownSelection(index: index, title: title)
@@ -178,14 +180,14 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     func setupTableView() {
         tableviewShowingGroup.dataSource = self
         tableviewShowingGroup.delegate = self
-        tableviewShowingGroup.backgroundColor = .white
         refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(refreshTableview), for: .valueChanged)
         tableviewShowingGroup.addSubview(refreshControl)
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        // segue to player screen??
+        selectedUser = usersInGroup[indexPath.row]
+        self.performSegue(withIdentifier: SegueType.toUserDetail.rawValue, sender: self)
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -208,6 +210,11 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         if segue.identifier == SegueType.toAddDrive.rawValue {
             let addDriveViewController = segue.destination as! AddDriveViewController
             addDriveViewController.addDriveDelegate = self
+        }
+        
+        if segue.identifier == SegueType.toUserDetail.rawValue {
+            let userDetailViewController = segue.destination as! UserDetailViewController
+            userDetailViewController.passedUser = selectedUser
         }
     }
 }

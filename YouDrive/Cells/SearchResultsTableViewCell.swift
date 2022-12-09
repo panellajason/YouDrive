@@ -25,11 +25,13 @@ class SearchResultsTableViewCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
     }
     
-    func configure(with searchResult: MKMapItem) {
-        let distance = SearchService.caclulateDistance(destination: searchResult.placemark.coordinate)
+    func configure(with searchResult: MKMapItem, searchType: String, startLocation: CLLocationCoordinate2D?) {
+        let distance = SearchService.caclulateDistance(destination: searchResult.placemark.coordinate, startLocation: startLocation  ?? SearchService.currentLocation)
         
         labelDescription.text = searchResult.placemark.title
-        labelDistance.text = distance.description + " mi"
+        if searchType == SearchType.END_LOCATION.rawValue {
+            labelDistance.text = distance.description + " mi"
+        }
         labelTitle.text = searchResult.name
     }
 }

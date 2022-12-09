@@ -41,32 +41,32 @@ class JoinGroupViewController: UIViewController {
     @IBAction func handleContinueButton(_ sender: UIButton) {
         self.view.endEditing(true)
         labelError.text = ""
-
-        guard textfieldGroupName.text != ""  && textfieldGroupPasscode.text != "" else {
-            labelError.text = "Fields cannot be empty."
-            return
-        }
         
-        joinGroup()
-    }
-
-    // Tries to join a group using DatabaseService.
-    func joinGroup() {
         guard let groupName = textfieldGroupName.text else { return }
         guard let groupPasscode = textfieldGroupPasscode.text else { return }
         
-        guard groupName != "" && groupPasscode != "" else {
-            self.removeSpinner()
+        guard !groupName.isEmpty  && !groupPasscode.isEmpty else {
             labelError.text = "Fields cannot be empty."
             return
         }
         
+        guard !UserDatabaseService.hasReachedMaxGroups else {
+            labelError.text = "You are in the maximum number of groups allowed."
+            return
+        }
+        
+        joinGroup(groupName: groupName, groupPasscode: groupPasscode)
+    }
+
+    // Tries to join a group using DatabaseService.
+    func joinGroup(groupName: String, groupPasscode: String) {
         self.showSpinner(onView: self.view)
         GroupDatabaseService.joinGroup(
             groupName: groupName,
             groupPasscode: groupPasscode
         ){ [weak self] error, errorMessage, hasSuccessfullyJoined in
             self?.removeSpinner()
+            
             guard error == nil else {
                 self?.labelError.text = "Unable to join group, please try again."
                 return

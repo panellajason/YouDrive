@@ -13,6 +13,8 @@ class SearchResultsViewController: UIViewController, UITableViewDelegate, UITabl
     var searchDelegate: SearchDelegate?
     var searchResults: [MKMapItem] = []
     var searchQuery: String!
+    var searchType: String!
+    var startLocation: CLLocationCoordinate2D!
     
     @IBOutlet weak var buttonClose: UIButton!
     @IBOutlet weak var labelTitle: UILabel!
@@ -23,7 +25,6 @@ class SearchResultsViewController: UIViewController, UITableViewDelegate, UITabl
         
         tableViewSearchResults.dataSource = self
         tableViewSearchResults.delegate = self
-        tableViewSearchResults.backgroundColor = .white
         
         labelTitle.text = "Search results for " + "\"" + searchQuery + "\""
     }
@@ -35,7 +36,7 @@ class SearchResultsViewController: UIViewController, UITableViewDelegate, UITabl
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let location: MKMapItem = searchResults[indexPath.row]
-        searchDelegate?.onLocationSelected(location: location)
+        searchDelegate?.onLocationSelected(location: location, type: searchType)
         
         self.dismiss(animated: true, completion: nil)
     }
@@ -51,7 +52,7 @@ class SearchResultsViewController: UIViewController, UITableViewDelegate, UITabl
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let resultsCell = tableView.dequeueReusableCell(withIdentifier: SearchResultsTableViewCell.identifier,
                                                         for: indexPath) as! SearchResultsTableViewCell
-        resultsCell.configure(with: searchResults[indexPath.row])
+        resultsCell.configure(with: searchResults[indexPath.row], searchType: searchType, startLocation: startLocation)
         return resultsCell
     }
 }

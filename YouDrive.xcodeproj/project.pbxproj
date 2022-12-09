@@ -24,7 +24,7 @@
 		FA6B02DC2915A0EF0061BE8D /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6B02DB2915A0EF0061BE8D /* Event.swift */; };
 		FA6B02DE2915A40D0061BE8D /* EventDatabaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6B02DD2915A40D0061BE8D /* EventDatabaseService.swift */; };
 		FA6B02E0291725700061BE8D /* ManageGroupsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6B02DF291725700061BE8D /* ManageGroupsTableViewCell.swift */; };
-		FA6B02E32918CF510061BE8D /* GroupDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6B02E22918CF510061BE8D /* GroupDetailTableViewCell.swift */; };
+		FA6B02E32918CF510061BE8D /* DriveTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6B02E22918CF510061BE8D /* DriveTableViewCell.swift */; };
 		FA6B02E52918CFC60061BE8D /* GroupDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6B02E42918CFC60061BE8D /* GroupDetailViewController.swift */; };
 		FAAF18402903DBD1005E5E95 /* Drive.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAAF183F2903DBD1005E5E95 /* Drive.swift */; };
 		FAAF18422903E31E005E5E95 /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAAF18412903E31E005E5E95 /* Group.swift */; };
@@ -32,6 +32,8 @@
 		FAAF184629046E4E005E5E95 /* Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAAF184529046E4E005E5E95 /* Database.swift */; };
 		FAAF184829046E80005E5E95 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAAF184729046E80005E5E95 /* Error.swift */; };
 		FAAF184A29046E9E005E5E95 /* Navigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAAF184929046E9E005E5E95 /* Navigation.swift */; };
+		FAC4942A29387EC100238494 /* UserDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC4942929387EC100238494 /* UserDetailViewController.swift */; };
+		FAC4942C2939F6D300238494 /* EditAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC4942B2939F6D300238494 /* EditAccountViewController.swift */; };
 		FACEA7F628FB120B00CAA2AD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FACEA7F528FB120B00CAA2AD /* AppDelegate.swift */; };
 		FACEA7F828FB120B00CAA2AD /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FACEA7F728FB120B00CAA2AD /* SceneDelegate.swift */; };
 		FACEA7FD28FB120B00CAA2AD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FACEA7FB28FB120B00CAA2AD /* Main.storyboard */; };
@@ -72,7 +74,7 @@
 		FA6B02DB2915A0EF0061BE8D /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
 		FA6B02DD2915A40D0061BE8D /* EventDatabaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDatabaseService.swift; sourceTree = "<group>"; };
 		FA6B02DF291725700061BE8D /* ManageGroupsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageGroupsTableViewCell.swift; sourceTree = "<group>"; };
-		FA6B02E22918CF510061BE8D /* GroupDetailTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupDetailTableViewCell.swift; sourceTree = "<group>"; };
+		FA6B02E22918CF510061BE8D /* DriveTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DriveTableViewCell.swift; sourceTree = "<group>"; };
 		FA6B02E42918CFC60061BE8D /* GroupDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupDetailViewController.swift; sourceTree = "<group>"; };
 		FAAF183F2903DBD1005E5E95 /* Drive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Drive.swift; sourceTree = "<group>"; };
 		FAAF18412903E31E005E5E95 /* Group.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Group.swift; sourceTree = "<group>"; };
@@ -81,6 +83,8 @@
 		FAAF184729046E80005E5E95 /* Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
 		FAAF184929046E9E005E5E95 /* Navigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Navigation.swift; sourceTree = "<group>"; };
 		FAAF184D290471D5005E5E95 /* _todo.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = _todo.md; sourceTree = "<group>"; };
+		FAC4942929387EC100238494 /* UserDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetailViewController.swift; sourceTree = "<group>"; };
+		FAC4942B2939F6D300238494 /* EditAccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditAccountViewController.swift; sourceTree = "<group>"; };
 		FACEA7F228FB120B00CAA2AD /* YouDrive.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YouDrive.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FACEA7F528FB120B00CAA2AD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FACEA7F728FB120B00CAA2AD /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -198,8 +202,9 @@
 				FA6B02D72914EA190061BE8D /* ActivityFeedViewController.swift */,
 				FAEF21BC28FCCDAE008432C3 /* AddDriveViewController.swift */,
 				FAEF21AE28FB2E91008432C3 /* CreateAccountViewController.swift */,
-				FAAF184329046D2F005E5E95 /* JoinGroupViewController.swift */,
 				FA38505928FE7B4F00133A93 /* CreateGroupViewController.swift */,
+				FAC4942B2939F6D300238494 /* EditAccountViewController.swift */,
+				FAAF184329046D2F005E5E95 /* JoinGroupViewController.swift */,
 				FA6B02E42918CFC60061BE8D /* GroupDetailViewController.swift */,
 				FAEF21B028FB333D008432C3 /* HomeViewController.swift */,
 				FA6B02CF29124E610061BE8D /* ManageGroupsViewController.swift */,
@@ -207,6 +212,7 @@
 				FAEF21BE28FD26AC008432C3 /* SearchResultsViewController.swift */,
 				FAE2DDCC290F90BD004664FE /* SideMenuTableViewController.swift */,
 				FAEF21AA28FB26B0008432C3 /* SignInViewController.swift */,
+				FAC4942929387EC100238494 /* UserDetailViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -238,7 +244,7 @@
 			isa = PBXGroup;
 			children = (
 				FA6B02D929159FEE0061BE8D /* ActivityFeedTableViewCell.swift */,
-				FA6B02E22918CF510061BE8D /* GroupDetailTableViewCell.swift */,
+				FA6B02E22918CF510061BE8D /* DriveTableViewCell.swift */,
 				FA317B242905E0400047BEC6 /* HomeGroupTableViewCell.swift */,
 				FA6B02D529139D6E0061BE8D /* IconCollectionViewCell.swift */,
 				FA6B02DF291725700061BE8D /* ManageGroupsTableViewCell.swift */,
@@ -372,16 +378,18 @@
 				FAEF21B728FB9F6E008432C3 /* User.swift in Sources */,
 				FA6B02D029124E610061BE8D /* ManageGroupsViewController.swift in Sources */,
 				FA0157A8290622280018E354 /* AccountViewController.swift in Sources */,
-				FA6B02E32918CF510061BE8D /* GroupDetailTableViewCell.swift in Sources */,
+				FA6B02E32918CF510061BE8D /* DriveTableViewCell.swift in Sources */,
 				FAAF18402903DBD1005E5E95 /* Drive.swift in Sources */,
 				FAEF21BF28FD26AC008432C3 /* SearchResultsViewController.swift in Sources */,
 				FAAF184A29046E9E005E5E95 /* Navigation.swift in Sources */,
 				FA6B02D42913855D0061BE8D /* NavigationService.swift in Sources */,
 				FA15E7B42907881E00699DE3 /* UserDatabaseService.swift in Sources */,
+				FAC4942C2939F6D300238494 /* EditAccountViewController.swift in Sources */,
 				FAEF21AF28FB2E91008432C3 /* CreateAccountViewController.swift in Sources */,
 				FAAF184429046D2F005E5E95 /* JoinGroupViewController.swift in Sources */,
 				FA6B02D629139D6E0061BE8D /* IconCollectionViewCell.swift in Sources */,
 				FA6B02D82914EA190061BE8D /* ActivityFeedViewController.swift in Sources */,
+				FAC4942A29387EC100238494 /* UserDetailViewController.swift in Sources */,
 				FAEF21AB28FB26B0008432C3 /* SignInViewController.swift in Sources */,
 				FA38505628FE591900133A93 /* NoGroupsViewController.swift in Sources */,
 				FAD4FCE52925E02400DB37DB /* SideMenuTableViewCell.swift in Sources */,
@@ -566,7 +574,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.bois.YouDrive;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -602,7 +610,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.bois.YouDrive;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

@@ -15,6 +15,7 @@ enum SegueType: String {
     case toJoinGroup
     case toNoGroups
     case toSearchResults
+    case toUserDetail
 }
 
 // Side bar menu items.
@@ -22,11 +23,12 @@ enum SideBarNavItem: String {
     case Home = "Home"
     case ActivityFeed = "Activity feed"
     case ManageGroups = "Manage groups"
-    case SignOut = "Sign out"
+    case Account = "Account"
 }
 
 // Manage group options.
 enum ManageGroupOptions: String {
     case CreateGroup = "Create a group"
     case JoinGroup = "Join a group"
+    case LeaveGroup = "Leave this group"
 }

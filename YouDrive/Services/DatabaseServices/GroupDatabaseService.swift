@@ -72,13 +72,13 @@ class GroupDatabaseService {
                     guard error == nil else { return completion(error, nil) }
                     
                     // Create event
-                    let newEvent = Event(groupName: groupName, iconId: currentUser.iconId, points: 0.0, timestamp: Date().timeIntervalSince1970.description, type: EventType.GROUP_CREATED.rawValue, username: currentUser.username)
+                    let newEvent = Event(groupName: groupName, iconId: currentUser.iconId, points: 0.0, timestamp: Date().timeIntervalSince1970.description, type: EventType.GROUP_CREATED.rawValue, userId: currentUser.userId, username: currentUser.username)
                     EventDatabaseService.createEventDoucment(event: newEvent) { error in
                         guard error == nil else { return completion(error, nil) }
                         
                         // Set home group of current user user to this group
                         let accountToUpdate = User(email: currentUser.email, homeGroup: groupName, iconId: currentUser.iconId,  userId: currentUser.userId, username: currentUser.username)
-                        UserDatabaseService.updateUserDocument(accountToUpdate: accountToUpdate) { error in
+                        UserDatabaseService.updateUserDocument(accountToUpdate: accountToUpdate, batch: nil) { error, batch in
                             guard error == nil else { return completion(error, nil) }
                             
                             UserDatabaseService.currentUserProfile? = accountToUpdate
@@ -155,20 +155,17 @@ class GroupDatabaseService {
                         UserDatabaseService.currentUserProfile? = updatedUser
 
                         // Create event
-                        let newEvent = Event(groupName: groupName, iconId: currentUser.iconId, points: 0.0, timestamp: Date().timeIntervalSince1970.description, type: EventType.GROUP_LEFT.rawValue, username: currentUser.username)
+                        let newEvent = Event(groupName: groupName, iconId: currentUser.iconId, points: 0.0, timestamp: Date().timeIntervalSince1970.description, type: EventType.GROUP_LEFT.rawValue, userId: currentUser.userId, username: currentUser.username)
                         EventDatabaseService.createEventDoucment(event: newEvent) { error in
                             guard error == nil else { return completion(error) }
                             completion(error)
                         }
                         
-                        UserDatabaseService.updateUserDocument(accountToUpdate: updatedUser) { error in
+                        UserDatabaseService.updateUserDocument(accountToUpdate: updatedUser, batch: nil) { error, batch in
                             guard error == nil else { return completion(error) }
                             
                             guard UserDatabaseService.groupsForCurrentUser.count > 1 else {
-                                let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                                let viewController = storyboard.instantiateViewController(withIdentifier: "NoGroupsViewController") as? NoGroupsViewController
-                                UIApplication.shared.windows.first?.rootViewController = viewController
-                                UIApplication.shared.windows.first?.makeKeyAndVisible()
+                                NavigationService.showNoGroupsViewController()
                                 return completion(error)
                             }
                             // Successfully deleted and updated home group for current user
@@ -207,13 +204,13 @@ class GroupDatabaseService {
                             guard let currentUser = UserDatabaseService.currentUserProfile else { return completion(error, nil, false) }
                             
                             // Create event
-                            let newEvent = Event(groupName: groupName, iconId: currentUser.iconId, points: 0.0, timestamp: Date().timeIntervalSince1970.description, type: EventType.GROUP_JOINED.rawValue, username: currentUser.username)
+                            let newEvent = Event(groupName: groupName, iconId: currentUser.iconId, points: 0.0, timestamp: Date().timeIntervalSince1970.description, type: EventType.GROUP_JOINED.rawValue, userId: currentUser.userId, username: currentUser.username)
                             EventDatabaseService.createEventDoucment(event: newEvent) { error in
                                 guard error == nil else { return completion(error, nil, false) }
                                 
                                 // Set home group of current user user to this group
                                 let accountToUpdate = User(email: currentUser.email, homeGroup: groupName, iconId: currentUser.iconId,  userId: currentUser.userId, username: currentUser.username)
-                                UserDatabaseService.updateUserDocument(accountToUpdate: accountToUpdate) { error in
+                                UserDatabaseService.updateUserDocument(accountToUpdate: accountToUpdate, batch: nil) { error, batch in
                                     guard error == nil else { return completion(error, nil, false) }
                                     UserDatabaseService.currentUserProfile? = accountToUpdate
                                     return completion(error, nil, true)
@@ -239,10 +236,10 @@ class GroupDatabaseService {
                 var groupNames: [String] = []
                 for document in results.documents {
                     let data = document.data()
-                    guard let groupName = data[DatabaseField.group_name.rawValue] as? String else { return completion(error, []) }
+                    guard let groupName = data[DatabaseField.group_name.rawValue] as? String else { return completion(error, groupNames) }
                     groupNames.append(groupName)
                 }
-                let sortedGroupNames = groupNames.sorted(by: { $0 < $1 })
+                let sortedGroupNames = groupNames.sorted(by: { $0.lowercased() < $1.lowercased() })
                 return completion(error, sortedGroupNames)
             }
             // No groups for user
@@ -264,11 +261,11 @@ class GroupDatabaseService {
                 for document in results.documents {
                     let data = document.data()
                     
-                    guard let groupName = data[DatabaseField.group_name.rawValue] as? String else { return completion(error, []) }
-                    guard let iconId = data[DatabaseField.icon_id.rawValue] as? Int else { return completion(error, []) }
-                    guard let pointsInGroup = data[DatabaseField.points.rawValue] as? Double else { return completion(error, []) }
-                    guard let userId = data[DatabaseField.user_id.rawValue] as? String else { return completion(error, []) }
-                    guard let username = data[DatabaseField.username.rawValue] as? String else { return completion(error, []) }
+                    guard let groupName = data[DatabaseField.group_name.rawValue] as? String else { return completion(error, usersInGroup) }
+                    guard let iconId = data[DatabaseField.icon_id.rawValue] as? Int else { return completion(error, usersInGroup) }
+                    guard let pointsInGroup = data[DatabaseField.points.rawValue] as? Double else { return completion(error, usersInGroup) }
+                    guard let userId = data[DatabaseField.user_id.rawValue] as? String else { return completion(error, usersInGroup) }
+                    guard let username = data[DatabaseField.username.rawValue] as? String else { return completion(error, usersInGroup) }
                     
                     usersInGroup.append(UserGroup(groupName: groupName, iconId: iconId, pointsInGroup: pointsInGroup, userId: userId, username: username))
                 }
@@ -307,6 +304,41 @@ class GroupDatabaseService {
         }
     }
     
+    static func updateAllUserGroupsDocuments(accountToUpdate: User, batch: WriteBatch, completion: @escaping(Error?, WriteBatch?) ->()) {
+        databaseInstance.collection(DatabaseCollection.user_groups.rawValue)
+            .whereField(DatabaseField.user_id.rawValue, isEqualTo: accountToUpdate.userId)
+            .getDocuments()
+        {(queryResults, error) in
+            guard error == nil else { return completion(error, nil) }
+            guard let results = queryResults else { return completion(error, nil) }
+            
+            if !results.documents.isEmpty {
+                for document in results.documents {
+                    let data = document.data()
+                    let docId = document.documentID
+                    let docRef = databaseInstance.collection(DatabaseCollection.user_groups.rawValue).document(docId)
+                    
+                    guard let groupName = data[DatabaseField.group_name.rawValue] as? String else { return completion(error, nil) }
+                    guard let pointsInGroup = data[DatabaseField.points.rawValue] as? Double else { return completion(error, nil) }
+                    guard let userId = data[DatabaseField.user_id.rawValue] as? String else { return completion(error, nil) }
+                    
+                    let fields: [AnyHashable : Any] = [
+                        DatabaseField.group_name.rawValue: groupName,
+                        DatabaseField.icon_id.rawValue: accountToUpdate.iconId,
+                        DatabaseField.points.rawValue: pointsInGroup,
+                        DatabaseField.user_id.rawValue: userId,
+                        DatabaseField.username.rawValue: accountToUpdate.username,
+                    ]
+                    
+                    batch.updateData(fields, forDocument: docRef)
+                }
+                return completion(error, batch)
+            }
+            // No users found
+            return completion(error, batch)
+        }
+    }
+
     // Updates userGroups document.
     static func updateUserGroupsDocument(userGroupToUpdate: UserGroup, completion: @escaping(Error?) ->()) {
         databaseInstance.collection(DatabaseCollection.user_groups.rawValue)
@@ -336,7 +368,7 @@ class GroupDatabaseService {
                 }
             }
             // No document found
-            completion(error)
+            return completion(error)
         }
     }
 }

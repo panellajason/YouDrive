@@ -70,6 +70,11 @@ class CreateGroupViewController: UIViewController {
             return
         }
         
+        guard !UserDatabaseService.hasReachedMaxGroups else {
+            labelError.text = "You are in the maximum number of groups allowed."
+            return
+        }
+        
         createNewGroup(groupName: groupName, groupPasscode: groupPasscode)
     }
     

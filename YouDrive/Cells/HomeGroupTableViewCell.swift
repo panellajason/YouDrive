@@ -25,7 +25,7 @@ class HomeGroupTableViewCell: UITableViewCell {
     }
     
     func configure(with userGroup: UserGroup) {
-        let imageName = "icon_" + userGroup.iconId.description
+        let imageName = WidgetService.ICON_PREFIX + userGroup.iconId.description
 
         imageviewAvatar.image =  UIImage(named: imageName)
         labelPointsInGroup.text = userGroup.pointsInGroup.description + " points"

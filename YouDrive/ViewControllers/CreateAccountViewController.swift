@@ -47,23 +47,13 @@ class CreateAccountViewController: UIViewController, UICollectionViewDataSource,
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        let indexPath = IndexPath(row: 0, section: 0)
-        collectionViewIcons.selectItem(at: indexPath, animated: false, scrollPosition: .bottom)
-        
-        guard let iconId = iconIdList.first else { return }
-        selectedIcon = iconId
+        selectUserIcon()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        collectionViewIcons.dataSource = self
-        collectionViewIcons.delegate = self
-        collectionViewIcons.collectionViewLayout = UICollectionViewFlowLayout()
-        collectionViewIcons.allowsMultipleSelection = false
-        if let layout = collectionViewIcons.collectionViewLayout as? UICollectionViewFlowLayout {
-            layout.scrollDirection = .horizontal
-        }
+        setupCollectionView()
     }
     
     // Handles on-click for create account button.
@@ -107,7 +97,7 @@ class CreateAccountViewController: UIViewController, UICollectionViewDataSource,
     }
     
     // Uses UserDatabaseService to create a user account.
-    func createAccount(accountToCreate: User, password: String) {
+    private func createAccount(accountToCreate: User, password: String) {
         self.showSpinner(onView: self.view)
         UserDatabaseService.createUserAccount(accountToCreate: accountToCreate, password: password) { [weak self] error in
             self?.removeSpinner()
@@ -116,6 +106,24 @@ class CreateAccountViewController: UIViewController, UICollectionViewDataSource,
                 return
             }
             self?.performSegue(withIdentifier: SegueType.toNoGroups.rawValue, sender: self)
+        }
+    }
+    
+    private func selectUserIcon() {
+        let indexPath = IndexPath(row: 0, section: 0)
+        collectionViewIcons.selectItem(at: indexPath, animated: false, scrollPosition: .bottom)
+        
+        guard let iconId = iconIdList.first else { return }
+        selectedIcon = iconId
+    }
+    
+    private func setupCollectionView() {
+        collectionViewIcons.dataSource = self
+        collectionViewIcons.delegate = self
+        collectionViewIcons.collectionViewLayout = UICollectionViewFlowLayout()
+        collectionViewIcons.allowsMultipleSelection = false
+        if let layout = collectionViewIcons.collectionViewLayout as? UICollectionViewFlowLayout {
+            layout.scrollDirection = .horizontal
         }
     }
     

@@ -15,15 +15,22 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
     private let driversDropdown: DropDown = DropDown()
     // Dropdown to select a group to show.
     private let groupsDropdown: DropDown = DropDown()
+    
+    private var shouldEndSearch = false
+    private var shouldStartSearch = false
+    private var useCurrentLocation = true
 
     let locationManager = CLLocationManager()
-    
-    private var shouldSearch = false
-    
+
     var addDriveDelegate: AddDriveDelegate?
+    var searchQuery: String!
     var searchResults: [MKMapItem]!
-    var selectedLocation: String?
-    var selectedLocationDistance: Double?
+    var searchType: String!
+    var selectedEndCoordinate: CLLocationCoordinate2D?
+    var selectedEndLocation: String?
+    var selectedStartCoordinate: CLLocationCoordinate2D?
+    var selectedStartLocation: String?
+    var selectedEndLocationDistance: Double?
     var userObjectsInGroup: [UserGroup] = []
     var usersInGroup: [String] = []
 
@@ -32,7 +39,10 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
     @IBOutlet weak var labelDriver: UILabel!
     @IBOutlet weak var labelError: UILabel!
     @IBOutlet weak var labelGroup: UILabel!
-    @IBOutlet weak var labelSearch: UILabel!
+    @IBOutlet weak var labelEndSearch: UILabel!
+    @IBOutlet weak var labelStartingSearch: UILabel!
+    @IBOutlet weak var segmentedControlLocation: UISegmentedControl!
+    @IBOutlet weak var stackviewStartLocation: UIStackView!
     @IBOutlet weak var textfieldPassengers: UITextField! {
         didSet {
             let placeholderText = NSAttributedString(string: "Enter # of people in car",
@@ -41,35 +51,41 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
             textfieldPassengers.keyboardType = .numberPad
         }
     }
-    @IBOutlet weak var textfieldSearch: UITextField! {
+    @IBOutlet weak var textfieldEndSearch: UITextField! {
         didSet {
-            let placeholderText = NSAttributedString(string: "Enter location",
+            let placeholderText = NSAttributedString(string: "Destination",
                                                         attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])
-            textfieldSearch.attributedPlaceholder = placeholderText
+            textfieldEndSearch.attributedPlaceholder = placeholderText
+        }
+    }
+    @IBOutlet weak var textfieldStartSearch: UITextField! {
+        didSet {
+            let placeholderText = NSAttributedString(string: "Starting location",
+                                                        attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])
+            textfieldStartSearch.attributedPlaceholder = placeholderText
         }
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        textfieldPassengers.addTarget(self, action: #selector(updatePointsLabel(textField:)), for: .editingChanged)
 
-        let labelDriverOnClick = UITapGestureRecognizer(target: self, action: #selector(AddDriveViewController.editDriver))
-        labelDriver.isUserInteractionEnabled = true
-        labelDriver.addGestureRecognizer(labelDriverOnClick)
-        
-        let labelGroupOnClick = UITapGestureRecognizer(target: self, action: #selector(AddDriveViewController.editGroup))
-        labelGroup.isUserInteractionEnabled = true
-        labelGroup.addGestureRecognizer(labelGroupOnClick)
-        
-        guard let homeGroup = UserDatabaseService.currentUserProfile?.homeGroup else { return }
-        labelGroup.text = homeGroup
-        
-        labelDriver.text = UserDatabaseService.driversForHomeGroup[0].username
-
-        setupLocationManager()
         setupDriverDropdown()
         setupGroupDropdown()
+        setupLocationManager()
+        setupUI()
+    }
+    
+    // Handles on-click for the segmented control.
+    @IBAction func didChangeSegmentedControl(_ sender: UISegmentedControl) {
+        refreshLocations()
+        
+        if sender.selectedSegmentIndex == 0 {
+            useCurrentLocation = true
+            stackviewStartLocation.isHidden = true
+        } else {
+            useCurrentLocation = false
+            stackviewStartLocation.isHidden = false
+        }
     }
     
     // Handles on-click for the "X" button.
@@ -92,37 +108,79 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
         refresh()
     }
     
-    // Handles on-click for the search button.
-    @IBAction func handleSearchButton(_ sender: Any) {
+    // Handles on-click for the search end location button.
+    @IBAction func handleEndSearchButton(_ sender: Any) {
         self.view.endEditing(true)
-        guard textfieldSearch.text != "" else {
-            labelSearch.text = "Enter a location."
-            return
-        }
-        guard SearchService.currentLocation != nil else {
-            labelSearch.text = "Cannot determine your location."
-            locationManager.requestWhenInUseAuthorization()
-            shouldSearch = true
+        
+        guard textfieldEndSearch.text != "" else {
+            labelEndSearch.text = "Enter a location."
             return
         }
         
-        search()
+        guard SearchService.currentLocation != nil else {
+            labelEndSearch.text = "Cannot determine your location."
+            locationManager.requestWhenInUseAuthorization()
+            shouldEndSearch = true
+            return
+        }
+        
+        executeEndLocationSearch()
+    }
+    
+    // Handles on-click for the search start location button.
+    @IBAction func handleStartSearchButton(_ sender: Any) {
+        self.view.endEditing(true)
+        
+        guard textfieldStartSearch.text != "" else {
+            labelStartingSearch.text = "Enter a location."
+            return
+        }
+        
+        guard SearchService.currentLocation != nil else {
+            labelStartingSearch.text = "Cannot determine your location."
+            locationManager.requestWhenInUseAuthorization()
+            shouldStartSearch = true
+            return
+        }
+        
+        executeStartLocationSearch()
     }
     
     // Handles on-click for the submit button.
     @IBAction func handleSubmitButton(_ sender: Any) {
         self.view.endEditing(true)
-        guard selectedLocation != nil else {
-            labelError.textColor = .red
-            labelError.text = "No location selected."
-            return
+        labelError.textColor = .red
+
+        if !useCurrentLocation {
+            guard selectedStartCoordinate != nil else {
+                labelError.text = "No starting location selected."
+                return
+            }
         }
-        guard textfieldPassengers.text != "" else {
-            labelError.textColor = .red
-            labelError.text = "Enter number of passengers."
+        
+        guard selectedEndCoordinate != nil else {
+            labelError.text = "No destination selected."
             return
         }
         
+        guard let numOfPassengers = textfieldPassengers.text else { return }
+        guard !numOfPassengers.isEmpty else {
+            labelError.text = "Enter number of people in car."
+            return
+        }
+        
+        guard let passengersDouble = Double(numOfPassengers) else { return }
+        guard passengersDouble > 1 else {
+            labelError.text = "Must be 2 or more people in car."
+            return
+        }
+        
+        guard passengersDouble < 9 else {
+            labelError.text = "Enter a reasonable amount of people in car."
+            return
+        }
+        
+        labelError.textColor = .black
         addDrive()
     }
     
@@ -140,21 +198,20 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
     
     // Listens for textfieldPassengers updates to calculate points.
     @objc private func updatePointsLabel(textField: UITextField) {
-        guard selectedLocation != nil else { return }
+        guard selectedEndLocationDistance != nil else { return }
         guard textField.text?.count != 0 else {
             labelError.text = ""
             return
         }
-        
         calculatePoints()
     }
     
     // Uses DriveDatabaseService to add a new drive.
     private func addDrive() {
         guard let user = userObjectsInGroup.first(where: {$0.username == labelDriver.text}) else { return }
-        guard let distance = selectedLocationDistance else { return }
+        guard let distance = selectedEndLocationDistance else { return }
         guard let groupName = labelGroup.text else { return }
-        guard let location = selectedLocation else { return }
+        guard let location = selectedEndLocation else { return }
         guard let numOfPassengers = textfieldPassengers.text else { return }
         guard let passengersDouble = Double(numOfPassengers) else { return }
         guard let peopleInCar = Int(numOfPassengers) else { return }
@@ -162,8 +219,9 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
         
         let driveToAdd = Drive(distance: distance, groupName: groupName, location: location, peopleInCar: peopleInCar, pointsEarned: pointsEarned.rounded(toPlaces: 1), timestamp: Date().timeIntervalSince1970.description, user: user)
         DriveDatabaseService.addDriveToGroup(driveToAdd: driveToAdd){ [weak self] error in
+            self?.removeSpinner()
+
             guard error == nil else {
-                self?.removeSpinner()
                 self?.labelError.textColor = .red
                 self?.labelError.text = "Unable to add drive, try again."
                 return
@@ -177,7 +235,11 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
     
     // Calculates number of points from drive.
     private func calculatePoints() {
-        guard let distance = selectedLocationDistance else { return }
+        if !useCurrentLocation && (selectedStartCoordinate == nil || selectedEndCoordinate == nil) {
+            return
+        }
+        
+        guard let distance = selectedEndLocationDistance else { return }
         guard let passengers = textfieldPassengers.text else { return }
         guard let passengersDouble = Double(passengers) else { return }
         let points = (distance * passengersDouble) * 2.0
@@ -186,61 +248,122 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
         labelError.text = "Points earned: " + points.rounded(toPlaces: 1).description
     }
     
+    private func executeEndLocationSearch() {
+        guard let query = textfieldEndSearch.text else { return }
+        searchQuery = query
+        searchType = SearchType.END_LOCATION.rawValue
+        guard let searchLocation = getSearchLocation() else {
+            if !useCurrentLocation && selectedStartCoordinate == nil {
+                labelEndSearch.text = "No starting location selected."
+            }
+            return
+        }
+        search(searchLocation: searchLocation, searchQuery: searchQuery, label: labelEndSearch, type: SearchType.END_LOCATION.rawValue)
+        shouldEndSearch = false
+    }
+    
+    private func executeStartLocationSearch() {
+        guard let query = textfieldStartSearch.text else { return }
+        searchQuery = query
+        searchType = SearchType.STARTING_LOCATION.rawValue
+        guard let searchLocation = getSearchLocation() else { return }
+        search(searchLocation: searchLocation, searchQuery: searchQuery, label: labelStartingSearch, type: SearchType.STARTING_LOCATION.rawValue)
+        shouldStartSearch = false
+    }
+    
+    private func getSearchLocation() -> CLLocationCoordinate2D? {
+        if searchType == SearchType.END_LOCATION.rawValue && !useCurrentLocation {
+            return selectedStartCoordinate
+        }
+        return SearchService.currentLocation
+    }
+    
+    private func handleGroupDropdownSelection(index: Int, title: String) {
+        guard let currentUser = UserDatabaseService.currentUserProfile else { return }
+        guard labelGroup.text != title else { return }
+        labelGroup.text = title
+        
+        GroupDatabaseService.getAllUsersInGroup(groupName: title) {[weak self] error, users in
+            guard error == nil && users.count != 0 else { return }
+            
+            var driversList: [String] = []
+            for userGroup in users {
+                driversList.append(userGroup.username)
+            }
+            self?.driversDropdown.dataSource = driversList
+            
+            if title == currentUser.homeGroup {
+                UserDatabaseService.driversForHomeGroup = users
+            }
+
+            self?.driversDropdown.selectRow(at: driversList.firstIndex(of: currentUser.username))
+            self?.labelDriver.text = currentUser.username
+            self?.usersInGroup = driversList
+            self?.userObjectsInGroup = users
+        }
+    }
+    
     // Resets all labels and textviews.
     private func refresh() {
         self.view.endEditing(true)
-        labelError.textColor = .red
-        labelError.text = ""
-        labelSearch.text = ""
+        refreshLocations()
         textfieldPassengers.text = ""
-        textfieldSearch.text = ""
-        selectedLocation = nil
-        selectedLocationDistance = 0.0
         
-        guard let homeGroup = UserDatabaseService.currentUserProfile?.homeGroup else { return }
-        labelGroup.text = homeGroup
-        groupsDropdown.clearSelection()
-        
+        guard let currentUser = UserDatabaseService.currentUserProfile else { return }
+        labelGroup.text = currentUser.homeGroup
+        groupsDropdown.selectRow(at: UserDatabaseService.groupsForCurrentUser.firstIndex(of: currentUser.homeGroup))
+
         var driversList: [String] = []
         for userGroup in UserDatabaseService.driversForHomeGroup {
             driversList.append(userGroup.username)
         }
         driversDropdown.dataSource = driversList
         
-        guard let currentUser = UserDatabaseService.currentUserProfile else { return }
         driversDropdown.selectRow(at: driversList.firstIndex(of: currentUser.username))
         labelDriver.text = currentUser.username
     }
     
+    private func refreshLocations() {
+        labelEndSearch.text = ""
+        labelError.textColor = .red
+        labelError.text = ""
+        labelStartingSearch.text = ""
+        selectedEndCoordinate = nil
+        selectedEndLocation = ""
+        selectedEndLocationDistance = 0.0
+        selectedStartCoordinate = nil
+        selectedStartLocation = ""
+        textfieldEndSearch.text = ""
+        textfieldStartSearch.text = ""
+    }
+    
     // Uses SearchService to search for locations based on search query.
-    private func search() {
+    private func search(searchLocation: CLLocationCoordinate2D, searchQuery: String, label: UILabel, type: String) {
         self.showSpinner(onView: self.view)
-        guard let searchQuery = textfieldSearch.text else { return }
+        label.text = ""
 
-        SearchService.searchForLocations(searchQuery: searchQuery) {[weak self] error, mapItems in
+        SearchService.searchForLocations(searchLocation: searchLocation, searchQuery: searchQuery) {[weak self] error, mapItems in
+            self?.removeSpinner()
             guard error == nil && !mapItems.isEmpty else {
-                self?.removeSpinner()
                 self?.labelError.textColor = .red
 
                 switch error?._code ?? Int(MKError.unknown.rawValue) {
                     case Int(MKError.loadingThrottled.rawValue):
-                        self?.labelSearch.text = "Loading throttled, try again."
+                        label.text = "Loading throttled, try again."
                     case Int(MKError.placemarkNotFound.rawValue):
-                        self?.labelSearch.text = "No locations found."
+                        label.text = "No locations found."
                     case Int(MKError.serverFailure.rawValue):
-                        self?.labelSearch.text = "No internet."
+                        label.text = "No internet."
                     default:
-                        self?.labelSearch.text = "Unknown error, try again."
+                        label.text = "Unknown error, try again."
                 }
                 return
             }
-            
             self?.searchResults = mapItems
             self?.performSegue(withIdentifier: SegueType.toSearchResults.rawValue, sender: self)
-            self?.removeSpinner()
         }
     }
-    
+        
     // Sets up dropdown which displays all the drivers in selected group.
     private func setupDriverDropdown() {
         driversDropdown.anchorView = dropdownAnchor2
@@ -267,26 +390,12 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
         groupsDropdown.anchorView = dropdownAnchor
         groupsDropdown.dataSource = UserDatabaseService.groupsForCurrentUser
         
+        guard let currentUser = UserDatabaseService.currentUserProfile else { return }
+        labelGroup.text = currentUser.homeGroup
+        groupsDropdown.selectRow(at: UserDatabaseService.groupsForCurrentUser.firstIndex(of: currentUser.homeGroup))
+        
         groupsDropdown.selectionAction = { [weak self] index, title in
-            guard self?.labelGroup.text != title else { return }
-            
-            self?.labelGroup.text = title
-            
-            GroupDatabaseService.getAllUsersInGroup(groupName: title) {[weak self] error, users in
-                guard error == nil && users.count != 0 else { return }
-                
-                var driversList: [String] = []
-                for userGroup in users {
-                    driversList.append(userGroup.username)
-                }
-                self?.driversDropdown.dataSource = driversList
-                
-                UserDatabaseService.driversForHomeGroup = users
-
-                self?.labelDriver.text = driversList[0]
-                self?.usersInGroup = driversList
-                self?.userObjectsInGroup = users
-            }
+            self?.handleGroupDropdownSelection(index: index, title: title)
         }
     }
     
@@ -294,6 +403,25 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
     private func setupLocationManager() {
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+    }
+    
+    private func setupUI() {
+        let selectedTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
+        segmentedControlLocation.setTitleTextAttributes(selectedTextAttributes, for: .selected)
+        
+        textfieldPassengers.addTarget(self, action: #selector(updatePointsLabel(textField:)), for: .editingChanged)
+
+        let labelDriverOnClick = UITapGestureRecognizer(target: self, action: #selector(AddDriveViewController.editDriver))
+        labelDriver.isUserInteractionEnabled = true
+        labelDriver.addGestureRecognizer(labelDriverOnClick)
+        
+        let labelGroupOnClick = UITapGestureRecognizer(target: self, action: #selector(AddDriveViewController.editGroup))
+        labelGroup.isUserInteractionEnabled = true
+        labelGroup.addGestureRecognizer(labelGroupOnClick)
+        
+        guard let currentUser = UserDatabaseService.currentUserProfile else { return }
+        labelGroup.text = currentUser.homeGroup
+        labelDriver.text = currentUser.username
     }
     
     // Starts updating location if allowed from user.
@@ -316,18 +444,55 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
         }
     }
     
-    // Updates distance label/calculates points when user selects location in SearchResultsViewController.
-    func onLocationSelected(location: MKMapItem) {
-        selectedLocation = location.name?.description
-        textfieldSearch.text = selectedLocation
-        selectedLocationDistance = SearchService.caclulateDistance(destination: location.placemark.coordinate)
+    private func updateEndLocation(location: MKMapItem, type: String) {
+        selectedEndLocation = location.name?.description
+        selectedEndCoordinate = location.placemark.coordinate
+        textfieldEndSearch.text = selectedEndLocation
         
-        guard let distance = selectedLocationDistance else { return }
-        labelSearch.text = "Distance: " + distance.description + " miles"
+        guard var startLocation: CLLocationCoordinate2D = SearchService.currentLocation else { return }
+        if !useCurrentLocation {
+            if selectedStartCoordinate != nil {
+                startLocation = selectedStartCoordinate ?? startLocation
+            } else {
+                return
+            }
+        }
+        
+        selectedEndLocationDistance = SearchService.caclulateDistance(destination: location.placemark.coordinate, startLocation: startLocation)
+        
+        guard let distance = selectedEndLocationDistance else { return }
+        labelEndSearch.text = "Distance: " + distance.description + " miles"
         
         guard let numOfPassengers = textfieldPassengers.text else { return }
         if numOfPassengers.count > 0 {
             calculatePoints()
+        }
+    }
+    
+    private func updateStartLocation(location: MKMapItem, type: String) {
+        selectedStartLocation = location.name?.description
+        selectedStartCoordinate = location.placemark.coordinate
+        textfieldStartSearch.text = selectedStartLocation
+
+        if selectedEndCoordinate != nil {
+            selectedEndLocationDistance = SearchService.caclulateDistance(destination: selectedEndCoordinate!, startLocation: location.placemark.coordinate)
+            
+            guard let distance = selectedEndLocationDistance else { return }
+            labelEndSearch.text = "Distance: " + distance.description + " miles"
+            
+            guard let numOfPassengers = textfieldPassengers.text else { return }
+            if numOfPassengers.count > 0 {
+                calculatePoints()
+            }
+        }
+    }
+    
+    // Updates distance label/calculates points when user selects location in SearchResultsViewController.
+    func onLocationSelected(location: MKMapItem, type: String) {
+        if type == SearchType.END_LOCATION.rawValue {
+            updateEndLocation(location: location, type: type)
+        } else {
+            updateStartLocation(location: location, type: type)
         }
     }
     
@@ -336,10 +501,12 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
         guard let location: CLLocationCoordinate2D = manager.location?.coordinate else { return }
         SearchService.currentLocation = location
         
-        if shouldSearch {
-            search()
-            labelSearch.text = ""
-            shouldSearch = false
+        if shouldEndSearch {
+            executeEndLocationSearch()
+        }
+        
+        if shouldStartSearch {
+            executeStartLocationSearch()
         }
     }
     
@@ -357,9 +524,11 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
     override func prepare(for segue: UIStoryboardSegue, sender: Any?){
         if segue.identifier == SegueType.toSearchResults.rawValue {
             let searchResultsViewController = segue.destination as! SearchResultsViewController
+            searchResultsViewController.searchQuery = searchQuery
             searchResultsViewController.searchResults = searchResults
-            searchResultsViewController.searchQuery = textfieldSearch.text
+            searchResultsViewController.searchType = searchType
             searchResultsViewController.searchDelegate = self
+            searchResultsViewController.startLocation = getSearchLocation()
         }
     }
 }

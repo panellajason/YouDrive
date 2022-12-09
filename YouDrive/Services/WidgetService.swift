@@ -12,13 +12,10 @@ class WidgetService {
     static let ICON_PREFIX = "icon_"
     
     static func getIconIdList() -> [Int] {
-        
         var iconIdList: [Int] = []
-        
         for index in 2...25 {
             iconIdList.append(index)
         }
-        
         return iconIdList.shuffled()
     }
 }

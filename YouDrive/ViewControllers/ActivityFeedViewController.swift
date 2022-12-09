@@ -8,7 +8,8 @@
 import SideMenu
 import UIKit
 
-class ActivityFeedViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, GroupUpdatesDelegate, EventUpdatesDelegate {
+class ActivityFeedViewController: UIViewController, UITableViewDelegate, UITableViewDataSource,
+                                    AccountUpdatesDelegate, EventUpdatesDelegate, GroupUpdatesDelegate {
 
     private static var eventList: [Event] = []
     private static var hasLoadedData = false
@@ -17,6 +18,7 @@ class ActivityFeedViewController: UIViewController, UITableViewDelegate, UITable
     private var refreshControl: UIRefreshControl!
     private var sideMenu: SideMenuNavigationController?
 
+    static var accountUpdatesDelegate: AccountUpdatesDelegate?
     static var eventUpdatesDelegate: EventUpdatesDelegate?
     static var groupUpdatesDelegate: GroupUpdatesDelegate?
 
@@ -40,6 +42,7 @@ class ActivityFeedViewController: UIViewController, UITableViewDelegate, UITable
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        ActivityFeedViewController.accountUpdatesDelegate = self
         ActivityFeedViewController.eventUpdatesDelegate = self
         ActivityFeedViewController.groupUpdatesDelegate = self
         
@@ -93,18 +96,8 @@ class ActivityFeedViewController: UIViewController, UITableViewDelegate, UITable
         }
     }
     
-    func onEventUpdates() {
-        ActivityFeedViewController.hasLoadedData = false
-        ActivityFeedViewController.eventList = []
-    }
-    
-    func onGroupUpdates() {
-        ActivityFeedViewController.shouldGetFreshGroups = true
-        ActivityFeedViewController.eventList = []
-    }
-    
     // Sets up navigation side menu.
-    func setupSideMenu() {
+    private func setupSideMenu() {
         sideMenu = SideMenuNavigationController(rootViewController: SideMenuTableViewController())
         sideMenu?.leftSide = true
         sideMenu?.setNavigationBarHidden(true, animated: true)
@@ -115,10 +108,24 @@ class ActivityFeedViewController: UIViewController, UITableViewDelegate, UITable
     private func setupTableView() {
         tableViewActivityFeed.dataSource = self
         tableViewActivityFeed.delegate = self
-        tableViewActivityFeed.backgroundColor = .white
         refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(refreshTableview), for: .valueChanged)
         tableViewActivityFeed.addSubview(refreshControl)
+    }
+    
+    func onAccountUpdated() {
+        ActivityFeedViewController.hasLoadedData = false
+        ActivityFeedViewController.eventList = []
+    }
+    
+    func onEventUpdates() {
+        ActivityFeedViewController.hasLoadedData = false
+        ActivityFeedViewController.eventList = []
+    }
+    
+    func onGroupUpdates() {
+        ActivityFeedViewController.shouldGetFreshGroups = true
+        ActivityFeedViewController.eventList = []
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

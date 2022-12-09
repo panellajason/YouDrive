@@ -80,10 +80,7 @@ class ManageGroupsViewController: UIViewController, UITableViewDelegate, UITable
     // Sets up dropdown which displays create and join group buttons.
     private func setupDropdown() {
         moreOptionsDropdown.anchorView = moreButton
-        moreOptionsDropdown.bottomOffset = CGPoint(x: CGFloat(0), y: CGFloat(35))
-        moreOptionsDropdown.backgroundColor = .darkGray
-        moreOptionsDropdown.separatorColor = .black
-        moreOptionsDropdown.textColor = .white
+        moreOptionsDropdown.bottomOffset = CGPoint(x: CGFloat(0), y: CGFloat(30))
         moreOptionsDropdown.dataSource = [ManageGroupOptions.CreateGroup.rawValue, ManageGroupOptions.JoinGroup.rawValue]
         moreOptionsDropdown.selectionAction = { [weak self] index, title in
             self?.handleDropdownSelection(title: title)
@@ -93,7 +90,6 @@ class ManageGroupsViewController: UIViewController, UITableViewDelegate, UITable
     private func setupTableView() {
         tableViewManageGroups.dataSource = self
         tableViewManageGroups.delegate = self
-        tableViewManageGroups.backgroundColor = .white
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

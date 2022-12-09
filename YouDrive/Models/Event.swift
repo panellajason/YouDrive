@@ -14,14 +14,16 @@ class Event {
     var points: Double
     var timestamp: String
     var type: String
+    var userId: String
     var username: String
 
-    init(groupName: String, iconId: Int, points: Double, timestamp: String, type: String, username: String) {
+    init(groupName: String, iconId: Int, points: Double, timestamp: String, type: String, userId: String, username: String) {
         self.groupName = groupName
         self.iconId = iconId
         self.points = points
         self.timestamp = timestamp
         self.type = type
+        self.userId = userId
         self.username = username
     }
 }
