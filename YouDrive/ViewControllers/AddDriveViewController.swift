@@ -246,6 +246,7 @@ class AddDriveViewController: UIViewController, CLLocationManagerDelegate, Searc
         
         labelError.textColor = .black
         labelError.text = "Points earned: " + points.rounded(toPlaces: 1).description
+        self.view.endEditing(true)
     }
     
     private func executeEndLocationSearch() {

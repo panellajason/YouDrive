@@ -34,6 +34,11 @@ class NoGroupsViewController: UIViewController, UITextFieldDelegate {
         self.performSegue(withIdentifier: SegueType.toJoinGroup.rawValue, sender: self)
     }
     
+    // Handles on-click for sign out button.
+    @IBAction func handleSignOut(_ sender: UIButton) {
+        UserDatabaseService.handleSignOut()
+    }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == SegueType.toCreateGroup.rawValue {
             let createGroupVc = segue.destination as! CreateGroupViewController

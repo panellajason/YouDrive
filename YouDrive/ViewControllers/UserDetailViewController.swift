@@ -14,12 +14,14 @@ class UserDetailViewController: UIViewController, UITableViewDelegate, UITableVi
     var passedUser: UserGroup?
 
     @IBOutlet weak var imageviewUserIcon: UIImageView!
+    @IBOutlet weak var labelAverageNumberOfDrivers: UILabel!
     @IBOutlet weak var labelLongestDrive: UILabel!
     @IBOutlet weak var labelNoDrivesInThisGroup: UILabel!
     @IBOutlet weak var labelPoints: UILabel!
     @IBOutlet weak var labelSeparator: UILabel!
     @IBOutlet weak var labelTitle: UILabel!
     @IBOutlet weak var labelTotalDrives: UILabel!
+    @IBOutlet weak var labelTotalMilesDriven: UILabel!
     @IBOutlet weak var labelUsername: UILabel!
     @IBOutlet weak var tableviewUserDrives: UITableView!
 
@@ -39,6 +41,24 @@ class UserDetailViewController: UIViewController, UITableViewDelegate, UITableVi
     // Handles on-click for the "X" button.
     @IBAction func handleCloseAction(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
+    }
+    
+    private func calculateAverageNumberOfDrivers() -> Double {
+        var totalDrivers = 0
+        for drive in userDrivesList {
+            totalDrivers += drive.peopleInCar
+        }
+        
+        return Double(totalDrivers) / Double(userDrivesList.count)
+    }
+    
+    private func calculateTotalMiles() -> Double {
+        var totalMilesDriven = 0.0
+        for drive in userDrivesList {
+            totalMilesDriven += drive.distance
+        }
+        
+        return totalMilesDriven
     }
     
     // Gets all drives for a user in a group.
@@ -62,6 +82,12 @@ class UserDetailViewController: UIViewController, UITableViewDelegate, UITableVi
             self?.userDrivesList = drives
             self?.tableviewUserDrives.reloadData()
             self?.labelTotalDrives.text = "Total drives: " + drives.count.description
+            
+            guard let milesDriven = self?.calculateTotalMiles() else { return }
+            self?.labelTotalMilesDriven.text = "Total miles driven: " + milesDriven.rounded(toPlaces: 1).description
+            
+            guard let avgDrivers = self?.calculateAverageNumberOfDrivers() else { return }
+            self?.labelAverageNumberOfDrivers.text = "Average number of people: " + avgDrivers.rounded(toPlaces: 1).description
             
             let sortedDrives = drives.sorted(by: { $0.distance > $1.distance })
             guard let longestDrive = sortedDrives.first else { return }

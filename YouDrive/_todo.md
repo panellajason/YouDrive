@@ -1,6 +1,4 @@
-- Edit user https://firebase.google.com/docs/firestore/manage-data/transactions#batched-writes
 
-- on sign out, load data
 
 - drive notifications
 
